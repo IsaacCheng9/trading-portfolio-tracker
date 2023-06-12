@@ -12,6 +12,12 @@ Include the following information when reporting an issue (where possible):
 - Breakdown of the problem
 - Expected changes
 - Reproducible steps (if reporting a bug)
+- Prerequisite issues
+  - Some issues may require another issue to be completed first.
+- Related issues
+  - Some issues may be related to others, but not require them to be completed
+    first.
+  - e.g. an issue may help provide context for another issue.
 
 The `high priority` label should be sparingly to avoid diluting its
 significance - overuse of this defeats the purpose of the label.
