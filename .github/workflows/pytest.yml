@@ -38,4 +38,4 @@ jobs:
         run: coverage run --source=src -m pytest -v
 
       - name: Get code coverage report
-        run: coverage report -m
+        run: coverage report -m 
