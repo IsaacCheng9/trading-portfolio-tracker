@@ -4,7 +4,7 @@ portfolio.
 """
 
 from dataclasses import dataclass
-
+from decimal import Decimal
 import duckdb
 
 
@@ -19,16 +19,22 @@ class HeldSecurity:
 
     ticker: str
     name: str
-    amount: float
+    amount: Decimal
     currency: str
-    paid: float
+    paid: Decimal
 
     def save(self):
         with duckdb.connect(database=DB_PATH) as conn:
             # Insert or update the security in the portfolio table.
             conn.execute(
                 "INSERT OR REPLACE INTO portfolio VALUES (?, ?, ?, ?, ?)",
-                (self.ticker, self.name, self.amount, self.currency, self.paid),
+                (
+                    self.ticker,
+                    self.name,
+                    str(self.amount),
+                    self.currency,
+                    str(self.paid),
+                ),
             )
 
     @staticmethod
@@ -44,6 +50,10 @@ class HeldSecurity:
         portfolio = []
         for record in records:
             name, ticker, amount, currency, paid = record
+            # Convert the amount and paid values to Decimal objects to avoid
+            # floating point precision errors.
+            amount = Decimal(amount)
+            paid = Decimal(paid)
             security = HeldSecurity(name, ticker, amount, currency, paid)
             portfolio.append(security)
 
@@ -63,17 +73,17 @@ if __name__ == "__main__":
             "CREATE TABLE IF NOT EXISTS portfolio ("
             "ticker TEXT PRIMARY KEY, "
             "name TEXT, "
-            "amount REAL, "
+            "amount TEXT, "
             "currency TEXT, "
-            "paid REAL"
+            "paid TEXT"
             ")"
         )
         # Load some mock data into the table.
         conn.execute(
             "INSERT OR REPLACE INTO portfolio VALUES "
-            "('AAPL', 'Apple Inc.', 10, 'USD', 1000), "
-            "('TSLA', 'Tesla Inc.', 5, 'USD', 3000), "
-            "('BTC', 'Bitcoin', 0.2, 'USD', 1000)"
+            "('AAPL', 'Apple Inc.', '10', 'USD', '1000'), "
+            "('TSLA', 'Tesla Inc.', '5', 'USD', '3000'), "
+            "('BTC', 'Bitcoin', '0.2', 'USD', '1000')"
         )
     portfolio = HeldSecurity.load_portfolio()
     HeldSecurity.print_portfolio(portfolio)
