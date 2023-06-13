@@ -10,8 +10,8 @@ def main() -> None:
     """
     Open the main menu on program startup.
     """
-    # Perform scaling to prevent tiny UI on high resolution screens.
-    os.environ["QT_SCALE_FACTOR"] = "1.25"
+    # No scaling is required - increase font sizes instead if necessary.
+    os.environ["QT_SCALE_FACTOR"] = "1"
     app = QtWidgets.QApplication(sys.argv)
     app.setStyle("fusion")
     main_menu = MainWindow()
