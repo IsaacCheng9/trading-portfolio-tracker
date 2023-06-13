@@ -59,6 +59,11 @@ class Ui_main_window(object):
 
         self.hori_layout_btns.addWidget(self.btn_add_transaction)
 
+        self.btn_view_transactions = QPushButton(self.verticalLayoutWidget)
+        self.btn_view_transactions.setObjectName(u"btn_view_transactions")
+
+        self.hori_layout_btns.addWidget(self.btn_view_transactions)
+
         self.btn_view_portfolio_perf = QPushButton(self.verticalLayoutWidget)
         self.btn_view_portfolio_perf.setObjectName(u"btn_view_portfolio_perf")
         self.btn_view_portfolio_perf.setFont(font)
@@ -162,6 +167,7 @@ class Ui_main_window(object):
         main_window.setWindowTitle(QCoreApplication.translate("main_window", u"Trading Portfolio Tracker", None))
         self.lbl_app_header.setText(QCoreApplication.translate("main_window", u"Trading Portfolio Tracker", None))
         self.btn_add_transaction.setText(QCoreApplication.translate("main_window", u"Add Transaction (Buy/Sell)", None))
+        self.btn_view_transactions.setText(QCoreApplication.translate("main_window", u"View Transactions", None))
         self.btn_view_portfolio_perf.setText(QCoreApplication.translate("main_window", u"View Portfolio Performance", None))
         self.lbl_last_updated.setText(QCoreApplication.translate("main_window", u"Last Updated: DD/MM/YYYY HH:MM:SS", None))
         ___qtablewidgetitem = self.table_widget_portfolio.horizontalHeaderItem(0)
