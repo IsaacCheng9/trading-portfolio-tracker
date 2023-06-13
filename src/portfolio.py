@@ -12,6 +12,7 @@ from PySide6 import QtWidgets
 from PySide6.QtWidgets import QMainWindow
 
 from src.ui.main_window_ui import Ui_main_window
+from src.transactions import AddTransactionDialog
 
 DB_PATH = "resources/portfolio.db"
 
@@ -22,6 +23,9 @@ class MainWindow(QMainWindow):
         self.ui = Ui_main_window()
         self.ui.setupUi(self)
 
+        # Connect the 'Add Transaction' button to open the dialog.
+        self.ui.btn_add_transaction.clicked.connect(self.open_add_transaction_dialog)
+
         # Set the resize mode of the table to resize the columns to fit
         # the contents by default.
         table_header = self.ui.table_widget_portfolio.horizontalHeader()
@@ -29,6 +33,13 @@ class MainWindow(QMainWindow):
             QtWidgets.QHeaderView.ResizeMode.ResizeToContents
         )
         self.load_portfolio_table()
+
+    def open_add_transaction_dialog(self) -> None:
+        """
+        Open the dialog to add a new transaction.
+        """
+        self.add_transaction_dialog = AddTransactionDialog()
+        self.add_transaction_dialog.open()
 
     def load_portfolio_table(self) -> None:
         """
