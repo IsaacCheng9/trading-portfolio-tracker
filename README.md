@@ -8,6 +8,14 @@ market data integration from Yahoo Finance, developed with PyQt6.
 
 ## Usage
 
+### Running the Application
+
+To run the application, you should follow the following steps from the
+[root](./) directory:
+
+1. Install the required Python libraries: `pip install -r requirements.txt`
+2. Run the application with the command: `python -m src.app`
+
 ### Running the Tests
 
 The tests are written using the [pytest](https://docs.pytest.org/en/stable/)
