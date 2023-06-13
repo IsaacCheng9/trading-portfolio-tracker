@@ -3,6 +3,8 @@ Handles the logic for the processing and storage of the user's trading
 portfolio.
 """
 
+from __future__ import annotations
+
 import time
 from dataclasses import dataclass
 from decimal import Decimal
@@ -11,8 +13,8 @@ import duckdb
 from PySide6 import QtWidgets
 from PySide6.QtWidgets import QMainWindow
 
-from src.ui.main_window_ui import Ui_main_window
 from src.transactions import AddTransactionDialog
+from src.ui.main_window_ui import Ui_main_window
 
 DB_PATH = "resources/portfolio.db"
 
@@ -107,7 +109,7 @@ class HeldSecurity:
             )
 
     @staticmethod
-    def load_portfolio() -> list[str, str, Decimal, str, Decimal]:
+    def load_portfolio() -> list[HeldSecurity]:
         """
         Load the user's portfolio from DuckDB, containing details on each
         security they hold.
