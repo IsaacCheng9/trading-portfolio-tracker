@@ -27,7 +27,7 @@ class MainWindow(QMainWindow):
 
         # Set the resize mode of the table to resize the columns to fit
         # the contents by default.
-        table_header = self.ui.portfolio_table_widget.horizontalHeader()
+        table_header = self.ui.table_widget_portfolio.horizontalHeader()
         table_header.setSectionResizeMode(
             QtWidgets.QHeaderView.ResizeMode.ResizeToContents
         )
