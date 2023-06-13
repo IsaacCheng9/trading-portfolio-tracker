@@ -3,7 +3,7 @@ Handles the logic for the processing and storage of the user's trading
 transactions.
 """
 import datetime
-from uuid import uuid4
+from uuid import UUID, uuid4
 from dataclasses import dataclass
 from decimal import Decimal
 
@@ -55,7 +55,7 @@ class AddTransactionDialog(QDialog):
 
 @dataclass
 class Transaction:
-    transaction_id: uuid4
+    transaction_id: UUID
     transaction_type: str
     timestamp: datetime
     ticker: str
