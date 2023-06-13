@@ -25,8 +25,8 @@ class AddTransactionDialog(QDialog):
 
         # Set the datetime edit to the current date and time.
         self.ui.datetime_edit_transaction.setDateTime(QDateTime.currentDateTime())
-        # Ensure that the value field only accepts up to two decimal places.
-        self.ui.line_edit_value.setValidator(QDoubleValidator(decimals=2))
+        # Ensure that the amount field only accepts up to two decimal places.
+        self.ui.line_edit_amount.setValidator(QDoubleValidator(decimals=2))
 
         # Connect the 'Submit' button to create a new transaction.
         self.ui.btn_submit_transaction.clicked.connect(self.add_transaction)
@@ -48,7 +48,7 @@ class Transaction:
     ticker: str
     platform: str
     currency: str
-    value: Decimal
+    amount: Decimal
     unit_price: Decimal
 
     def save(self) -> None:
@@ -65,7 +65,7 @@ class Transaction:
                     self.ticker,
                     self.platform,
                     self.currency,
-                    str(self.value),
+                    str(self.amount),
                     str(self.unit_price),
                 ),
             )
@@ -82,7 +82,7 @@ if __name__ == "__main__":
             "ticker TEXT, "
             "platform TEXT, "
             "currency TEXT, "
-            "value TEXT, "
+            "amount TEXT, "
             "unit_price TEXT"
             ")"
         )

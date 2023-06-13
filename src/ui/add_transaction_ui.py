@@ -24,13 +24,13 @@ class Ui_dialog_add_transaction(object):
     def setupUi(self, dialog_add_transaction):
         if not dialog_add_transaction.objectName():
             dialog_add_transaction.setObjectName(u"dialog_add_transaction")
-        dialog_add_transaction.resize(400, 310)
+        dialog_add_transaction.resize(400, 340)
         font = QFont()
         font.setPointSize(12)
         dialog_add_transaction.setFont(font)
         self.verticalLayoutWidget = QWidget(dialog_add_transaction)
         self.verticalLayoutWidget.setObjectName(u"verticalLayoutWidget")
-        self.verticalLayoutWidget.setGeometry(QRect(9, 9, 381, 291))
+        self.verticalLayoutWidget.setGeometry(QRect(9, 9, 381, 321))
         self.vert_layout_dialog = QVBoxLayout(self.verticalLayoutWidget)
         self.vert_layout_dialog.setObjectName(u"vert_layout_dialog")
         self.vert_layout_dialog.setContentsMargins(0, 0, 0, 0)
@@ -104,15 +104,25 @@ class Ui_dialog_add_transaction(object):
 
         self.form_layout_transaction.setWidget(4, QFormLayout.FieldRole, self.line_edit_currency)
 
-        self.lbl_value = QLabel(self.verticalLayoutWidget)
-        self.lbl_value.setObjectName(u"lbl_value")
+        self.lbl_amount = QLabel(self.verticalLayoutWidget)
+        self.lbl_amount.setObjectName(u"lbl_amount")
 
-        self.form_layout_transaction.setWidget(5, QFormLayout.LabelRole, self.lbl_value)
+        self.form_layout_transaction.setWidget(5, QFormLayout.LabelRole, self.lbl_amount)
 
-        self.line_edit_value = QLineEdit(self.verticalLayoutWidget)
-        self.line_edit_value.setObjectName(u"line_edit_value")
+        self.line_edit_amount = QLineEdit(self.verticalLayoutWidget)
+        self.line_edit_amount.setObjectName(u"line_edit_amount")
 
-        self.form_layout_transaction.setWidget(5, QFormLayout.FieldRole, self.line_edit_value)
+        self.form_layout_transaction.setWidget(5, QFormLayout.FieldRole, self.line_edit_amount)
+
+        self.label = QLabel(self.verticalLayoutWidget)
+        self.label.setObjectName(u"label")
+
+        self.form_layout_transaction.setWidget(6, QFormLayout.LabelRole, self.label)
+
+        self.line_edit_unit_price = QLineEdit(self.verticalLayoutWidget)
+        self.line_edit_unit_price.setObjectName(u"line_edit_unit_price")
+
+        self.form_layout_transaction.setWidget(6, QFormLayout.FieldRole, self.line_edit_unit_price)
 
 
         self.vert_layout_dialog.addLayout(self.form_layout_transaction)
@@ -157,7 +167,8 @@ class Ui_dialog_add_transaction(object):
         self.lbl_ticker.setText(QCoreApplication.translate("dialog_add_transaction", u"Ticker:", None))
         self.lbl_platform.setText(QCoreApplication.translate("dialog_add_transaction", u"Platform:", None))
         self.lbl_currency.setText(QCoreApplication.translate("dialog_add_transaction", u"Currency:", None))
-        self.lbl_value.setText(QCoreApplication.translate("dialog_add_transaction", u"Value:", None))
+        self.lbl_amount.setText(QCoreApplication.translate("dialog_add_transaction", u"Amount:", None))
+        self.label.setText(QCoreApplication.translate("dialog_add_transaction", u"Unit Price:", None))
         self.btn_submit_transaction.setText(QCoreApplication.translate("dialog_add_transaction", u"Submit", None))
         self.btn_cancel_transaction.setText(QCoreApplication.translate("dialog_add_transaction", u"Cancel", None))
     # retranslateUi
