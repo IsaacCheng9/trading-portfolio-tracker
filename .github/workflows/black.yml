@@ -5,6 +5,28 @@ on: [push, pull_request]
 jobs:
   lint:
     runs-on: ubuntu-latest
+    # Use the latest version of Python 3.
+    strategy:
+      matrix:
+        python-version: [3.x]
+
     steps:
       - uses: actions/checkout@v3
-      - uses: psf/black@stable
+
+      - name: Run Python code formatting with Black
+        uses: lgeiger/black-action@stable
+        with:
+          args: ". --exclude src/ui"
+
+      - name: Commit changes made with code formatters
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: Format Python code with Black
+
+      - name: Switch to current branch
+        run: git checkout ${{ env.BRANCH }}
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@stable
+        with:
+          python-version: ${{ matrix.python-version }}
