@@ -3,9 +3,10 @@ Handles the logic for the processing and storage of the user's trading
 portfolio.
 """
 
+import time
 from dataclasses import dataclass
 from decimal import Decimal
-import time
+
 import duckdb
 from PySide6 import QtWidgets
 from PySide6.QtWidgets import QMainWindow
