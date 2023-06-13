@@ -5,7 +5,7 @@ portfolio.
 
 from dataclasses import dataclass
 from decimal import Decimal
-
+import time
 import duckdb
 from PySide6 import QtWidgets
 from PySide6.QtWidgets import QMainWindow
@@ -27,6 +27,34 @@ class MainWindow(QMainWindow):
         table_header.setSectionResizeMode(
             QtWidgets.QHeaderView.ResizeMode.ResizeToContents
         )
+        self.load_portfolio_table()
+
+    def load_portfolio_table(self):
+        """
+        Load the user's portfolio into the table widget.
+        """
+        portfolio = HeldSecurity.load_portfolio()
+        for security in portfolio:
+            self.ui.table_widget_portfolio.insertRow(0)
+            self.ui.table_widget_portfolio.setItem(
+                0, 1, QtWidgets.QTableWidgetItem(security.ticker)
+            )
+            self.ui.table_widget_portfolio.setItem(
+                0, 0, QtWidgets.QTableWidgetItem(security.name)
+            )
+            self.ui.table_widget_portfolio.setItem(
+                0, 3, QtWidgets.QTableWidgetItem(str(security.units))
+            )
+            self.ui.table_widget_portfolio.setItem(
+                0, 4, QtWidgets.QTableWidgetItem(security.currency)
+            )
+            self.ui.table_widget_portfolio.setItem(
+                0, 5, QtWidgets.QTableWidgetItem(str(security.paid))
+            )
+
+        # Get the current time in DD/MM/YYYY HH:MM:SS format.
+        cur_time = time.strftime("%d/%m/%Y %H:%M:%S")
+        self.ui.lbl_last_updated.setText(f"Last Updated: {cur_time}")
 
 
 @dataclass
@@ -37,7 +65,7 @@ class HeldSecurity:
 
     ticker: str
     name: str
-    amount: Decimal
+    units: Decimal
     currency: str
     paid: Decimal
 
@@ -49,7 +77,7 @@ class HeldSecurity:
                 (
                     self.ticker,
                     self.name,
-                    str(self.amount),
+                    str(self.units),
                     self.currency,
                     str(self.paid),
                 ),
@@ -60,19 +88,19 @@ class HeldSecurity:
         with duckdb.connect(database=DB_PATH) as conn:
             # Retrieve securities from the portfolio table
             result = conn.execute(
-                "SELECT name, ticker, amount, currency, paid FROM portfolio"
+                "SELECT name, ticker, units, currency, paid FROM portfolio"
             )
             records = result.fetchall()
 
         # Create HeldSecurity objects for each record.
         portfolio = []
         for record in records:
-            name, ticker, amount, currency, paid = record
-            # Convert the amount and paid values to Decimal objects to avoid
+            name, ticker, units, currency, paid = record
+            # Convert the units and paid values to Decimal objects to avoid
             # floating point precision errors.
-            amount = Decimal(amount)
+            units = Decimal(units)
             paid = Decimal(paid)
-            security = HeldSecurity(name, ticker, amount, currency, paid)
+            security = HeldSecurity(name, ticker, units, currency, paid)
             portfolio.append(security)
 
         return portfolio
@@ -91,7 +119,7 @@ if __name__ == "__main__":
             "CREATE TABLE IF NOT EXISTS portfolio ("
             "ticker TEXT PRIMARY KEY, "
             "name TEXT, "
-            "amount TEXT, "
+            "units TEXT, "
             "currency TEXT, "
             "paid TEXT"
             ")"
