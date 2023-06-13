@@ -3,14 +3,18 @@ Handles the logic for the processing and storage of the user's trading
 transactions.
 """
 import datetime
+from uuid import uuid4
 from dataclasses import dataclass
 from decimal import Decimal
 
+import duckdb
 from PySide6.QtCore import QDateTime
 from PySide6.QtGui import QDoubleValidator
 from PySide6.QtWidgets import QDialog
 
 from src.ui.add_transaction_ui import Ui_dialog_add_transaction
+
+DB_PATH = "resources/portfolio.db"
 
 
 class AddTransactionDialog(QDialog):
@@ -38,9 +42,47 @@ class AddTransactionDialog(QDialog):
 
 @dataclass
 class Transaction:
+    transaction_id: uuid4
     transaction_type: str
     timestamp: datetime
     ticker: str
     platform: str
     currency: str
     value: Decimal
+    unit_price: Decimal
+
+    def save(self) -> None:
+        """
+        Add a record to the transaction table.
+        """
+        with duckdb.connect(database=DB_PATH) as conn:
+            conn.execute(
+                "INSERT OR REPLACE INTO transaction VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+                (
+                    uuid4(),
+                    self.transaction_type,
+                    self.timestamp,
+                    self.ticker,
+                    self.platform,
+                    self.currency,
+                    str(self.value),
+                    str(self.unit_price),
+                ),
+            )
+
+
+if __name__ == "__main__":
+    with duckdb.connect(database=DB_PATH) as conn:
+        # Create a table to store portfolio information
+        conn.execute(
+            "CREATE TABLE IF NOT EXISTS transaction ("
+            "transaction_id TEXT PRIMARY KEY, "
+            "transaction_type TEXT NOT NULL, "
+            "timestamp DATETIME NOT NULL, "
+            "ticker TEXT, "
+            "platform TEXT, "
+            "currency TEXT, "
+            "value TEXT, "
+            "unit_price TEXT"
+            ")"
+        )
