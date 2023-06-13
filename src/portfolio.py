@@ -166,7 +166,7 @@ class HeldSecurity:
 
 if __name__ == "__main__":
     with duckdb.connect(database=DB_PATH) as conn:
-        # Create a table to store portfolio information
+        # Create a table to store securities in the user's portfolio.
         conn.execute(
             "CREATE TABLE IF NOT EXISTS portfolio ("
             "ticker TEXT PRIMARY KEY, "

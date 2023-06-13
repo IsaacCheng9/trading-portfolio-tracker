@@ -73,7 +73,7 @@ class Transaction:
 
 if __name__ == "__main__":
     with duckdb.connect(database=DB_PATH) as conn:
-        # Create a table to store portfolio information
+        # Create a table to store the transactions made by the user.
         conn.execute(
             "CREATE TABLE IF NOT EXISTS transaction ("
             "transaction_id TEXT PRIMARY KEY, "
