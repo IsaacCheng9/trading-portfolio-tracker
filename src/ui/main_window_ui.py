@@ -196,7 +196,7 @@ class Ui_main_window(object):
         ___qtablewidgetitem10 = self.table_widget_portfolio.item(0, 1)
         ___qtablewidgetitem10.setText(QCoreApplication.translate("main_window", u"Vanguard S&P 500 UCITS ETF", None));
         ___qtablewidgetitem11 = self.table_widget_portfolio.item(0, 2)
-        ___qtablewidgetitem11.setText(QCoreApplication.translate("main_window", u"100%", None));
+        ___qtablewidgetitem11.setText(QCoreApplication.translate("main_window", u"100.000%", None));
         ___qtablewidgetitem12 = self.table_widget_portfolio.item(0, 3)
         ___qtablewidgetitem12.setText(QCoreApplication.translate("main_window", u"16.35783718", None));
         ___qtablewidgetitem13 = self.table_widget_portfolio.item(0, 4)

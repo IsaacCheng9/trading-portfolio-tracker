@@ -225,7 +225,7 @@
        </item>
        <item row="0" column="2">
         <property name="text">
-         <string>100%</string>
+         <string>100.000%</string>
         </property>
        </item>
        <item row="0" column="3">
