@@ -27,6 +27,8 @@ class AddTransactionDialog(QDialog):
         self.ui.datetime_edit_transaction.setDateTime(QDateTime.currentDateTime())
         # Ensure that the amount field only accepts up to two decimal places.
         self.ui.line_edit_amount.setValidator(QDoubleValidator(decimals=2))
+        # Ensure that the unit price field only accepts up to two decimal places.
+        self.ui.line_edit_unit_price.setValidator(QDoubleValidator(decimals=2))
 
         # Connect the 'Submit' button to create a new transaction.
         self.ui.btn_submit_transaction.clicked.connect(self.add_transaction)
@@ -37,7 +39,18 @@ class AddTransactionDialog(QDialog):
         """
         Add a new transaction to the database.
         """
-        pass
+        new_transaction = Transaction(
+            uuid4(),
+            self.ui.combo_box_transaction_type.currentText(),
+            self.ui.datetime_edit_transaction.dateTime().toPython(),
+            self.ui.line_edit_ticker.text(),
+            self.ui.line_edit_platform.text(),
+            self.ui.line_edit_currency.text(),
+            self.ui.line_edit_amount.text(),
+            self.ui.line_edit_unit_price.text(),
+        )
+        new_transaction.save()
+        self.close()
 
 
 @dataclass
@@ -59,7 +72,7 @@ class Transaction:
             conn.execute(
                 "INSERT OR REPLACE INTO transaction VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
                 (
-                    uuid4(),
+                    self.transaction_id,
                     self.transaction_type,
                     self.timestamp,
                     self.ticker,
