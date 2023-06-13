@@ -27,6 +27,6 @@ jobs:
         run: git checkout ${{ env.BRANCH }}
 
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@3.1.4
+        uses: actions/setup-python@v3.1.4
         with:
           python-version: ${{ matrix.python-version }}
