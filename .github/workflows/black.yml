@@ -18,7 +18,7 @@ jobs:
         with:
           args: ". --exclude src/ui"
 
-      - name: Commit changes made with code formatters
+      - name: Commit changes made by Black
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
           commit_message: Format Python code with Black
