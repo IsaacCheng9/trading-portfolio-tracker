@@ -200,7 +200,7 @@ class Ui_main_window(object):
         ___qtablewidgetitem12 = self.table_widget_portfolio.item(0, 3)
         ___qtablewidgetitem12.setText(QCoreApplication.translate("main_window", u"16.35783718", None));
         ___qtablewidgetitem13 = self.table_widget_portfolio.item(0, 4)
-        ___qtablewidgetitem13.setText(QCoreApplication.translate("main_window", u"GBP (\u00a3)", None));
+        ___qtablewidgetitem13.setText(QCoreApplication.translate("main_window", u"GBP", None));
         ___qtablewidgetitem14 = self.table_widget_portfolio.item(0, 5)
         ___qtablewidgetitem14.setText(QCoreApplication.translate("main_window", u"1000", None));
         ___qtablewidgetitem15 = self.table_widget_portfolio.item(0, 6)
