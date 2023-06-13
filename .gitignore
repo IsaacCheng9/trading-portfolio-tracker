@@ -161,3 +161,7 @@ cython_debug/
 
 # Text files
 *.txt
+
+# Qt Creator files
+*.pyproject
+*.pyproject.user
