@@ -36,11 +36,18 @@ class MainWindow(QMainWindow):
         portfolio = HeldSecurity.load_portfolio()
         for security in portfolio:
             self.ui.table_widget_portfolio.insertRow(0)
+            # TODO: Why are these two flipped (ticker and name)?
             self.ui.table_widget_portfolio.setItem(
                 0, 1, QtWidgets.QTableWidgetItem(security.ticker)
             )
             self.ui.table_widget_portfolio.setItem(
                 0, 0, QtWidgets.QTableWidgetItem(security.name)
+            )
+            weight = str(
+                round((security.paid / HeldSecurity.get_total_value()) * 100, 3)
+            )
+            self.ui.table_widget_portfolio.setItem(
+                0, 2, QtWidgets.QTableWidgetItem(f"{weight}%")
             )
             self.ui.table_widget_portfolio.setItem(
                 0, 3, QtWidgets.QTableWidgetItem(str(security.units))
@@ -48,6 +55,7 @@ class MainWindow(QMainWindow):
             self.ui.table_widget_portfolio.setItem(
                 0, 4, QtWidgets.QTableWidgetItem(security.currency)
             )
+            # TODO: Change this to current value and add change and rate of return once yfinance API is implemented.
             self.ui.table_widget_portfolio.setItem(
                 0, 5, QtWidgets.QTableWidgetItem(str(security.paid))
             )
@@ -63,6 +71,7 @@ class HeldSecurity:
     Keep track of a security held by the user.
     """
 
+    # TODO: Add a current value, change, and rate of return fields once yfinance API is implemented.
     ticker: str
     name: str
     units: Decimal
@@ -110,6 +119,21 @@ class HeldSecurity:
         portfolio = HeldSecurity.load_portfolio()
         for security in portfolio:
             print(security)
+
+    @staticmethod
+    def get_total_value():
+        """
+        Calculate the total current value of the user's portfolio.
+
+        Returns: The total value of the portfolio.
+        """
+        total_value = Decimal(0)
+        portfolio = HeldSecurity.load_portfolio()
+        for security in portfolio:
+            # TODO: Change this to current value once yfinance API is implemented.ƒ
+            security.paid = Decimal(security.paid)
+            total_value += security.paid
+        return total_value
 
 
 if __name__ == "__main__":
