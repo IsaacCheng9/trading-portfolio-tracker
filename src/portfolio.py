@@ -16,7 +16,7 @@ DB_PATH = "resources/portfolio.db"
 
 
 class MainWindow(QMainWindow):
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
         self.ui = Ui_main_window()
         self.ui.setupUi(self)
@@ -29,7 +29,7 @@ class MainWindow(QMainWindow):
         )
         self.load_portfolio_table()
 
-    def load_portfolio_table(self):
+    def load_portfolio_table(self) -> None:
         """
         Load the user's portfolio into the table widget.
         """
@@ -78,9 +78,11 @@ class HeldSecurity:
     currency: str
     paid: Decimal
 
-    def save(self):
+    def save(self) -> None:
+        """
+        Insert or update the security in the portfolio table.
+        """
         with duckdb.connect(database=DB_PATH) as conn:
-            # Insert or update the security in the portfolio table.
             conn.execute(
                 "INSERT OR REPLACE INTO portfolio VALUES (?, ?, ?, ?, ?)",
                 (
@@ -93,7 +95,14 @@ class HeldSecurity:
             )
 
     @staticmethod
-    def load_portfolio():
+    def load_portfolio() -> list[str, str, Decimal, str, Decimal]:
+        """
+        Load the user's portfolio from DuckDB, containing details on each
+        security they hold.
+
+        Returns:
+            A list of the securities and the details of each held by the user.
+        """
         with duckdb.connect(database=DB_PATH) as conn:
             # Retrieve securities from the portfolio table
             result = conn.execute(
@@ -115,17 +124,12 @@ class HeldSecurity:
         return portfolio
 
     @staticmethod
-    def print_portfolio(portfolio):
-        portfolio = HeldSecurity.load_portfolio()
-        for security in portfolio:
-            print(security)
-
-    @staticmethod
-    def get_total_value():
+    def get_total_value() -> Decimal:
         """
         Calculate the total current value of the user's portfolio.
 
-        Returns: The total value of the portfolio.
+        Returns:
+            The total value of the portfolio.
         """
         total_value = Decimal(0)
         portfolio = HeldSecurity.load_portfolio()
@@ -133,7 +137,17 @@ class HeldSecurity:
             # TODO: Change this to current value once yfinance API is implemented.ƒ
             security.paid = Decimal(security.paid)
             total_value += security.paid
+
         return total_value
+
+    @staticmethod
+    def print_portfolio() -> None:
+        """
+        Print the user's portfolio to the console.
+        """
+        portfolio = HeldSecurity.load_portfolio()
+        for security in portfolio:
+            print(security)
 
 
 if __name__ == "__main__":
