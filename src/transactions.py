@@ -2,9 +2,13 @@
 Handles the logic for the processing and storage of the user's trading
 transactions.
 """
+import datetime
+from dataclasses import dataclass
+from decimal import Decimal
+
+from PySide6.QtCore import QDateTime
 from PySide6.QtGui import QDoubleValidator
 from PySide6.QtWidgets import QDialog
-from PySide6.QtCore import QDateTime
 
 from src.ui.add_transaction_ui import Ui_dialog_add_transaction
 
@@ -30,3 +34,13 @@ class AddTransactionDialog(QDialog):
         Add a new transaction to the database.
         """
         pass
+
+
+@dataclass
+class Transaction:
+    transaction_type: str
+    timestamp: datetime
+    ticker: str
+    platform: str
+    currency: str
+    value: Decimal
