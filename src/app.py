@@ -1,9 +1,7 @@
 import sys
 import os
 from PySide6 import QtWidgets
-from PySide6.QtWidgets import QMainWindow
-
-from src.ui.main_window_ui import Ui_main_window
+from src.portfolio import MainWindow
 
 
 def main() -> None:
@@ -17,20 +15,6 @@ def main() -> None:
     main_menu = MainWindow()
     main_menu.show()
     sys.exit(app.exec())
-
-
-class MainWindow(QMainWindow):
-    def __init__(self):
-        super().__init__()
-        self.ui = Ui_main_window()
-        self.ui.setupUi(self)
-
-        # Set the resize mode of the table to resize the columns to fit
-        # the contents by default.
-        table_header = self.ui.table_widget_portfolio.horizontalHeader()
-        table_header.setSectionResizeMode(
-            QtWidgets.QHeaderView.ResizeMode.ResizeToContents
-        )
 
 
 if __name__ == "__main__":

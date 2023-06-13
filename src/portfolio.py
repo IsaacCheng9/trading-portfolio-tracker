@@ -5,10 +5,28 @@ portfolio.
 
 from dataclasses import dataclass
 from decimal import Decimal
-import duckdb
 
+import duckdb
+from PySide6 import QtWidgets
+from PySide6.QtWidgets import QMainWindow
+
+from src.ui.main_window_ui import Ui_main_window
 
 DB_PATH = "resources/portfolio.db"
+
+
+class MainWindow(QMainWindow):
+    def __init__(self):
+        super().__init__()
+        self.ui = Ui_main_window()
+        self.ui.setupUi(self)
+
+        # Set the resize mode of the table to resize the columns to fit
+        # the contents by default.
+        table_header = self.ui.table_widget_portfolio.horizontalHeader()
+        table_header.setSectionResizeMode(
+            QtWidgets.QHeaderView.ResizeMode.ResizeToContents
+        )
 
 
 @dataclass
