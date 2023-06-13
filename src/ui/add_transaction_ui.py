@@ -24,13 +24,13 @@ class Ui_dialog_add_transaction(object):
     def setupUi(self, dialog_add_transaction):
         if not dialog_add_transaction.objectName():
             dialog_add_transaction.setObjectName(u"dialog_add_transaction")
-        dialog_add_transaction.resize(350, 310)
+        dialog_add_transaction.resize(400, 310)
         font = QFont()
         font.setPointSize(12)
         dialog_add_transaction.setFont(font)
         self.verticalLayoutWidget = QWidget(dialog_add_transaction)
         self.verticalLayoutWidget.setObjectName(u"verticalLayoutWidget")
-        self.verticalLayoutWidget.setGeometry(QRect(9, 9, 331, 291))
+        self.verticalLayoutWidget.setGeometry(QRect(9, 9, 381, 291))
         self.vert_layout_dialog = QVBoxLayout(self.verticalLayoutWidget)
         self.vert_layout_dialog.setObjectName(u"vert_layout_dialog")
         self.vert_layout_dialog.setContentsMargins(0, 0, 0, 0)
@@ -147,7 +147,7 @@ class Ui_dialog_add_transaction(object):
     # setupUi
 
     def retranslateUi(self, dialog_add_transaction):
-        dialog_add_transaction.setWindowTitle(QCoreApplication.translate("dialog_add_transaction", u"Dialog", None))
+        dialog_add_transaction.setWindowTitle(QCoreApplication.translate("dialog_add_transaction", u"Add a Transaction \u2013 Trading Portfolio Tracker", None))
         self.lbl_add_transaction.setText(QCoreApplication.translate("dialog_add_transaction", u"Add a Transaction", None))
         self.lbl_transaction_type.setText(QCoreApplication.translate("dialog_add_transaction", u"Transaction Type:", None))
         self.combo_box_transaction_type.setItemText(0, QCoreApplication.translate("dialog_add_transaction", u"Buy", None))

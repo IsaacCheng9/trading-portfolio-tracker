@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>350</width>
+    <width>400</width>
     <height>310</height>
    </rect>
   </property>
@@ -16,14 +16,14 @@
    </font>
   </property>
   <property name="windowTitle">
-   <string>Dialog</string>
+   <string>Add a Transaction – Trading Portfolio Tracker</string>
   </property>
   <widget class="QWidget" name="verticalLayoutWidget">
    <property name="geometry">
     <rect>
      <x>9</x>
      <y>9</y>
-     <width>331</width>
+     <width>381</width>
      <height>291</height>
     </rect>
    </property>
