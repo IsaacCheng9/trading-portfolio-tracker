@@ -1,9 +1,9 @@
 import sys
 import os
-from PyQt6 import QtWidgets
-from PyQt6.QtWidgets import QMainWindow
+from PySide6 import QtWidgets
+from PySide6.QtWidgets import QMainWindow
 
-from src.ui.main_window import Ui_main_window
+from src.ui.main_window_ui import Ui_main_window
 
 
 def main() -> None:
