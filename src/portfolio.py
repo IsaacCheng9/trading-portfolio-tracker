@@ -25,7 +25,7 @@ class MainWindow(QMainWindow, Ui_main_window):
         self.setupUi(self)
 
         # Connect the 'Add Transaction' button to open the dialog.
-        self.ui.btn_add_transaction.clicked.connect(self.open_add_transaction_dialog)
+        self.btn_add_transaction.clicked.connect(self.open_add_transaction_dialog)
 
         # Set the resize mode of the table to resize the columns to fit
         # the contents by default.
