@@ -24,13 +24,13 @@ class Ui_dialog_add_transaction(object):
     def setupUi(self, dialog_add_transaction):
         if not dialog_add_transaction.objectName():
             dialog_add_transaction.setObjectName(u"dialog_add_transaction")
-        dialog_add_transaction.resize(400, 365)
+        dialog_add_transaction.resize(400, 375)
         font = QFont()
         font.setPointSize(12)
         dialog_add_transaction.setFont(font)
         self.verticalLayoutWidget = QWidget(dialog_add_transaction)
         self.verticalLayoutWidget.setObjectName(u"verticalLayoutWidget")
-        self.verticalLayoutWidget.setGeometry(QRect(9, 9, 381, 351))
+        self.verticalLayoutWidget.setGeometry(QRect(9, 9, 381, 357))
         self.vert_layout_dialog = QVBoxLayout(self.verticalLayoutWidget)
         self.vert_layout_dialog.setObjectName(u"vert_layout_dialog")
         self.vert_layout_dialog.setContentsMargins(0, 0, 0, 0)
@@ -126,6 +126,13 @@ class Ui_dialog_add_transaction(object):
 
 
         self.vert_layout_dialog.addLayout(self.form_layout_transaction)
+
+        self.hori_line_transaction_form = QFrame(self.verticalLayoutWidget)
+        self.hori_line_transaction_form.setObjectName(u"hori_line_transaction_form")
+        self.hori_line_transaction_form.setFrameShape(QFrame.HLine)
+        self.hori_line_transaction_form.setFrameShadow(QFrame.Sunken)
+
+        self.vert_layout_dialog.addWidget(self.hori_line_transaction_form)
 
         self.lbl_status_msg = QLabel(self.verticalLayoutWidget)
         self.lbl_status_msg.setObjectName(u"lbl_status_msg")
