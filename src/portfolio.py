@@ -19,18 +19,17 @@ from src.ui.main_window_ui import Ui_main_window
 DB_PATH = "resources/portfolio.db"
 
 
-class MainWindow(QMainWindow):
+class MainWindow(QMainWindow, Ui_main_window):
     def __init__(self) -> None:
         super().__init__()
-        self.ui = Ui_main_window()
-        self.ui.setupUi(self)
+        self.setupUi(self)
 
         # Connect the 'Add Transaction' button to open the dialog.
         self.ui.btn_add_transaction.clicked.connect(self.open_add_transaction_dialog)
 
         # Set the resize mode of the table to resize the columns to fit
         # the contents by default.
-        table_header = self.ui.table_widget_portfolio.horizontalHeader()
+        table_header = self.table_widget_portfolio.horizontalHeader()
         table_header.setSectionResizeMode(
             QtWidgets.QHeaderView.ResizeMode.ResizeToContents
         )
@@ -49,34 +48,34 @@ class MainWindow(QMainWindow):
         """
         portfolio = HeldSecurity.load_portfolio()
         for security in portfolio:
-            self.ui.table_widget_portfolio.insertRow(0)
+            self.table_widget_portfolio.insertRow(0)
             # TODO: Why are these two flipped (ticker and name)?
-            self.ui.table_widget_portfolio.setItem(
+            self.table_widget_portfolio.setItem(
                 0, 1, QtWidgets.QTableWidgetItem(security.ticker)
             )
-            self.ui.table_widget_portfolio.setItem(
+            self.table_widget_portfolio.setItem(
                 0, 0, QtWidgets.QTableWidgetItem(security.name)
             )
             weight = str(
                 round((security.paid / HeldSecurity.get_total_value()) * 100, 3)
             )
-            self.ui.table_widget_portfolio.setItem(
+            self.table_widget_portfolio.setItem(
                 0, 2, QtWidgets.QTableWidgetItem(f"{weight}%")
             )
-            self.ui.table_widget_portfolio.setItem(
+            self.table_widget_portfolio.setItem(
                 0, 3, QtWidgets.QTableWidgetItem(str(security.units))
             )
-            self.ui.table_widget_portfolio.setItem(
+            self.table_widget_portfolio.setItem(
                 0, 4, QtWidgets.QTableWidgetItem(security.currency)
             )
             # TODO: Change this to current value and add change and rate of return once yfinance API is implemented.
-            self.ui.table_widget_portfolio.setItem(
+            self.table_widget_portfolio.setItem(
                 0, 5, QtWidgets.QTableWidgetItem(str(security.paid))
             )
 
         # Get the current time in DD/MM/YYYY HH:MM:SS format.
         cur_time = time.strftime("%d/%m/%Y %H:%M:%S")
-        self.ui.lbl_last_updated.setText(f"Last Updated: {cur_time}")
+        self.lbl_last_updated.setText(f"Last Updated: {cur_time}")
 
 
 @dataclass
