@@ -24,13 +24,13 @@ class Ui_dialog_add_transaction(object):
     def setupUi(self, dialog_add_transaction):
         if not dialog_add_transaction.objectName():
             dialog_add_transaction.setObjectName(u"dialog_add_transaction")
-        dialog_add_transaction.resize(400, 340)
+        dialog_add_transaction.resize(400, 365)
         font = QFont()
         font.setPointSize(12)
         dialog_add_transaction.setFont(font)
         self.verticalLayoutWidget = QWidget(dialog_add_transaction)
         self.verticalLayoutWidget.setObjectName(u"verticalLayoutWidget")
-        self.verticalLayoutWidget.setGeometry(QRect(9, 9, 381, 321))
+        self.verticalLayoutWidget.setGeometry(QRect(9, 9, 381, 351))
         self.vert_layout_dialog = QVBoxLayout(self.verticalLayoutWidget)
         self.vert_layout_dialog.setObjectName(u"vert_layout_dialog")
         self.vert_layout_dialog.setContentsMargins(0, 0, 0, 0)
@@ -127,6 +127,11 @@ class Ui_dialog_add_transaction(object):
 
         self.vert_layout_dialog.addLayout(self.form_layout_transaction)
 
+        self.lbl_status_msg = QLabel(self.verticalLayoutWidget)
+        self.lbl_status_msg.setObjectName(u"lbl_status_msg")
+
+        self.vert_layout_dialog.addWidget(self.lbl_status_msg)
+
         self.hori_layout_submit_transaction = QHBoxLayout()
         self.hori_layout_submit_transaction.setObjectName(u"hori_layout_submit_transaction")
         self.btn_submit_transaction = QPushButton(self.verticalLayoutWidget)
@@ -169,6 +174,7 @@ class Ui_dialog_add_transaction(object):
         self.lbl_currency.setText(QCoreApplication.translate("dialog_add_transaction", u"Currency:", None))
         self.lbl_amount.setText(QCoreApplication.translate("dialog_add_transaction", u"Amount:", None))
         self.label.setText(QCoreApplication.translate("dialog_add_transaction", u"Unit Price:", None))
+        self.lbl_status_msg.setText(QCoreApplication.translate("dialog_add_transaction", u"Enter all the details of your transaction before submitting.", None))
         self.btn_submit_transaction.setText(QCoreApplication.translate("dialog_add_transaction", u"Submit", None))
         self.btn_cancel_transaction.setText(QCoreApplication.translate("dialog_add_transaction", u"Cancel", None))
     # retranslateUi

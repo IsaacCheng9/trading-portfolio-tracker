@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>400</width>
-    <height>340</height>
+    <height>365</height>
    </rect>
   </property>
   <property name="font">
@@ -24,7 +24,7 @@
      <x>9</x>
      <y>9</y>
      <width>381</width>
-     <height>321</height>
+     <height>351</height>
     </rect>
    </property>
    <layout class="QVBoxLayout" name="vert_layout_dialog">
@@ -135,6 +135,13 @@
        <widget class="QLineEdit" name="line_edit_unit_price"/>
       </item>
      </layout>
+    </item>
+    <item>
+     <widget class="QLabel" name="lbl_status_msg">
+      <property name="text">
+       <string>Enter all the details of your transaction before submitting.</string>
+      </property>
+     </widget>
     </item>
     <item>
      <layout class="QHBoxLayout" name="hori_layout_submit_transaction">
