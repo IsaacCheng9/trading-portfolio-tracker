@@ -156,10 +156,10 @@ if __name__ == "__main__":
         conn.execute(
             "CREATE TABLE IF NOT EXISTS portfolio ("
             "ticker TEXT PRIMARY KEY, "
-            "name TEXT, "
-            "units TEXT, "
-            "currency TEXT, "
-            "paid TEXT"
+            "name TEXT NOT NULL, "
+            "units TEXT NOT NULL, "
+            "currency TEXT NOT NULL, "
+            "paid TEXT NOT NULL"
             ")"
         )
         # Load some mock data into the table.
