@@ -17,23 +17,22 @@ from src.ui.add_transaction_ui import Ui_dialog_add_transaction
 DB_PATH = "resources/portfolio.db"
 
 
-class AddTransactionDialog(QDialog):
+class AddTransactionDialog(QDialog, Ui_dialog_add_transaction):
     def __init__(self) -> None:
         super().__init__()
-        self.ui = Ui_dialog_add_transaction()
-        self.ui.setupUi(self)
+        self.setupUi(self)
 
         # Set the datetime edit to the current date and time.
-        self.ui.datetime_edit_transaction.setDateTime(QDateTime.currentDateTime())
+        self.datetime_edit_transaction.setDateTime(QDateTime.currentDateTime())
         # Ensure that the amount field only accepts up to two decimal places.
-        self.ui.line_edit_amount.setValidator(QDoubleValidator(decimals=2))
+        self.line_edit_amount.setValidator(QDoubleValidator(decimals=2))
         # Ensure that the unit price field only accepts up to two decimal places.
-        self.ui.line_edit_unit_price.setValidator(QDoubleValidator(decimals=2))
+        self.line_edit_unit_price.setValidator(QDoubleValidator(decimals=2))
 
         # Connect the 'Submit' button to create a new transaction.
-        self.ui.btn_submit_transaction.clicked.connect(self.add_transaction)
+        self.btn_submit_transaction.clicked.connect(self.add_transaction)
         # Close the dialog when the 'Cancel' button is clicked.
-        self.ui.btn_cancel_transaction.clicked.connect(self.close)
+        self.btn_cancel_transaction.clicked.connect(self.close)
 
     def add_transaction(self) -> None:
         """
@@ -41,45 +40,43 @@ class AddTransactionDialog(QDialog):
         """
         # Ensure that none of the fields are empty.
         if (
-            not self.ui.combo_box_transaction_type.currentText()
-            or not self.ui.line_edit_ticker.text()
-            or not self.ui.line_edit_platform.text()
-            or not self.ui.line_edit_currency.text()
-            or not self.ui.line_edit_amount.text()
-            or not self.ui.line_edit_unit_price.text()
+            not self.combo_box_transaction_type.currentText()
+            or not self.line_edit_ticker.text()
+            or not self.line_edit_platform.text()
+            or not self.line_edit_currency.text()
+            or not self.line_edit_amount.text()
+            or not self.line_edit_unit_price.text()
         ):
-            self.ui.lbl_status_msg.setText("Please fill in all of the details.")
+            self.lbl_status_msg.setText("Please fill in all of the details.")
             return
         # Ensure that the timestamp isn't in the future.
-        if self.ui.datetime_edit_transaction.dateTime() > QDateTime.currentDateTime():
-            self.ui.lbl_status_msg.setText(
+        if self.datetime_edit_transaction.dateTime() > QDateTime.currentDateTime():
+            self.lbl_status_msg.setText(
                 "The transaction timestamp cannot be in the future."
             )
             return
         # Ensure that the ticker only contains letters.
-        if not self.ui.line_edit_ticker.text().isalpha():
-            self.ui.lbl_status_msg.setText("The ticker can only contain letters.")
+        if not self.line_edit_ticker.text().isalpha():
+            self.lbl_status_msg.setText("The ticker can only contain letters.")
             return
         # Ensure that the amount and unit price are positive.
         if (
-            float(self.ui.line_edit_amount.text()) <= 0.0
-            or float(self.ui.line_edit_unit_price.text()) <= 0.0
+            float(self.line_edit_amount.text()) <= 0.0
+            or float(self.line_edit_unit_price.text()) <= 0.0
         ):
-            self.ui.lbl_status_msg.setText(
-                "The amount and unit price must be positive."
-            )
+            self.lbl_status_msg.setText("The amount and unit price must be positive.")
             return
 
         # Create a new transaction object and save it to the database.
         new_transaction = Transaction(
             uuid4(),
-            self.ui.combo_box_transaction_type.currentText(),
-            self.ui.datetime_edit_transaction.dateTime().toPython(),
-            self.ui.line_edit_ticker.text().upper(),
-            self.ui.line_edit_platform.text(),
-            self.ui.line_edit_currency.text(),
-            self.ui.line_edit_amount.text(),
-            self.ui.line_edit_unit_price.text(),
+            self.combo_box_transaction_type.currentText(),
+            self.datetime_edit_transaction.dateTime().toPython(),
+            self.line_edit_ticker.text().upper(),
+            self.line_edit_platform.text(),
+            self.line_edit_currency.text(),
+            self.line_edit_amount.text(),
+            self.line_edit_unit_price.text(),
         )
         new_transaction.save()
         self.close()
