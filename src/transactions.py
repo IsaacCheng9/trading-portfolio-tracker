@@ -60,6 +60,15 @@ class AddTransactionDialog(QDialog):
         if not self.ui.line_edit_ticker.text().isalpha():
             self.ui.lbl_status_msg.setText("The ticker can only contain letters.")
             return
+        # Ensure that the amount and unit price are positive.
+        if (
+            float(self.ui.line_edit_amount.text()) <= 0.0
+            or float(self.ui.line_edit_unit_price.text()) <= 0.0
+        ):
+            self.ui.lbl_status_msg.setText(
+                "The amount and unit price must be positive."
+            )
+            return
 
         # Create a new transaction object and save it to the database.
         new_transaction = Transaction(
