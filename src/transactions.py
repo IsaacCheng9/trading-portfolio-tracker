@@ -37,8 +37,27 @@ class AddTransactionDialog(QDialog):
 
     def add_transaction(self) -> None:
         """
-        Add a new transaction to the database.
+        Add a new transaction to the database if it's valid.
         """
+        # If any of the details are missing, avoid adding the transaction.
+        if (
+            not self.ui.combo_box_transaction_type.currentText()
+            or not self.ui.line_edit_ticker.text()
+            or not self.ui.line_edit_platform.text()
+            or not self.ui.line_edit_currency.text()
+            or not self.ui.line_edit_amount.text()
+            or not self.ui.line_edit_unit_price.text()
+        ):
+            self.ui.lbl_status_msg.setText("Please fill in all of the details.")
+            return
+        # If the timestamp is in the future, avoid adding the transaction.
+        if self.ui.datetime_edit_transaction.dateTime() > QDateTime.currentDateTime():
+            self.ui.lbl_status_msg.setText(
+                "The transaction timestamp cannot be in the future."
+            )
+            return
+
+        # Create a new transaction object and save it to the database.
         new_transaction = Transaction(
             uuid4(),
             self.ui.combo_box_transaction_type.currentText(),
