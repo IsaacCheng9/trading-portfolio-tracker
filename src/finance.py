@@ -14,7 +14,7 @@ def get_ticker(name: str) -> str:
     Credit: https://gist.github.com/bruhbruhroblox/dd9d981c8c37983f61e423a45085e063
 
     Args:
-      name: Name of the company/Index.
+      name: Name of the company/index.
 
     Returns:
       Ticker of the company.
@@ -59,8 +59,9 @@ def get_info(name: str) -> dict[str, str]:
     Returns:
       Dictionary containing information about the stock, future, or index.
     """
+    # Creates a yfinance ticker object for a given asset
     try:
-        ticker = yf.Ticker(get_ticker(name))  # Creates a yfinance ticker for
+        ticker = yf.Ticker(get_ticker(name))
     except:
         return False
 
@@ -86,7 +87,7 @@ def get_info(name: str) -> dict[str, str]:
     return return_dict
 
 
-def absolute_rate_of_return(current: float, purchase: float) -> float:
+def get_absolute_rate_of_return(current: float, purchase: float) -> float:
     """
     Calculates the absolute rate of return given the current and purchase price of an
     asset.
