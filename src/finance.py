@@ -6,6 +6,7 @@ using yfinance and performing financial calculations
 import requests
 import yfinance as yf
 import pandas as pd
+from decimal import Decimal
 
 
 def get_ticker(name: str) -> str:
@@ -87,7 +88,7 @@ def get_info(name: str) -> dict[str, str]:
     return return_dict
 
 
-def get_absolute_rate_of_return(current: float, purchase: float) -> float:
+def get_absolute_rate_of_return(current: Decimal, purchase: Decimal) -> Decimal:
     """
     Calculates the absolute rate of return given the current and purchase price of an
     asset.

@@ -75,8 +75,9 @@ class MainWindow(QMainWindow, Ui_main_window):
             self.table_widget_portfolio.setItem(
                 0, 6, QtWidgets.QTableWidgetItem(str(Decimal(stock_info["current_value"]) - security.paid))
             )
-            
-            # TODO: Change and Rate of Return
+            # self.table_widget_portfolio.setItem(
+            #     0, 7, QtWidgets.QTableWidgetItem(get_absolute_rate_of_return())
+            # )
 
         # Get the current time in DD/MM/YYYY HH:MM:SS format.
         cur_time = time.strftime("%d/%m/%Y %H:%M:%S")
