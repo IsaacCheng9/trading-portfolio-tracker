@@ -70,20 +70,26 @@ class MainWindow(QMainWindow, Ui_main_window):
             )
             stock_info = get_info(security.name)
             self.table_widget_portfolio.setItem(
-                0, 5, QtWidgets.QTableWidgetItem(str(stock_info["current_value"]))
+                0,
+                5,
+                QtWidgets.QTableWidgetItem(
+                    "{0:.03f}".format(stock_info["current_value"])
+                ),
             )
             self.table_widget_portfolio.setItem(
                 0,
                 6,
                 QtWidgets.QTableWidgetItem(
-                    str(Decimal(stock_info["current_value"]) - security.paid)
+                    "{0:.03f}".format(
+                        Decimal(stock_info["current_value"]) - security.paid
+                    )
                 ),
             )
             self.table_widget_portfolio.setItem(
                 0,
                 7,
                 QtWidgets.QTableWidgetItem(
-                    str(
+                    "{0:+.03f}%".format(
                         get_absolute_rate_of_return(
                             Decimal(stock_info["current_value"]), security.paid
                         )
@@ -198,7 +204,9 @@ if __name__ == "__main__":
             "INSERT OR REPLACE INTO portfolio VALUES "
             "('AAPL', 'Apple Inc.', '10', 'USD', '1000'), "
             "('TSLA', 'Tesla Inc.', '5', 'USD', '3000'), "
-            "('BTC', 'Bitcoin', '0.2', 'USD', '1000')"
+            "('BTC', 'Bitcoin', '0.2', 'USD', '1000'),"
+            "('HMC', 'Honda', '40', 'USD', '39.5'),"
+            "('^IXIC', 'NASDAQ Composite', '10', 'USD', '10000')"
         )
     portfolio = HeldSecurity.load_portfolio()
     HeldSecurity.print_portfolio()
