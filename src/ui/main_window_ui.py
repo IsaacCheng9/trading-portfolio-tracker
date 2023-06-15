@@ -267,47 +267,5 @@ class Ui_main_window(object):
         ___qtablewidgetitem7.setText(
             QCoreApplication.translate("main_window", "Rate of Return (Absolute)", None)
         )
-        ___qtablewidgetitem8 = self.table_widget_portfolio.verticalHeaderItem(0)
-        ___qtablewidgetitem8.setText(
-            QCoreApplication.translate("main_window", "New Row", None)
-        )
-
-        __sortingEnabled = self.table_widget_portfolio.isSortingEnabled()
-        self.table_widget_portfolio.setSortingEnabled(False)
-        ___qtablewidgetitem9 = self.table_widget_portfolio.item(0, 0)
-        ___qtablewidgetitem9.setText(
-            QCoreApplication.translate("main_window", "VUSA", None)
-        )
-        ___qtablewidgetitem10 = self.table_widget_portfolio.item(0, 1)
-        ___qtablewidgetitem10.setText(
-            QCoreApplication.translate(
-                "main_window", "Vanguard S&P 500 UCITS ETF", None
-            )
-        )
-        ___qtablewidgetitem11 = self.table_widget_portfolio.item(0, 2)
-        ___qtablewidgetitem11.setText(
-            QCoreApplication.translate("main_window", "100.000%", None)
-        )
-        ___qtablewidgetitem12 = self.table_widget_portfolio.item(0, 3)
-        ___qtablewidgetitem12.setText(
-            QCoreApplication.translate("main_window", "16.35783718", None)
-        )
-        ___qtablewidgetitem13 = self.table_widget_portfolio.item(0, 4)
-        ___qtablewidgetitem13.setText(
-            QCoreApplication.translate("main_window", "GBP", None)
-        )
-        ___qtablewidgetitem14 = self.table_widget_portfolio.item(0, 5)
-        ___qtablewidgetitem14.setText(
-            QCoreApplication.translate("main_window", "1000", None)
-        )
-        ___qtablewidgetitem15 = self.table_widget_portfolio.item(0, 6)
-        ___qtablewidgetitem15.setText(
-            QCoreApplication.translate("main_window", "1077", None)
-        )
-        ___qtablewidgetitem16 = self.table_widget_portfolio.item(0, 7)
-        ___qtablewidgetitem16.setText(
-            QCoreApplication.translate("main_window", "+7.7%", None)
-        )
-        self.table_widget_portfolio.setSortingEnabled(__sortingEnabled)
 
     # retranslateUi
