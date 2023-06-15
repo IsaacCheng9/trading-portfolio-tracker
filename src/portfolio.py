@@ -3,6 +3,7 @@ Handles the logic for the processing and storage of the user's trading
 portfolio.
 """
 
+from __future__ import annotations
 import time
 from dataclasses import dataclass
 from decimal import Decimal
@@ -11,6 +12,7 @@ import duckdb
 from PySide6 import QtWidgets
 from PySide6.QtWidgets import QMainWindow
 
+from src.transactions import AddTransactionDialog
 from src.ui.main_window_ui import Ui_main_window
 
 DB_PATH = "resources/portfolio.db"
@@ -21,6 +23,9 @@ class MainWindow(QMainWindow, Ui_main_window):
         super().__init__()
         self.setupUi(self)
 
+        # Connect the 'Add Transaction' button to open the dialog.
+        self.btn_add_transaction.clicked.connect(self.open_add_transaction_dialog)
+
         # Set the resize mode of the table to resize the columns to fit
         # the contents by default.
         table_header = self.table_widget_portfolio.horizontalHeader()
@@ -28,6 +33,13 @@ class MainWindow(QMainWindow, Ui_main_window):
             QtWidgets.QHeaderView.ResizeMode.ResizeToContents
         )
         self.load_portfolio_table()
+
+    def open_add_transaction_dialog(self) -> None:
+        """
+        Open the dialog to add a new transaction.
+        """
+        self.add_transaction_dialog = AddTransactionDialog()
+        self.add_transaction_dialog.open()
 
     def load_portfolio_table(self) -> None:
         """
@@ -95,7 +107,7 @@ class HeldSecurity:
             )
 
     @staticmethod
-    def load_portfolio() -> list[str, str, Decimal, str, Decimal]:
+    def load_portfolio() -> list[HeldSecurity]:
         """
         Load the user's portfolio from DuckDB, containing details on each
         security they hold.
@@ -134,7 +146,7 @@ class HeldSecurity:
         total_value = Decimal(0)
         portfolio = HeldSecurity.load_portfolio()
         for security in portfolio:
-            # TODO: Change this to current value once yfinance API is implemented.ƒ
+            # TODO: Change this to current value once yfinance API is implemented.
             security.paid = Decimal(security.paid)
             total_value += security.paid
 
@@ -152,7 +164,7 @@ class HeldSecurity:
 
 if __name__ == "__main__":
     with duckdb.connect(database=DB_PATH) as conn:
-        # Create a table to store portfolio information
+        # Create a table to store securities in the user's portfolio.
         conn.execute(
             "CREATE TABLE IF NOT EXISTS portfolio ("
             "ticker TEXT PRIMARY KEY, "
