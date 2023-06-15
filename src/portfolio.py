@@ -14,6 +14,7 @@ from PySide6.QtWidgets import QMainWindow
 
 from src.transactions import AddTransactionDialog
 from src.ui.main_window_ui import Ui_main_window
+from src.finance import get_info
 
 DB_PATH = "resources/portfolio.db"
 
@@ -67,10 +68,15 @@ class MainWindow(QMainWindow, Ui_main_window):
             self.table_widget_portfolio.setItem(
                 0, 4, QtWidgets.QTableWidgetItem(security.currency)
             )
-            # TODO: Change this to current value and add change and rate of return once yfinance API is implemented.
+            stock_info = get_info(security.name)
             self.table_widget_portfolio.setItem(
-                0, 5, QtWidgets.QTableWidgetItem(str(security.paid))
+                0, 5, QtWidgets.QTableWidgetItem(str(stock_info["current_value"]))
             )
+            # self.table_widget_portfolio.setItem(
+            #     0, 6, QtWidgets.QTableWidgetItem()
+            # )
+            
+            # TODO: Change and Rate of Return
 
         # Get the current time in DD/MM/YYYY HH:MM:SS format.
         cur_time = time.strftime("%d/%m/%Y %H:%M:%S")
