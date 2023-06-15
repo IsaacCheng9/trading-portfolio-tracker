@@ -1,0 +1,277 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>main_window</class>
+ <widget class="QMainWindow" name="main_window">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1000</width>
+    <height>600</height>
+   </rect>
+  </property>
+  <property name="font">
+   <font>
+    <pointsize>12</pointsize>
+   </font>
+  </property>
+  <property name="windowTitle">
+   <string>Trading Portfolio Tracker</string>
+  </property>
+  <widget class="QWidget" name="central_widget">
+   <widget class="QWidget" name="verticalLayoutWidget">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>10</y>
+      <width>981</width>
+      <height>581</height>
+     </rect>
+    </property>
+    <layout class="QVBoxLayout" name="vert_layout_window">
+     <item>
+      <widget class="QLabel" name="lbl_app_header">
+       <property name="font">
+        <font>
+         <pointsize>24</pointsize>
+        </font>
+       </property>
+       <property name="text">
+        <string>Trading Portfolio Tracker</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="Line" name="hori_line_header">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="hori_layout_btns">
+       <item>
+        <widget class="QPushButton" name="btn_add_transaction">
+         <property name="font">
+          <font>
+           <pointsize>12</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>Add Transaction (Buy/Sell)</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="btn_view_transactions">
+         <property name="text">
+          <string>View Transactions</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="btn_view_portfolio_perf">
+         <property name="font">
+          <font>
+           <pointsize>12</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>View Portfolio Performance</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <spacer name="hori_spacer_btns">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeType">
+          <enum>QSizePolicy::Expanding</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <widget class="Line" name="hori_line_buttons">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="lbl_last_updated">
+       <property name="text">
+        <string>Last Updated: DD/MM/YYYY HH:MM:SS</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QTableWidget" name="table_widget_portfolio">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="font">
+        <font>
+         <pointsize>12</pointsize>
+        </font>
+       </property>
+       <property name="frameShape">
+        <enum>QFrame::StyledPanel</enum>
+       </property>
+       <property name="frameShadow">
+        <enum>QFrame::Sunken</enum>
+       </property>
+       <property name="sizeAdjustPolicy">
+        <enum>QAbstractScrollArea::AdjustToContentsOnFirstShow</enum>
+       </property>
+       <property name="editTriggers">
+        <set>QAbstractItemView::NoEditTriggers</set>
+       </property>
+       <property name="alternatingRowColors">
+        <bool>true</bool>
+       </property>
+       <property name="selectionMode">
+        <enum>QAbstractItemView::NoSelection</enum>
+       </property>
+       <property name="selectionBehavior">
+        <enum>QAbstractItemView::SelectRows</enum>
+       </property>
+       <property name="sortingEnabled">
+        <bool>true</bool>
+       </property>
+       <property name="cornerButtonEnabled">
+        <bool>false</bool>
+       </property>
+       <attribute name="horizontalHeaderVisible">
+        <bool>true</bool>
+       </attribute>
+       <attribute name="horizontalHeaderCascadingSectionResizes">
+        <bool>false</bool>
+       </attribute>
+       <attribute name="horizontalHeaderStretchLastSection">
+        <bool>false</bool>
+       </attribute>
+       <attribute name="verticalHeaderVisible">
+        <bool>false</bool>
+       </attribute>
+       <attribute name="verticalHeaderCascadingSectionResizes">
+        <bool>false</bool>
+       </attribute>
+       <row>
+        <property name="text">
+         <string>New Row</string>
+        </property>
+       </row>
+       <column>
+        <property name="text">
+         <string>Ticker</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>Security</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>Weight</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>Units</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>Currency</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>Current Value</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>Change</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>Rate of Return (Absolute)</string>
+        </property>
+       </column>
+       <item row="0" column="0">
+        <property name="text">
+         <string>VUSA</string>
+        </property>
+       </item>
+       <item row="0" column="1">
+        <property name="text">
+         <string>Vanguard S&amp;P 500 UCITS ETF</string>
+        </property>
+       </item>
+       <item row="0" column="2">
+        <property name="text">
+         <string>100.000%</string>
+        </property>
+       </item>
+       <item row="0" column="3">
+        <property name="text">
+         <string>16.35783718</string>
+        </property>
+       </item>
+       <item row="0" column="4">
+        <property name="text">
+         <string>GBP</string>
+        </property>
+       </item>
+       <item row="0" column="5">
+        <property name="text">
+         <string>1000</string>
+        </property>
+       </item>
+       <item row="0" column="6">
+        <property name="text">
+         <string>1077</string>
+        </property>
+       </item>
+       <item row="0" column="7">
+        <property name="text">
+         <string>+7.7%</string>
+        </property>
+       </item>
+      </widget>
+     </item>
+     <item>
+      <spacer name="vert_spacer_app">
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>20</width>
+         <height>40</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+    </layout>
+   </widget>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

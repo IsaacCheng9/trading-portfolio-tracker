@@ -1,4 +1,5 @@
 import pytest
+import coverage
 
 
 def test_invalid_transaction():
