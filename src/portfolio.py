@@ -146,7 +146,7 @@ class HeldSecurity:
         total_value = Decimal(0)
         portfolio = HeldSecurity.load_portfolio()
         for security in portfolio:
-            # TODO: Change this to current value once yfinance API is implemented.ƒ
+            # TODO: Change this to current value once yfinance API is implemented.
             security.paid = Decimal(security.paid)
             total_value += security.paid
 
