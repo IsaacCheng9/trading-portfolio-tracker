@@ -1,6 +1,6 @@
 """
-Module containing functions relating to 
-https://pypi.org/project/yfinance/
+Module containing functions relating to retrieving financial data from yahoo finance 
+using yfinance and performing financial calculations 
 """
 
 import requests
@@ -30,10 +30,7 @@ def get_ticker(name: str) -> str:
     return company_code
 
 
-def get_history(
-    name: str,
-    period: str = "1mo",
-) -> pd.DataFrame:
+def get_history(name: str, period: str = "1mo") -> pd.DataFrame:
     """
     Gets the stock history of a company or index given a name.
 
@@ -52,33 +49,41 @@ def get_history(
 def get_info(name: str) -> dict[str, str]:
     """
     Returns information about a stock/company.
+    Accounts for the difference in the yfinance library in returning
+    information about different types of assets and assets which have a
+    delay in reporting of price.
 
     Args:
-      name: Name of the company/index/...
+      name: Name of the company/index/asset/...
 
     Returns:
-      dictionary containing information about the stock, future, or index
+      Dictionary containing information about the stock, future, or index.
     """
-    ticker = yf.Ticker(get_ticker(name))
-    if ticker:
-        print(ticker.info)
-        return_dict = {
-            "name": ticker.info["shortName"],
-            "type": ticker.info["quoteType"],
-            "previous_close": ticker.info["previousClose"],
-        }
-
-        if return_dict["type"] in ["INDEX", "FUTURE"]:
-            return_dict["open"] = ticker.info["open"]
-            return_dict["currency"] = ticker.info["currency"]
-
-        else:
-            return_dict["current_value"] = ticker.info["currentPrice"]
-            return_dict["sector"] = ticker.info["sector"]
-            return_dict["currency"] = (ticker.info["financialCurrency"],)
-        return return_dict
-    else:
+    try:
+        ticker = yf.Ticker(get_ticker(name))  # Creates a yfinance ticker for
+    except:
         return False
+
+    # Creates a dictionary containing basic information about the asset
+    return_dict = {
+        "name": ticker.info["shortName"],
+        "ticker": ticker.info["symbol"],
+        "type": ticker.info["quoteType"],
+    }
+
+    if return_dict["type"] in ["INDEX", "FUTURE", "CRYPTOCURRENCY"]:
+        # Downloads the most recent data about the price of the asset
+        data = yf.download(return_dict["ticker"], period="1d", interval="1m")
+        last_row_index = len(data) - 1
+        # Gets the last reported close price of the asset
+        last_row_open_value = data.iloc[last_row_index]["Close"]
+        return_dict["current_value"] = last_row_open_value
+        return_dict["currency"] = ticker.info["currency"]
+    else:  # If the asset is a stock
+        return_dict["current_value"] = ticker.info["currentPrice"]
+        return_dict["sector"] = ticker.info["sector"]
+        return_dict["currency"] = ticker.info["financialCurrency"]
+    return return_dict
 
 
 def absolute_rate_of_return(current: float, purchase: float) -> float:
@@ -94,3 +99,9 @@ def absolute_rate_of_return(current: float, purchase: float) -> float:
       absolute rate of return.
     """
     return ((current - purchase) / purchase) * 100
+
+
+if __name__ == "__main__":
+    print(get_info("FTSE 250"))
+    print(get_info("Apple"))
+    print(get_info("Ethereum"))

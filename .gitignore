@@ -161,3 +161,4 @@ cython_debug/
 
 # Text files
 *.txt
+*.db
