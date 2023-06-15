@@ -4,7 +4,6 @@ portfolio.
 """
 
 from __future__ import annotations
-
 import time
 from dataclasses import dataclass
 from decimal import Decimal
@@ -183,4 +182,4 @@ if __name__ == "__main__":
             "('BTC', 'Bitcoin', '0.2', 'USD', '1000')"
         )
     portfolio = HeldSecurity.load_portfolio()
-    HeldSecurity.print_portfolio(portfolio)
+    HeldSecurity.print_portfolio()
