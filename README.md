@@ -4,9 +4,17 @@
 ![CI](https://github.com/IsaacCheng9/trading-portfolio-tracker/actions/workflows/pytest.yml/badge.svg)
 
 A platform for monitoring and managing your investment portfolios with real-time
-market data integration from Yahoo Finance, developed with PyQt6.
+market data integration from Yahoo Finance, developed with Qt.
 
 ## Usage
+
+### Running the Application
+
+To run the application, you should follow the following steps from the
+[root](./) directory:
+
+1. Install the required Python libraries: `pip install -r requirements.txt`
+2. Run the application with the command: `python -m src.app`
 
 ### Running the Tests
 

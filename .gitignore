@@ -161,3 +161,10 @@ cython_debug/
 
 # Text files
 *.txt
+
+# Qt Creator files
+*.pyproject
+*.pyproject.user
+
+# DB files - these are binary files which causes version control conflicts.
+*.db
