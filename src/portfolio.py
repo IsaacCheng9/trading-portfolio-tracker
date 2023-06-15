@@ -14,7 +14,7 @@ from PySide6.QtWidgets import QMainWindow
 
 from src.transactions import AddTransactionDialog
 from src.ui.main_window_ui import Ui_main_window
-from src.finance import get_info
+from src.finance import get_info, get_absolute_rate_of_return
 
 DB_PATH = "resources/portfolio.db"
 
@@ -72,9 +72,9 @@ class MainWindow(QMainWindow, Ui_main_window):
             self.table_widget_portfolio.setItem(
                 0, 5, QtWidgets.QTableWidgetItem(str(stock_info["current_value"]))
             )
-            # self.table_widget_portfolio.setItem(
-            #     0, 6, QtWidgets.QTableWidgetItem()
-            # )
+            self.table_widget_portfolio.setItem(
+                0, 6, QtWidgets.QTableWidgetItem(str(Decimal(stock_info["current_value"]) - security.paid))
+            )
             
             # TODO: Change and Rate of Return
 
