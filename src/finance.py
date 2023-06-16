@@ -6,6 +6,7 @@ using yfinance and performing financial calculations
 import requests
 import yfinance as yf
 import pandas as pd
+from decimal import Decimal
 
 
 def get_ticker(name: str) -> str:
@@ -74,7 +75,7 @@ def get_info(name: str) -> dict[str, str]:
 
     if return_dict["type"] in ["INDEX", "FUTURE", "CRYPTOCURRENCY"]:
         # Downloads the most recent data about the price of the asset
-        data = yf.download(return_dict["ticker"], period="1d", interval="1m")
+        data = yf.download(return_dict["ticker"], period="1d", progress=False)
         last_row_index = len(data) - 1
         # Gets the last reported close price of the asset
         last_row_open_value = data.iloc[last_row_index]["Close"]
@@ -87,7 +88,7 @@ def get_info(name: str) -> dict[str, str]:
     return return_dict
 
 
-def get_absolute_rate_of_return(current: float, purchase: float) -> float:
+def get_absolute_rate_of_return(current: Decimal, purchase: Decimal) -> Decimal:
     """
     Calculates the absolute rate of return given the current and purchase price of an
     asset.

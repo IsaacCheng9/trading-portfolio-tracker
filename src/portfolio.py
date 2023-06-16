@@ -11,9 +11,11 @@ from decimal import Decimal
 import duckdb
 from PySide6 import QtWidgets
 from PySide6.QtWidgets import QMainWindow
+from PySide6.QtCore import QTimer
 
 from src.transactions import AddTransactionDialog, TransactionHistoryDialog
 from src.ui.main_window_ui import Ui_main_window
+from src.finance import get_info, get_absolute_rate_of_return
 
 DB_PATH = "resources/portfolio.db"
 
@@ -35,6 +37,27 @@ class MainWindow(QMainWindow, Ui_main_window):
             QtWidgets.QHeaderView.ResizeMode.ResizeToContents
         )
         self.load_portfolio_table()
+
+        # Creates and links timer to refresh live stock data.
+        self.timer = QTimer()
+        self.timer.timeout.connect(self.update_stock_prices)
+
+        # Dynamically sets refresh rate based on number of tracked stocks
+        # to avoid hitting the limit for yfinance.
+        interval = None
+        portfolio = HeldSecurity.load_portfolio()
+
+        # Limit of 2000 requests per hour, retrieving data about each asset
+        # from yfinance can take a maximum of 2 API calls.
+        diff = 2000 - (2 * (60 * len(portfolio)))
+        if diff > 0:
+            interval = 60000
+        else:
+            # TODO Potentially improve dynamic calculation?
+            diff = abs(diff)
+            interval = 60000 + (diff * 1.1 * 60)
+
+        self.timer.start(interval)
 
     def open_add_transaction_dialog(self) -> None:
         """
@@ -76,12 +99,66 @@ class MainWindow(QMainWindow, Ui_main_window):
             self.table_widget_portfolio.setItem(
                 0, 4, QtWidgets.QTableWidgetItem(security.currency)
             )
-            # TODO: Change this to current value and add change and rate of return once yfinance API is implemented.
+            stock_info = get_info(security.name)
             self.table_widget_portfolio.setItem(
-                0, 5, QtWidgets.QTableWidgetItem(str(security.paid))
+                0,
+                5,
+                QtWidgets.QTableWidgetItem(f"{stock_info['current_value']:.2f}"),
+            )
+            self.table_widget_portfolio.setItem(
+                0,
+                6,
+                QtWidgets.QTableWidgetItem(
+                    f"{(Decimal(stock_info['current_value'])- security.paid):+.2f}"  # Change in value
+                ),
+            )
+            self.table_widget_portfolio.setItem(
+                0,
+                7,
+                QtWidgets.QTableWidgetItem(
+                    f"{get_absolute_rate_of_return(Decimal(stock_info['current_value']),security.paid):+.2f}%"
+                ),
             )
 
         # Get the current time in DD/MM/YYYY HH:MM:SS format.
+        cur_time = time.strftime("%d/%m/%Y %H:%M:%S")
+        self.lbl_last_updated.setText(f"Last Updated: {cur_time}")
+
+    def update_stock_prices(self) -> None:
+        """
+        Update live stock current prices, change in value, and
+        absolute rate of return.
+
+        TODO Maybe optimise this? Causes 1 sec lag when updating.
+        """
+        self.table_widget_portfolio.blockSignals(True)
+        portfolio = HeldSecurity.load_portfolio()
+        for security in portfolio:
+            stock_info = get_info(security.name)
+            self.table_widget_portfolio.setItem(
+                0,
+                5,
+                QtWidgets.QTableWidgetItem(
+                    f"{stock_info['current_value']:.2f}"  # Current value
+                ),
+            )
+            self.table_widget_portfolio.setItem(
+                0,
+                6,
+                QtWidgets.QTableWidgetItem(
+                    f"{(Decimal(stock_info['current_value'])- security.paid):+.2f}"  # Change in value
+                ),
+            )
+            self.table_widget_portfolio.setItem(
+                0,
+                7,
+                QtWidgets.QTableWidgetItem(
+                    f"{get_absolute_rate_of_return(Decimal(stock_info['current_value']),security.paid):+.2f}%"
+                ),
+            )
+
+        self.table_widget_portfolio.blockSignals(False)
+
         cur_time = time.strftime("%d/%m/%Y %H:%M:%S")
         self.lbl_last_updated.setText(f"Last Updated: {cur_time}")
 
@@ -188,7 +265,10 @@ if __name__ == "__main__":
             "INSERT OR REPLACE INTO portfolio VALUES "
             "('AAPL', 'Apple Inc.', '10', 'USD', '1000'), "
             "('TSLA', 'Tesla Inc.', '5', 'USD', '3000'), "
-            "('BTC', 'Bitcoin', '0.2', 'USD', '1000')"
+            "('BTC', 'Bitcoin', '0.2', 'USD', '1000'),"
+            "('HMC', 'Honda', '40', 'USD', '39.5'),"
+            "('^IXIC', 'NASDAQ Composite', '10', 'USD', '10000'),"
+            "('FTMC', 'FTSE 250', '2', 'GBP', '13520')"
         )
     portfolio = HeldSecurity.load_portfolio()
     HeldSecurity.print_portfolio()
