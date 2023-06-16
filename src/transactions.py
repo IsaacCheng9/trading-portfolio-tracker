@@ -16,6 +16,7 @@ from PySide6.QtCore import QDateTime
 from PySide6.QtGui import QDoubleValidator
 from PySide6.QtWidgets import QDialog
 
+from src.finance import get_name_from_symbol
 from src.ui.add_transaction_ui import Ui_dialog_add_transaction
 from src.ui.transaction_history_ui import Ui_dialog_transaction_history
 
@@ -36,6 +37,9 @@ class TransactionHistoryDialog(QDialog, Ui_dialog_transaction_history):
         self.load_transaction_history_table()
 
     def load_transaction_history_table(self) -> None:
+        """
+        Load the user's transaction history into the table.
+        """
         transactions = Transaction.load_transaction_history()
         for transaction in transactions:
             self.table_widget_transactions.insertRow(0)
@@ -48,7 +52,11 @@ class TransactionHistoryDialog(QDialog, Ui_dialog_transaction_history):
             self.table_widget_transactions.setItem(
                 0, 2, QtWidgets.QTableWidgetItem(str(transaction.symbol))
             )
-            # TODO: Get the name of the security from the symbol using yfinance.
+            self.table_widget_transactions.setItem(
+                0,
+                3,
+                QtWidgets.QTableWidgetItem(get_name_from_symbol(transaction.symbol)),
+            )
             self.table_widget_transactions.setItem(
                 0, 4, QtWidgets.QTableWidgetItem(str(transaction.platform))
             )
