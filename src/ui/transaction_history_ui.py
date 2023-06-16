@@ -49,6 +49,11 @@ class Ui_dialog_transaction_history(object):
 
         self.vert_layout_dialog.addWidget(self.hori_line_transaction_header)
 
+        self.lbl_last_updated = QLabel(self.verticalLayoutWidget)
+        self.lbl_last_updated.setObjectName(u"lbl_last_updated")
+
+        self.vert_layout_dialog.addWidget(self.lbl_last_updated)
+
         self.table_widget_transactions = QTableWidget(self.verticalLayoutWidget)
         if (self.table_widget_transactions.columnCount() < 9):
             self.table_widget_transactions.setColumnCount(9)
@@ -107,6 +112,7 @@ class Ui_dialog_transaction_history(object):
     def retranslateUi(self, dialog_transaction_history):
         dialog_transaction_history.setWindowTitle(QCoreApplication.translate("dialog_transaction_history", u"Dialog", None))
         self.lbl_transaction_history.setText(QCoreApplication.translate("dialog_transaction_history", u"Transaction History", None))
+        self.lbl_last_updated.setText(QCoreApplication.translate("dialog_transaction_history", u"Last Updated: DD/MM/YYYY HH:MM:SS", None))
         ___qtablewidgetitem = self.table_widget_transactions.horizontalHeaderItem(0)
         ___qtablewidgetitem.setText(QCoreApplication.translate("dialog_transaction_history", u"Transaction Type", None));
         ___qtablewidgetitem1 = self.table_widget_transactions.horizontalHeaderItem(1)

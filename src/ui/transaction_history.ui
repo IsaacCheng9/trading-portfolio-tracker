@@ -48,6 +48,13 @@
      </widget>
     </item>
     <item>
+     <widget class="QLabel" name="lbl_last_updated">
+      <property name="text">
+       <string>Last Updated: DD/MM/YYYY HH:MM:SS</string>
+      </property>
+     </widget>
+    </item>
+    <item>
      <widget class="QTableWidget" name="table_widget_transactions">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
