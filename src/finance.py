@@ -31,6 +31,20 @@ def get_ticker(name: str) -> str:
     return company_code
 
 
+def get_name_from_symbol(symbol: str) -> str:
+    """
+    Gets the name of the security given a symbol.
+
+    Args:
+        symbol: Symbol of the security.
+
+    Returns:
+        Name of the security.
+    """
+    tick = yf.Ticker(symbol)
+    return tick.info["shortName"]
+
+
 def get_history(name: str, period: str = "1mo") -> pd.DataFrame:
     """
     Gets the stock history of a company or index given a name.
