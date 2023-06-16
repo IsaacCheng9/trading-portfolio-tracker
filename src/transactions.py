@@ -177,6 +177,10 @@ class Transaction:
                 amount,
                 unit_price,
             ) = record
+            # Convert timestamp to remove the milliseconds.
+            timestamp = datetime.datetime.strptime(
+                str(timestamp), "%Y-%m-%d %H:%M:%S.%f"
+            ).replace(microsecond=0)
             # Convert the amount and unit price to Decimal objects to avoid
             # floating point precision errors.
             amount = Decimal(amount)
