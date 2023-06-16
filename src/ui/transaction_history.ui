@@ -48,7 +48,7 @@
      </widget>
     </item>
     <item>
-     <widget class="QTableWidget" name="table_widget_portfolio">
+     <widget class="QTableWidget" name="table_widget_transactions">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
         <horstretch>0</horstretch>
