@@ -122,33 +122,31 @@ class MainWindow(QMainWindow, Ui_main_window):
 
         TODO Maybe optimise this? Causes 1 sec lag when updating.
         """
-        self.table_widget_portfolio.blockSignals(True)
+
         portfolio = HeldSecurity.load_portfolio()
-        for security in portfolio:
+        for n, security in enumerate(portfolio):
             stock_info = get_info(security.name)
             self.table_widget_portfolio.setItem(
-                0,
+                n,
                 5,
                 QtWidgets.QTableWidgetItem(
                     f"{stock_info['current_value']:.2f}"  # Current value
                 ),
             )
             self.table_widget_portfolio.setItem(
-                0,
+                n,
                 6,
                 QtWidgets.QTableWidgetItem(
                     f"{(Decimal(stock_info['current_value'])- security.paid):+.2f}"  # Change in value
                 ),
             )
             self.table_widget_portfolio.setItem(
-                0,
+                n,
                 7,
                 QtWidgets.QTableWidgetItem(
                     f"{get_absolute_rate_of_return(Decimal(stock_info['current_value']),security.paid):+.2f}%"
                 ),
             )
-
-        self.table_widget_portfolio.blockSignals(False)
 
         cur_time = time.strftime("%d/%m/%Y %H:%M:%S")
         self.lbl_last_updated.setText(f"Last Updated: {cur_time}")
