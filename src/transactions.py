@@ -49,16 +49,20 @@ class TransactionHistoryDialog(QDialog, Ui_dialog_transaction_history):
                 0, 2, QtWidgets.QTableWidgetItem(str(transaction.id))
             )
             self.table_widget_transactions.setItem(
-                0, 4, QtWidgets.QTableWidgetItem(str(transaction.platform))
+                0, 3, QtWidgets.QTableWidgetItem(str(transaction.symbol))
+            )
+            # TODO: Get the name of the security from the symbol using yfinance.
+            self.table_widget_transactions.setItem(
+                0, 5, QtWidgets.QTableWidgetItem(str(transaction.platform))
             )
             self.table_widget_transactions.setItem(
-                0, 5, QtWidgets.QTableWidgetItem(str(transaction.currency))
+                0, 6, QtWidgets.QTableWidgetItem(str(transaction.currency))
             )
             self.table_widget_transactions.setItem(
-                0, 6, QtWidgets.QTableWidgetItem(str(transaction.amount))
+                0, 7, QtWidgets.QTableWidgetItem(str(transaction.amount))
             )
             self.table_widget_transactions.setItem(
-                0, 7, QtWidgets.QTableWidgetItem(str(transaction.unit_price))
+                0, 8, QtWidgets.QTableWidgetItem(str(transaction.unit_price))
             )
 
         # Get the current time in DD/MM/YYYY HH:MM:SS format.
