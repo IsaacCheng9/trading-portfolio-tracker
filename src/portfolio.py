@@ -7,17 +7,44 @@ from __future__ import annotations
 import time
 from dataclasses import dataclass
 from decimal import Decimal
+from typing import Optional
 
 import duckdb
 from PySide6 import QtWidgets
 from PySide6.QtWidgets import QMainWindow
-from PySide6.QtCore import QTimer
+from PySide6.QtCore import QTimer, QThread, QObject, Signal, QSemaphore
 
 from src.transactions import AddTransactionDialog
 from src.ui.main_window_ui import Ui_main_window
 from src.finance import get_info, get_absolute_rate_of_return
 
 DB_PATH = "resources/portfolio.db"
+
+
+class UpdateWorker(QObject):
+    finished = Signal()
+
+    def __init__(self, interval, main_window):
+        super().__init__()
+        self.main_window = main_window
+        self.interval = interval
+        self.timer = QTimer()
+        self.timer.timeout.connect(self.update_stock_prices)
+
+    def start_update(self):
+        """
+        TODO
+        """
+        self.timer.start(self.interval)
+
+    def update_stock_prices(self):
+        """
+        TODO
+        """
+        self.main_window.update_stock_prices()
+        # Restarts the timer if the timer is not active when method is called
+        if not self.timer.isActive():
+            self.timer.start()
 
 
 class MainWindow(QMainWindow, Ui_main_window):
@@ -36,26 +63,32 @@ class MainWindow(QMainWindow, Ui_main_window):
         )
         self.load_portfolio_table()
 
-        # Creates and links timer to refresh live stock data.
-        self.timer = QTimer()
-        self.timer.timeout.connect(self.update_stock_prices)
-
-        # Dynamically sets refresh rate based on number of tracked stocks
-        # to avoid hitting the limit for yfinance.
-        interval = None
         portfolio = HeldSecurity.load_portfolio()
+        interval = None
 
-        # Limit of 2000 requests per hour, retrieving data about each asset
-        # from yfinance can take a maximum of 2 API calls.
         diff = 2000 - (2 * (60 * len(portfolio)))
         if diff > 0:
-            interval = 60000
+            interval = 6000
         else:
             # TODO Potentially improve dynamic calculation?
             diff = abs(diff)
             interval = 60000 + (diff * 1.1 * 60)
 
-        self.timer.start(interval)
+        # TODO: CODE COMMENTS
+        self.worker = UpdateWorker(interval, self)
+
+        # Moves worker to a seperate thread
+        self.thread = QThread()
+        self.worker.moveToThread(self.thread)
+
+        # Connects finished signal to thread's quit method
+        self.worker.finished.connect(self.thread.quit)
+
+        # Starts the thread
+        self.thread.start()
+
+        # Starts the update loop
+        self.worker.start_update()
 
     def open_add_transaction_dialog(self) -> None:
         """
@@ -128,7 +161,7 @@ class MainWindow(QMainWindow, Ui_main_window):
         Update live stock current prices, change in value, and
         absolute rate of return.
 
-        TODO Maybe optimise this? Causes 1 sec lag when updating.
+        TODO Modify to show data only when all data collated
         """
         portfolio = HeldSecurity.load_portfolio()
         for security in portfolio:
@@ -142,7 +175,7 @@ class MainWindow(QMainWindow, Ui_main_window):
 
         self.table_widget_portfolio.setRowCount(0)
         self.table_widget_portfolio.clearContents()
-        self.load_portfolio_table()
+        self.load_portfolio_table()  # TODO: REPLACE THIS WHEN ALL DATA COLLATED
         cur_time = time.strftime("%d/%m/%Y %H:%M:%S")
         self.lbl_last_updated.setText(f"Last Updated: {cur_time}")
 
