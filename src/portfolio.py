@@ -276,7 +276,8 @@ if __name__ == "__main__":
             "('TSLA', 'Tesla Inc.', '5', 'USD', '3000'), "
             "('BTC', 'Bitcoin', '0.2', 'USD', '1000'),"
             "('HMC', 'Honda', '40', 'USD', '39.5'),"
-            "('^IXIC', 'NASDAQ Composite', '10', 'USD', '10000')"
+            "('^IXIC', 'NASDAQ Composite', '10', 'USD', '10000'),"
+            "('FTMC', 'FTSE 250', '2', 'GBP', '13520')"
         )
     portfolio = HeldSecurity.load_portfolio()
     HeldSecurity.print_portfolio()
