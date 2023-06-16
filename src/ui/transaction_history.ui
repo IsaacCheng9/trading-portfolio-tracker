@@ -121,11 +121,6 @@
       </column>
       <column>
        <property name="text">
-        <string>Transaction ID</string>
-       </property>
-      </column>
-      <column>
-       <property name="text">
         <string>Symbol</string>
        </property>
       </column>
@@ -152,6 +147,11 @@
       <column>
        <property name="text">
         <string>Unit Price</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>Transaction ID</string>
        </property>
       </column>
      </widget>

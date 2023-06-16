@@ -118,18 +118,18 @@ class Ui_dialog_transaction_history(object):
         ___qtablewidgetitem1 = self.table_widget_transactions.horizontalHeaderItem(1)
         ___qtablewidgetitem1.setText(QCoreApplication.translate("dialog_transaction_history", u"Timestamp", None));
         ___qtablewidgetitem2 = self.table_widget_transactions.horizontalHeaderItem(2)
-        ___qtablewidgetitem2.setText(QCoreApplication.translate("dialog_transaction_history", u"Transaction ID", None));
+        ___qtablewidgetitem2.setText(QCoreApplication.translate("dialog_transaction_history", u"Symbol", None));
         ___qtablewidgetitem3 = self.table_widget_transactions.horizontalHeaderItem(3)
-        ___qtablewidgetitem3.setText(QCoreApplication.translate("dialog_transaction_history", u"Symbol", None));
+        ___qtablewidgetitem3.setText(QCoreApplication.translate("dialog_transaction_history", u"Name", None));
         ___qtablewidgetitem4 = self.table_widget_transactions.horizontalHeaderItem(4)
-        ___qtablewidgetitem4.setText(QCoreApplication.translate("dialog_transaction_history", u"Name", None));
+        ___qtablewidgetitem4.setText(QCoreApplication.translate("dialog_transaction_history", u"Platform", None));
         ___qtablewidgetitem5 = self.table_widget_transactions.horizontalHeaderItem(5)
-        ___qtablewidgetitem5.setText(QCoreApplication.translate("dialog_transaction_history", u"Platform", None));
+        ___qtablewidgetitem5.setText(QCoreApplication.translate("dialog_transaction_history", u"Currency", None));
         ___qtablewidgetitem6 = self.table_widget_transactions.horizontalHeaderItem(6)
-        ___qtablewidgetitem6.setText(QCoreApplication.translate("dialog_transaction_history", u"Currency", None));
+        ___qtablewidgetitem6.setText(QCoreApplication.translate("dialog_transaction_history", u"Amount", None));
         ___qtablewidgetitem7 = self.table_widget_transactions.horizontalHeaderItem(7)
-        ___qtablewidgetitem7.setText(QCoreApplication.translate("dialog_transaction_history", u"Amount", None));
+        ___qtablewidgetitem7.setText(QCoreApplication.translate("dialog_transaction_history", u"Unit Price", None));
         ___qtablewidgetitem8 = self.table_widget_transactions.horizontalHeaderItem(8)
-        ___qtablewidgetitem8.setText(QCoreApplication.translate("dialog_transaction_history", u"Unit Price", None));
+        ___qtablewidgetitem8.setText(QCoreApplication.translate("dialog_transaction_history", u"Transaction ID", None));
     # retranslateUi
 
