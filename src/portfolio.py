@@ -11,6 +11,7 @@ from decimal import Decimal
 import duckdb
 from PySide6 import QtWidgets
 from PySide6.QtWidgets import QMainWindow
+from PySide6.QtCore import QTimer 
 
 from src.transactions import AddTransactionDialog
 from src.ui.main_window_ui import Ui_main_window
@@ -34,6 +35,11 @@ class MainWindow(QMainWindow, Ui_main_window):
             QtWidgets.QHeaderView.ResizeMode.ResizeToContents
         )
         self.load_portfolio_table()
+        
+        # Creates and links timer to refresh live stock data
+        self.timer = QTimer()
+        self.timer.timeout.connect(self.update_stock_prices)
+        self.timer.start(60000)
 
     def open_add_transaction_dialog(self) -> None:
         """
@@ -73,7 +79,7 @@ class MainWindow(QMainWindow, Ui_main_window):
                 0,
                 5,
                 QtWidgets.QTableWidgetItem(
-                    "{0:.03f}".format(stock_info["current_value"])
+                    "{0:.03f}".format(stock_info["current_value"])  # Current value
                 ),
             )
             self.table_widget_portfolio.setItem(
@@ -81,7 +87,8 @@ class MainWindow(QMainWindow, Ui_main_window):
                 6,
                 QtWidgets.QTableWidgetItem(
                     "{0:.03f}".format(
-                        Decimal(stock_info["current_value"]) - security.paid
+                        Decimal(stock_info["current_value"])
+                        - security.paid  # Change in value
                     )
                 ),
             )
@@ -91,13 +98,61 @@ class MainWindow(QMainWindow, Ui_main_window):
                 QtWidgets.QTableWidgetItem(
                     "{0:+.03f}%".format(
                         get_absolute_rate_of_return(
-                            Decimal(stock_info["current_value"]), security.paid
+                            Decimal(stock_info["current_value"]),
+                            security.paid,  # Absolute rate of return
                         )
                     )
                 ),
             )
 
         # Get the current time in DD/MM/YYYY HH:MM:SS format.
+        cur_time = time.strftime("%d/%m/%Y %H:%M:%S")
+        self.lbl_last_updated.setText(f"Last Updated: {cur_time}")
+    
+    def update_stock_prices(self) -> None:
+        """
+        Update live stock current prices, change in value, and 
+        absolute rate of return.
+        
+        TODO Maybe optimise this? Causes 1 sec lag when updating.
+        """
+        self.table_widget_portfolio.blockSignals(True)
+        portfolio = HeldSecurity.load_portfolio()
+        for security in portfolio:
+            stock_info = get_info(security.name)
+            self.table_widget_portfolio.setItem(
+                0,
+                5,
+                QtWidgets.QTableWidgetItem(
+                    "{0:.03f}".format(stock_info["current_value"])  # Current value
+                ),
+            )
+            self.table_widget_portfolio.setItem(
+                0,
+                6,
+                QtWidgets.QTableWidgetItem(
+                    "{0:.03f}".format(
+                        Decimal(stock_info["current_value"])
+                        - security.paid  # Change in value
+                    )
+                ),
+            )
+            self.table_widget_portfolio.setItem(
+                0,
+                7,
+                QtWidgets.QTableWidgetItem(
+                    "{0:+.03f}%".format(
+                        get_absolute_rate_of_return(
+                            Decimal(stock_info["current_value"]),
+                            security.paid,  # Absolute rate of return
+                        )
+                    )
+                ),
+            )
+                
+        
+        self.table_widget_portfolio.blockSignals(False)
+
         cur_time = time.strftime("%d/%m/%Y %H:%M:%S")
         self.lbl_last_updated.setText(f"Last Updated: {cur_time}")
 

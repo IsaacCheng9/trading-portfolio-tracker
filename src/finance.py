@@ -75,7 +75,7 @@ def get_info(name: str) -> dict[str, str]:
 
     if return_dict["type"] in ["INDEX", "FUTURE", "CRYPTOCURRENCY"]:
         # Downloads the most recent data about the price of the asset
-        data = yf.download(return_dict["ticker"], period="1d", interval="1m")
+        data = yf.download(return_dict["ticker"], period="1d", interval="1m", progress=False)
         last_row_index = len(data) - 1
         # Gets the last reported close price of the asset
         last_row_open_value = data.iloc[last_row_index]["Close"]
