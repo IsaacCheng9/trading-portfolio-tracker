@@ -79,10 +79,10 @@ class Ui_dialog_add_transaction(object):
 
         self.form_layout_transaction.setWidget(2, QFormLayout.LabelRole, self.lbl_ticker)
 
-        self.line_edit_ticker = QLineEdit(self.verticalLayoutWidget)
-        self.line_edit_ticker.setObjectName(u"line_edit_ticker")
+        self.line_edit_symbol = QLineEdit(self.verticalLayoutWidget)
+        self.line_edit_symbol.setObjectName(u"line_edit_symbol")
 
-        self.form_layout_transaction.setWidget(2, QFormLayout.FieldRole, self.line_edit_ticker)
+        self.form_layout_transaction.setWidget(2, QFormLayout.FieldRole, self.line_edit_symbol)
 
         self.lbl_platform = QLabel(self.verticalLayoutWidget)
         self.lbl_platform.setObjectName(u"lbl_platform")
@@ -176,7 +176,7 @@ class Ui_dialog_add_transaction(object):
         self.combo_box_transaction_type.setItemText(1, QCoreApplication.translate("dialog_add_transaction", u"Sell", None))
 
         self.lbl_timestamp.setText(QCoreApplication.translate("dialog_add_transaction", u"Timestamp:", None))
-        self.lbl_ticker.setText(QCoreApplication.translate("dialog_add_transaction", u"Ticker:", None))
+        self.lbl_ticker.setText(QCoreApplication.translate("dialog_add_transaction", u"Symbol:", None))
         self.lbl_platform.setText(QCoreApplication.translate("dialog_add_transaction", u"Platform:", None))
         self.lbl_currency.setText(QCoreApplication.translate("dialog_add_transaction", u"Currency:", None))
         self.lbl_amount.setText(QCoreApplication.translate("dialog_add_transaction", u"Amount:", None))
