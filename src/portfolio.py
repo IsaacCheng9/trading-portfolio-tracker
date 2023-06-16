@@ -42,20 +42,20 @@ class MainWindow(QMainWindow, Ui_main_window):
 
         # Dynamically sets refresh rate based on number of tracked stocks
         # to avoid hitting the limit for yfinance.
-        time = None
+        interval = None
         portfolio = HeldSecurity.load_portfolio()
 
         # Limit of 2000 requests per hour, retrieving data about each asset
         # from yfinance can take a maximum of 2 API calls.
         diff = 2000 - (2 * (60 * len(portfolio)))
         if diff > 0:
-            time = 60000
+            interval = 60000
         else:
             # TODO Potentially improve dynamic calculation?
             diff = abs(diff)
-            time = 60000 + (diff * 1.1 * 60)
+            interval = 60000 + (diff * 1.1 * 60)
 
-        self.timer.start(time)
+        self.timer.start(interval)
 
     def open_add_transaction_dialog(self) -> None:
         """
@@ -94,30 +94,20 @@ class MainWindow(QMainWindow, Ui_main_window):
             self.table_widget_portfolio.setItem(
                 0,
                 5,
-                QtWidgets.QTableWidgetItem(
-                    "{0:.03f}".format(stock_info["current_value"])  # Current value
-                ),
+                QtWidgets.QTableWidgetItem(f"{stock_info['current_value']:.2f}"),
             )
             self.table_widget_portfolio.setItem(
                 0,
                 6,
                 QtWidgets.QTableWidgetItem(
-                    "{0:+.03f}".format(
-                        Decimal(stock_info["current_value"])
-                        - security.paid  # Change in value
-                    )
+                    f"{(Decimal(stock_info['current_value'])- security.paid):+.2f}"  # Change in value
                 ),
             )
             self.table_widget_portfolio.setItem(
                 0,
                 7,
                 QtWidgets.QTableWidgetItem(
-                    "{0:+.03f}%".format(
-                        get_absolute_rate_of_return(
-                            Decimal(stock_info["current_value"]),
-                            security.paid,  # Absolute rate of return
-                        )
-                    )
+                    f"{get_absolute_rate_of_return(Decimal(stock_info['current_value']),security.paid):+.2f}%"
                 ),
             )
 
@@ -140,29 +130,21 @@ class MainWindow(QMainWindow, Ui_main_window):
                 0,
                 5,
                 QtWidgets.QTableWidgetItem(
-                    "{0:.03f}".format(stock_info["current_value"])  # Current value.
+                    f"{stock_info['current_value']:.2f}"  # Current value
                 ),
             )
             self.table_widget_portfolio.setItem(
                 0,
                 6,
                 QtWidgets.QTableWidgetItem(
-                    "{0:+.03f}".format(
-                        Decimal(stock_info["current_value"])
-                        - security.paid  # Change in value.
-                    )
+                    f"{(Decimal(stock_info['current_value'])- security.paid):+.2f}"  # Change in value
                 ),
             )
             self.table_widget_portfolio.setItem(
                 0,
                 7,
                 QtWidgets.QTableWidgetItem(
-                    "{0:+.03f}%".format(
-                        get_absolute_rate_of_return(
-                            Decimal(stock_info["current_value"]),
-                            security.paid,  # Absolute rate of return.
-                        )
-                    )
+                    f"{get_absolute_rate_of_return(Decimal(stock_info['current_value']),security.paid):+.2f}%"
                 ),
             )
 
