@@ -116,9 +116,9 @@ class AddTransactionDialog(QDialog, Ui_dialog_add_transaction):
                 "The transaction timestamp cannot be in the future."
             )
             return
-        # Ensure that the ticker only contains letters.
-        if not self.line_edit_symbol.text().isalpha():
-            self.lbl_status_msg.setText("The ticker can only contain letters.")
+        # Ensure that the ticker exists.
+        if not get_name_from_symbol(self.line_edit_symbol.text().upper()):
+            self.lbl_status_msg.setText("The ticker symbol is invalid.")
             return
         # Ensure that the amount and unit price are positive.
         if (
