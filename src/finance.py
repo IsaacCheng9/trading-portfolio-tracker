@@ -9,16 +9,16 @@ import pandas as pd
 from decimal import Decimal
 
 
-def get_ticker(name: str) -> str:
+def get_symbol(name: str) -> str:
     """
-    Gets the ticker of a company given a name.
+    Gets the symbol of a company given a name.
     Credit: https://gist.github.com/bruhbruhroblox/dd9d981c8c37983f61e423a45085e063
 
     Args:
       name: Name of the company/index.
 
     Returns:
-      Ticker of the company.
+      Symbol of the company.
     """
     yfinance = "https://query2.finance.yahoo.com/v1/finance/search"
     user_agent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36"
@@ -43,7 +43,7 @@ def get_history(name: str, period: str = "1mo") -> pd.DataFrame:
       Historical data relating to the stock.
     """
 
-    tick = yf.Ticker(get_ticker(name))
+    tick = yf.Ticker(get_symbol(name))
     return tick.history(period=period)
 
 
@@ -62,7 +62,7 @@ def get_info(name: str) -> dict[str, str]:
     """
     # Creates a yfinance ticker object for a given asset
     try:
-        ticker = yf.Ticker(get_ticker(name))
+        ticker = yf.Ticker(get_symbol(name))
     except:
         return False
 
