@@ -12,7 +12,7 @@ import duckdb
 from PySide6 import QtWidgets
 from PySide6.QtWidgets import QMainWindow
 
-from src.transactions import AddTransactionDialog
+from src.transactions import AddTransactionDialog, TransactionHistoryDialog
 from src.ui.main_window_ui import Ui_main_window
 
 DB_PATH = "resources/portfolio.db"
@@ -25,6 +25,8 @@ class MainWindow(QMainWindow, Ui_main_window):
 
         # Connect the 'Add Transaction' button to open the dialog.
         self.btn_add_transaction.clicked.connect(self.open_add_transaction_dialog)
+        # Connect the 'View Transactions' button to open the dialog.
+        self.btn_view_transactions.clicked.connect(self.open_transaction_history_dialog)
 
         # Set the resize mode of the table to resize the columns to fit
         # the contents by default.
@@ -40,6 +42,13 @@ class MainWindow(QMainWindow, Ui_main_window):
         """
         self.add_transaction_dialog = AddTransactionDialog()
         self.add_transaction_dialog.open()
+
+    def open_transaction_history_dialog(self) -> None:
+        """
+        Open the dialog to view the user's transaction history.
+        """
+        self.transaction_history_dialog = TransactionHistoryDialog()
+        self.transaction_history_dialog.open()
 
     def load_portfolio_table(self) -> None:
         """
