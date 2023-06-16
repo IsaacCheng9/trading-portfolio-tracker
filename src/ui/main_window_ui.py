@@ -151,9 +151,9 @@ class Ui_main_window(object):
         self.btn_view_portfolio_perf.setText(QCoreApplication.translate("main_window", u"View Portfolio Performance", None))
         self.lbl_last_updated.setText(QCoreApplication.translate("main_window", u"Last Updated: DD/MM/YYYY HH:MM:SS", None))
         ___qtablewidgetitem = self.table_widget_portfolio.horizontalHeaderItem(0)
-        ___qtablewidgetitem.setText(QCoreApplication.translate("main_window", u"Ticker", None));
+        ___qtablewidgetitem.setText(QCoreApplication.translate("main_window", u"Symbol", None));
         ___qtablewidgetitem1 = self.table_widget_portfolio.horizontalHeaderItem(1)
-        ___qtablewidgetitem1.setText(QCoreApplication.translate("main_window", u"Security", None));
+        ___qtablewidgetitem1.setText(QCoreApplication.translate("main_window", u"Name", None));
         ___qtablewidgetitem2 = self.table_widget_portfolio.horizontalHeaderItem(2)
         ___qtablewidgetitem2.setText(QCoreApplication.translate("main_window", u"Weight", None));
         ___qtablewidgetitem3 = self.table_widget_portfolio.horizontalHeaderItem(3)

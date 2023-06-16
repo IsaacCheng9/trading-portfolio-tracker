@@ -170,12 +170,12 @@
        </attribute>
        <column>
         <property name="text">
-         <string>Ticker</string>
+         <string>Symbol</string>
         </property>
        </column>
        <column>
         <property name="text">
-         <string>Security</string>
+         <string>Name</string>
         </property>
        </column>
        <column>
