@@ -16,7 +16,7 @@
    </font>
   </property>
   <property name="windowTitle">
-   <string>Dialog</string>
+   <string>Transaction History</string>
   </property>
   <widget class="QWidget" name="verticalLayoutWidget">
    <property name="geometry">

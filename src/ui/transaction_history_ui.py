@@ -110,7 +110,7 @@ class Ui_dialog_transaction_history(object):
     # setupUi
 
     def retranslateUi(self, dialog_transaction_history):
-        dialog_transaction_history.setWindowTitle(QCoreApplication.translate("dialog_transaction_history", u"Dialog", None))
+        dialog_transaction_history.setWindowTitle(QCoreApplication.translate("dialog_transaction_history", u"Transaction History", None))
         self.lbl_transaction_history.setText(QCoreApplication.translate("dialog_transaction_history", u"Transaction History", None))
         self.lbl_last_updated.setText(QCoreApplication.translate("dialog_transaction_history", u"Last Updated: DD/MM/YYYY HH:MM:SS", None))
         ___qtablewidgetitem = self.table_widget_transactions.horizontalHeaderItem(0)
