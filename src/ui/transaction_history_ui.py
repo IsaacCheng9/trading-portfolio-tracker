@@ -120,10 +120,10 @@ class Ui_dialog_transaction_history(object):
         ___qtablewidgetitem5 = self.table_widget_portfolio.horizontalHeaderItem(5)
         ___qtablewidgetitem5.setText(QCoreApplication.translate("dialog_transaction_history", u"Platform", None));
         ___qtablewidgetitem6 = self.table_widget_portfolio.horizontalHeaderItem(6)
-        ___qtablewidgetitem6.setText(QCoreApplication.translate("dialog_transaction_history", u"Units", None));
+        ___qtablewidgetitem6.setText(QCoreApplication.translate("dialog_transaction_history", u"Currency", None));
         ___qtablewidgetitem7 = self.table_widget_portfolio.horizontalHeaderItem(7)
-        ___qtablewidgetitem7.setText(QCoreApplication.translate("dialog_transaction_history", u"Currency", None));
+        ___qtablewidgetitem7.setText(QCoreApplication.translate("dialog_transaction_history", u"Amount", None));
         ___qtablewidgetitem8 = self.table_widget_portfolio.horizontalHeaderItem(8)
-        ___qtablewidgetitem8.setText(QCoreApplication.translate("dialog_transaction_history", u"Amount", None));
+        ___qtablewidgetitem8.setText(QCoreApplication.translate("dialog_transaction_history", u"Unit Price", None));
     # retranslateUi
 

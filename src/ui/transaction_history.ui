@@ -134,17 +134,17 @@
       </column>
       <column>
        <property name="text">
-        <string>Units</string>
-       </property>
-      </column>
-      <column>
-       <property name="text">
         <string>Currency</string>
        </property>
       </column>
       <column>
        <property name="text">
         <string>Amount</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>Unit Price</string>
        </property>
       </column>
      </widget>
