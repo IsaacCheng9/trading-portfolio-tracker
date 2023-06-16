@@ -69,6 +69,11 @@ class MainWindow(QMainWindow, Ui_main_window):
         Load the user's portfolio into the table widget.
         """
         portfolio = HeldSecurity.load_portfolio()
+
+        for security in portfolio:
+            info = get_info(security.name)
+            security.current = Decimal(info["current_value"])
+
         for security in portfolio:
             self.table_widget_portfolio.insertRow(0)
             # TODO: Why are these two flipped (ticker and name)?
@@ -79,7 +84,10 @@ class MainWindow(QMainWindow, Ui_main_window):
                 0, 0, QtWidgets.QTableWidgetItem(security.name)
             )
             weight = str(
-                round((security.paid / HeldSecurity.get_total_value()) * 100, 3)
+                round(
+                    (security.current / HeldSecurity.get_total_value(portfolio)) * 100,
+                    3,
+                )
             )
             self.table_widget_portfolio.setItem(
                 0, 2, QtWidgets.QTableWidgetItem(f"{weight}%")
@@ -122,32 +130,19 @@ class MainWindow(QMainWindow, Ui_main_window):
 
         TODO Maybe optimise this? Causes 1 sec lag when updating.
         """
-
         portfolio = HeldSecurity.load_portfolio()
-        for n, security in enumerate(portfolio):
+        for security in portfolio:
             stock_info = get_info(security.name)
-            self.table_widget_portfolio.setItem(
-                n,
-                5,
-                QtWidgets.QTableWidgetItem(
-                    f"{stock_info['current_value']:.2f}"  # Current value
-                ),
-            )
-            self.table_widget_portfolio.setItem(
-                n,
-                6,
-                QtWidgets.QTableWidgetItem(
-                    f"{(Decimal(stock_info['current_value'])- security.paid):+.2f}"  # Change in value
-                ),
-            )
-            self.table_widget_portfolio.setItem(
-                n,
-                7,
-                QtWidgets.QTableWidgetItem(
-                    f"{get_absolute_rate_of_return(Decimal(stock_info['current_value']),security.paid):+.2f}%"
-                ),
+
+            security.current = stock_info["current_value"]
+            security.change = Decimal(stock_info["current_value"]) - security.paid
+            security.rate_of_return = get_absolute_rate_of_return(
+                Decimal(stock_info["current_value"]), security.paid
             )
 
+        self.table_widget_portfolio.setRowCount(0)
+        self.table_widget_portfolio.clearContents()
+        self.load_portfolio_table()
         cur_time = time.strftime("%d/%m/%Y %H:%M:%S")
         self.lbl_last_updated.setText(f"Last Updated: {cur_time}")
 
@@ -164,6 +159,9 @@ class HeldSecurity:
     units: Decimal
     currency: str
     paid: Decimal
+    current: Decimal = 0
+    change: Decimal = 0
+    rate_of_return: Decimal = 0
 
     def save(self) -> None:
         """
@@ -211,7 +209,7 @@ class HeldSecurity:
         return portfolio
 
     @staticmethod
-    def get_total_value() -> Decimal:
+    def get_total_value(portfolio) -> Decimal:  # TODO MAybe change this
         """
         Calculate the total current value of the user's portfolio.
 
@@ -219,11 +217,8 @@ class HeldSecurity:
             The total value of the portfolio.
         """
         total_value = Decimal(0)
-        portfolio = HeldSecurity.load_portfolio()
         for security in portfolio:
-            # TODO: Change this to current value once yfinance API is implemented.
-            security.paid = Decimal(security.paid)
-            total_value += security.paid
+            total_value += security.current
 
         return total_value
 
