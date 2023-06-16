@@ -36,10 +36,26 @@ class MainWindow(QMainWindow, Ui_main_window):
         )
         self.load_portfolio_table()
 
-        # Creates and links timer to refresh live stock data
+        # Creates and links timer to refresh live stock data.
         self.timer = QTimer()
         self.timer.timeout.connect(self.update_stock_prices)
-        self.timer.start(60000)
+
+        # Dynamically sets refresh rate based on number of tracked stocks
+        # to avoid hitting the limit for yfinance.
+        time = None
+        portfolio = HeldSecurity.load_portfolio()
+
+        # Limit of 2000 requests per hour, retrieving data about each asset
+        # from yfinance can take a maximum of 2 API calls.
+        diff = 2000 - (2 * (60 * len(portfolio)))
+        if diff > 0:
+            time = 60000
+        else:
+            # TODO Potentially improve dynamic calculation?
+            diff = abs(diff)
+            time = 60000 + (diff * 1.1 * 60)
+
+        self.timer.start(time)
 
     def open_add_transaction_dialog(self) -> None:
         """
@@ -86,7 +102,7 @@ class MainWindow(QMainWindow, Ui_main_window):
                 0,
                 6,
                 QtWidgets.QTableWidgetItem(
-                    "{0:.03f}".format(
+                    "{0:+.03f}".format(
                         Decimal(stock_info["current_value"])
                         - security.paid  # Change in value
                     )
@@ -124,16 +140,16 @@ class MainWindow(QMainWindow, Ui_main_window):
                 0,
                 5,
                 QtWidgets.QTableWidgetItem(
-                    "{0:.03f}".format(stock_info["current_value"])  # Current value
+                    "{0:.03f}".format(stock_info["current_value"])  # Current value.
                 ),
             )
             self.table_widget_portfolio.setItem(
                 0,
                 6,
                 QtWidgets.QTableWidgetItem(
-                    "{0:.03f}".format(
+                    "{0:+.03f}".format(
                         Decimal(stock_info["current_value"])
-                        - security.paid  # Change in value
+                        - security.paid  # Change in value.
                     )
                 ),
             )
@@ -144,7 +160,7 @@ class MainWindow(QMainWindow, Ui_main_window):
                     "{0:+.03f}%".format(
                         get_absolute_rate_of_return(
                             Decimal(stock_info["current_value"]),
-                            security.paid,  # Absolute rate of return
+                            security.paid,  # Absolute rate of return.
                         )
                     )
                 ),
