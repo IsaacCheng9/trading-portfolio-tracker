@@ -4,18 +4,19 @@ portfolio.
 """
 
 from __future__ import annotations
+
 import time
 from dataclasses import dataclass
 from decimal import Decimal
 
 import duckdb
 from PySide6 import QtWidgets
-from PySide6.QtWidgets import QMainWindow
 from PySide6.QtCore import QTimer
+from PySide6.QtWidgets import QMainWindow
 
-from src.transactions import AddTransactionDialog, TransactionHistoryDialog
+from src.finance import get_absolute_rate_of_return, get_info, get_name_from_symbol
+from src.transactions import AddTransactionDialog, Transaction, TransactionHistoryDialog
 from src.ui.main_window_ui import Ui_main_window
-from src.finance import get_info, get_absolute_rate_of_return
 
 DB_PATH = "resources/portfolio.db"
 
@@ -191,6 +192,13 @@ class HeldSecurity:
                 ),
             )
 
+    def remove(self) -> None:
+        """
+        Remove the security from the portfolio table.
+        """
+        with duckdb.connect(database=DB_PATH) as conn:
+            conn.execute("DELETE FROM portfolio WHERE symbol = ?", (self.symbol,))
+
     @staticmethod
     def load_portfolio() -> list[HeldSecurity]:
         """
@@ -245,6 +253,37 @@ class HeldSecurity:
         portfolio = HeldSecurity.load_portfolio()
         for security in portfolio:
             print(security)
+
+    def upsert_portfolio_with_transaction(self, transaction: Transaction) -> None:
+        """
+        Update/insert the security in the portfolio based on a new transaction.
+
+        Args:
+            transaction: The transaction to upsert the portfolio based on.
+        """
+        if self.symbol == transaction.symbol:
+            if transaction.type == "Buy":
+                self.units += Decimal(transaction.amount / transaction.unit_price)
+                self.paid += transaction.amount
+            elif transaction.type == "Sell":
+                self.units -= Decimal(transaction.amount / transaction.unit_price)
+                self.paid -= transaction.amount
+                # If the user has sold all of their units, remove the security from the
+                # portfolio.
+                if self.units == 0:
+                    self.remove()
+            self.save()
+        else:
+            # The transaction is for a different security
+            # Create a new HeldSecurity object for the transaction and save it
+            new_security = HeldSecurity(
+                symbol=transaction.symbol,
+                name=get_name_from_symbol(transaction.symbol),
+                units=Decimal(transaction.amount / transaction.unit_price),
+                currency=transaction.currency,
+                paid=Decimal(transaction.amount),
+            )
+            new_security.save()
 
 
 if __name__ == "__main__":
