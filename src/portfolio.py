@@ -7,12 +7,11 @@ from __future__ import annotations
 import time
 from dataclasses import dataclass
 from decimal import Decimal
-from typing import Optional
 
 import duckdb
 from PySide6 import QtWidgets
 from PySide6.QtWidgets import QMainWindow
-from PySide6.QtCore import QTimer, QThread, QObject, Signal, QSemaphore
+from PySide6.QtCore import QTimer, QThread, QObject, Signal
 
 from src.transactions import AddTransactionDialog
 from src.ui.main_window_ui import Ui_main_window
@@ -68,7 +67,7 @@ class MainWindow(QMainWindow, Ui_main_window):
 
         diff = 2000 - (2 * (60 * len(portfolio)))
         if diff > 0:
-            interval = 6000
+            interval = 60000
         else:
             # TODO Potentially improve dynamic calculation?
             diff = abs(diff)
@@ -161,21 +160,65 @@ class MainWindow(QMainWindow, Ui_main_window):
         Update live stock current prices, change in value, and
         absolute rate of return.
 
-        TODO Modify to show data only when all data collated
+        TODO Code comments
         """
         portfolio = HeldSecurity.load_portfolio()
         for security in portfolio:
             stock_info = get_info(security.name)
 
-            security.current = stock_info["current_value"]
+            security.current = Decimal(stock_info["current_value"])
             security.change = Decimal(stock_info["current_value"]) - security.paid
             security.rate_of_return = get_absolute_rate_of_return(
                 Decimal(stock_info["current_value"]), security.paid
             )
 
-        self.table_widget_portfolio.setRowCount(0)
-        self.table_widget_portfolio.clearContents()
-        self.load_portfolio_table()  # TODO: REPLACE THIS WHEN ALL DATA COLLATED
+        # Clear the table portfolio widget without clearing headers
+        for row in range(self.table_widget_portfolio.rowCount()):
+            for column in range(self.table_widget_portfolio.columnCount()):
+                item = self.table_widget_portfolio.item(row, column)
+                if item is not None:
+                    self.table_widget_portfolio.takeItem(row, column)
+
+        for row, security in enumerate(portfolio):
+            self.table_widget_portfolio.setItem(
+                row, 1, QtWidgets.QTableWidgetItem(security.ticker)
+            )
+            self.table_widget_portfolio.setItem(
+                row, 0, QtWidgets.QTableWidgetItem(security.name)
+            )
+            weight = str(
+                round(
+                    (security.current / HeldSecurity.get_total_value(portfolio)) * 100,
+                    3,
+                )
+            )
+            self.table_widget_portfolio.setItem(
+                row, 2, QtWidgets.QTableWidgetItem(f"{weight}%")
+            )
+            self.table_widget_portfolio.setItem(
+                row, 3, QtWidgets.QTableWidgetItem(str(security.units))
+            )
+            self.table_widget_portfolio.setItem(
+                row, 4, QtWidgets.QTableWidgetItem(security.currency)
+            )
+            self.table_widget_portfolio.setItem(
+                row,
+                5,
+                QtWidgets.QTableWidgetItem(f"{security.current:.2f}"),
+            )
+            self.table_widget_portfolio.setItem(
+                row,
+                6,
+                QtWidgets.QTableWidgetItem(f"{security.change:+.2f}"),
+            )
+            self.table_widget_portfolio.setItem(
+                row,
+                7,
+                QtWidgets.QTableWidgetItem(f"{security.rate_of_return:+.2f}%"),
+            )
+
+        # self.load_portfolio_table()  # TODO: REPLACE THIS WHEN ALL DATA COLLATED
+
         cur_time = time.strftime("%d/%m/%Y %H:%M:%S")
         self.lbl_last_updated.setText(f"Last Updated: {cur_time}")
 
