@@ -72,7 +72,7 @@ class MainWindow(QMainWindow, Ui_main_window):
 
         diff = 2000 - (2 * (60 * len(portfolio)))
         if diff > 0:
-            interval = 6000
+            interval = 60000
         else:
             # TODO Potentially improve dynamic calculation?
             diff = abs(diff)
