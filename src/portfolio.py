@@ -28,17 +28,20 @@ class UpdateWorker(QObject):
         self.main_window = main_window
         self.interval = interval
         self.timer = QTimer()
+        # Connects the timer timeout to the method to update stock prices
         self.timer.timeout.connect(self.update_stock_prices)
 
     def start_update(self):
         """
-        TODO
+        Starts the loop to update stock prices
+        at regular intervals.
         """
         self.timer.start(self.interval)
 
     def update_stock_prices(self):
         """
-        TODO
+        Calls update stock prices from a thread and
+        restarts timer.
         """
         self.main_window.update_stock_prices()
         # Restarts the timer if the timer is not active when method is called
@@ -62,6 +65,7 @@ class MainWindow(QMainWindow, Ui_main_window):
         )
         self.load_portfolio_table()
 
+        # Calculates the interval for the refreshing of stock prices
         portfolio = HeldSecurity.load_portfolio()
         interval = None
 
@@ -73,7 +77,7 @@ class MainWindow(QMainWindow, Ui_main_window):
             diff = abs(diff)
             interval = 60000 + (diff * 1.1 * 60)
 
-        # TODO: CODE COMMENTS
+        # Creates a worker for the updating of stock prices
         self.worker = UpdateWorker(interval, self)
 
         # Moves worker to a seperate thread
@@ -159,10 +163,10 @@ class MainWindow(QMainWindow, Ui_main_window):
         """
         Update live stock current prices, change in value, and
         absolute rate of return.
-
-        TODO Code comments
         """
         portfolio = HeldSecurity.load_portfolio()
+
+        # Gets the current value, change in value, and rate of return of the current stock
         for security in portfolio:
             stock_info = get_info(security.name)
 
@@ -179,6 +183,7 @@ class MainWindow(QMainWindow, Ui_main_window):
                 if item is not None:
                     self.table_widget_portfolio.takeItem(row, column)
 
+        # Repopulate the table with the new data
         for row, security in enumerate(portfolio):
             self.table_widget_portfolio.setItem(
                 row, 1, QtWidgets.QTableWidgetItem(security.ticker)
@@ -217,8 +222,7 @@ class MainWindow(QMainWindow, Ui_main_window):
                 QtWidgets.QTableWidgetItem(f"{security.rate_of_return:+.2f}%"),
             )
 
-        # self.load_portfolio_table()  # TODO: REPLACE THIS WHEN ALL DATA COLLATED
-
+        # Update last updated time label in dd-mm-yyyy hh:mm:ss format
         cur_time = time.strftime("%d/%m/%Y %H:%M:%S")
         self.lbl_last_updated.setText(f"Last Updated: {cur_time}")
 
