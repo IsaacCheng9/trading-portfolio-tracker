@@ -52,8 +52,11 @@ class UpdateWorker(QObject):
 class MainWindow(QMainWindow, Ui_main_window):
     def __init__(self) -> None:
         super().__init__()
-        self.portfolio_view_mapping = {}
         self.setupUi(self)
+
+        # Mapping between asset name and the row it occupies in the
+        # portfolio table widget for updating purposes.
+        self.portfolio_view_mapping = {}
 
         # Connect the 'Add Transaction' button to open the dialog.
         self.btn_add_transaction.clicked.connect(self.open_add_transaction_dialog)
