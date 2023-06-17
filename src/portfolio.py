@@ -184,7 +184,7 @@ class MainWindow(QMainWindow, Ui_main_window):
                     self.table_widget_portfolio.takeItem(row, column)
 
         # Repopulate the table with the new data
-        for row, security in enumerate(portfolio):
+        for row, security in enumerate(reversed(portfolio)):
             self.table_widget_portfolio.setItem(
                 row, 1, QtWidgets.QTableWidgetItem(security.ticker)
             )
