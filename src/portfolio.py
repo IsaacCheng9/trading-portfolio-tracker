@@ -80,12 +80,11 @@ class MainWindow(QMainWindow, Ui_main_window):
         portfolio = HeldSecurity.load_portfolio()
         for security in portfolio:
             self.table_widget_portfolio.insertRow(0)
-            # TODO: Why are these two flipped (symbol and name)?
             self.table_widget_portfolio.setItem(
-                0, 1, QtWidgets.QTableWidgetItem(security.symbol)
+                0, 0, QtWidgets.QTableWidgetItem(security.symbol)
             )
             self.table_widget_portfolio.setItem(
-                0, 0, QtWidgets.QTableWidgetItem(security.name)
+                0, 1, QtWidgets.QTableWidgetItem(security.name)
             )
             weight = str(
                 round((security.paid / HeldSecurity.get_total_value()) * 100, 3)
@@ -263,12 +262,12 @@ if __name__ == "__main__":
         # Load some mock data into the table.
         conn.execute(
             "INSERT OR REPLACE INTO portfolio VALUES "
-            "('AAPL', 'Apple Inc.', '10', 'USD', '1000'), "
-            "('TSLA', 'Tesla Inc.', '5', 'USD', '3000'), "
-            "('BTC', 'Bitcoin', '0.2', 'USD', '1000'),"
-            "('HMC', 'Honda', '40', 'USD', '39.5'),"
-            "('^IXIC', 'NASDAQ Composite', '10', 'USD', '10000'),"
-            "('FTMC', 'FTSE 250', '2', 'GBP', '13520')"
+            "('Apple Inc.', 'AAPL', '10', 'USD', '1000'), "
+            "('Tesla Inc.', 'TSLA', '5', 'USD', '3000'), "
+            "('Bitcoin', 'BTC', '0.2', 'USD', '1000'),"
+            "('Honda', 'HMC', '40', 'USD', '39.5'),"
+            "('NASDAQ Composite', '^IXIC', '10', 'USD', '10000'),"
+            "('FTSE 250', 'FTMC', '2', 'GBP', '13520')"
         )
     portfolio = HeldSecurity.load_portfolio()
     HeldSecurity.print_portfolio()
