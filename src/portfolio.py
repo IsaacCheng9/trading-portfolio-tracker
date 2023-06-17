@@ -233,7 +233,6 @@ class HeldSecurity:
     Keep track of a security held by the user.
     """
 
-    # TODO: Add a current value, change, and rate of return fields once yfinance API is implemented.
     ticker: str
     name: str
     units: Decimal
@@ -289,7 +288,7 @@ class HeldSecurity:
         return portfolio
 
     @staticmethod
-    def get_total_value(portfolio) -> Decimal:  # TODO MAybe change this
+    def get_total_value(portfolio) -> Decimal:  # TODO Maybe change this
         """
         Calculate the total current value of the user's portfolio.
 
