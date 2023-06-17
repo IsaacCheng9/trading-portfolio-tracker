@@ -52,6 +52,7 @@ class UpdateWorker(QObject):
 class MainWindow(QMainWindow, Ui_main_window):
     def __init__(self) -> None:
         super().__init__()
+        self.portfolio_view_mapping = {}
         self.setupUi(self)
 
         # Connect the 'Add Transaction' button to open the dialog.
@@ -71,7 +72,7 @@ class MainWindow(QMainWindow, Ui_main_window):
 
         diff = 2000 - (2 * (60 * len(portfolio)))
         if diff > 0:
-            interval = 60000
+            interval = 6000
         else:
             # TODO Potentially improve dynamic calculation?
             diff = abs(diff)
@@ -106,7 +107,7 @@ class MainWindow(QMainWindow, Ui_main_window):
             info = get_info(security.name)
             security.current = Decimal(info["current_value"])
 
-        for security in portfolio:
+        for n, security in enumerate(portfolio):
             self.table_widget_portfolio.insertRow(0)
             # TODO: Why are these two flipped (ticker and name)?
             self.table_widget_portfolio.setItem(
@@ -151,6 +152,8 @@ class MainWindow(QMainWindow, Ui_main_window):
                 ),
             )
 
+            self.portfolio_view_mapping[security.name] = len(portfolio) - n - 1
+
         # Get the current time in DD/MM/YYYY HH:MM:SS format.
         cur_time = time.strftime("%d/%m/%Y %H:%M:%S")
         self.lbl_last_updated.setText(f"Last Updated: {cur_time}")
@@ -180,9 +183,12 @@ class MainWindow(QMainWindow, Ui_main_window):
                     self.table_widget_portfolio.takeItem(row, column)
 
         # Repopulate the table with the new data
-        for row, security in enumerate(reversed(portfolio)):
+        for security in portfolio:
+            row = self.portfolio_view_mapping[security.name]
             self.table_widget_portfolio.setItem(
-                row, 1, QtWidgets.QTableWidgetItem(security.ticker)
+                row,
+                1,
+                QtWidgets.QTableWidgetItem(security.ticker),
             )
             self.table_widget_portfolio.setItem(
                 row, 0, QtWidgets.QTableWidgetItem(security.name)
