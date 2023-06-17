@@ -7,6 +7,7 @@ import requests
 import yfinance as yf
 import pandas as pd
 from decimal import Decimal
+from requests import exceptions
 
 
 def get_symbol(name: str) -> str:
@@ -29,6 +30,24 @@ def get_symbol(name: str) -> str:
 
     company_code = data["quotes"][0]["symbol"]
     return company_code
+
+
+def get_name_from_symbol(symbol: str) -> str:
+    """
+    Gets the name of the security given a symbol.
+
+    Args:
+        symbol: Symbol of the security.
+
+    Returns:
+        Name of the security.
+    """
+    tick = yf.Ticker(symbol)
+    try:
+        name = tick.info["shortName"]
+        return name
+    except exceptions.HTTPError:
+        return ""
 
 
 def get_history(name: str, period: str = "1mo") -> pd.DataFrame:

@@ -13,7 +13,7 @@ from PySide6 import QtWidgets
 from PySide6.QtWidgets import QMainWindow
 from PySide6.QtCore import QTimer, QThread, QObject, Signal
 
-from src.transactions import AddTransactionDialog
+from src.transactions import AddTransactionDialog, TransactionHistoryDialog
 from src.ui.main_window_ui import Ui_main_window
 from src.finance import get_info, get_absolute_rate_of_return
 
@@ -57,6 +57,8 @@ class MainWindow(QMainWindow, Ui_main_window):
 
         # Connect the 'Add Transaction' button to open the dialog.
         self.btn_add_transaction.clicked.connect(self.open_add_transaction_dialog)
+        # Connect the 'View Transactions' button to open the dialog.
+        self.btn_view_transactions.clicked.connect(self.open_transaction_history_dialog)
 
         # Set the resize mode of the table to resize the columns to fit
         # the contents by default.
@@ -97,6 +99,13 @@ class MainWindow(QMainWindow, Ui_main_window):
         self.add_transaction_dialog = AddTransactionDialog()
         self.add_transaction_dialog.open()
 
+    def open_transaction_history_dialog(self) -> None:
+        """
+        Open the dialog to view the user's transaction history.
+        """
+        self.transaction_history_dialog = TransactionHistoryDialog()
+        self.transaction_history_dialog.open()
+
     def load_portfolio_table(self) -> None:
         """
         Load the user's portfolio into the table widget.
@@ -109,9 +118,9 @@ class MainWindow(QMainWindow, Ui_main_window):
 
         for n, security in enumerate(portfolio):
             self.table_widget_portfolio.insertRow(0)
-            # TODO: Why are these two flipped (ticker and name)?
+            # TODO: Why are these two flipped (symbol and name)?
             self.table_widget_portfolio.setItem(
-                0, 1, QtWidgets.QTableWidgetItem(security.ticker)
+                0, 1, QtWidgets.QTableWidgetItem(security.symbol)
             )
             self.table_widget_portfolio.setItem(
                 0, 0, QtWidgets.QTableWidgetItem(security.name)
@@ -235,7 +244,7 @@ class HeldSecurity:
     Keep track of a security held by the user.
     """
 
-    ticker: str
+    symbol: str
     name: str
     units: Decimal
     currency: str
@@ -252,7 +261,7 @@ class HeldSecurity:
             conn.execute(
                 "INSERT OR REPLACE INTO portfolio VALUES (?, ?, ?, ?, ?)",
                 (
-                    self.ticker,
+                    self.symbol,
                     self.name,
                     str(self.units),
                     self.currency,
@@ -272,19 +281,19 @@ class HeldSecurity:
         with duckdb.connect(database=DB_PATH) as conn:
             # Retrieve securities from the portfolio table
             result = conn.execute(
-                "SELECT name, ticker, units, currency, paid FROM portfolio"
+                "SELECT name, symbol, units, currency, paid FROM portfolio"
             )
             records = result.fetchall()
 
         # Create HeldSecurity objects for each record.
         portfolio = []
         for record in records:
-            name, ticker, units, currency, paid = record
+            name, symbol, units, currency, paid = record
             # Convert the units and paid values to Decimal objects to avoid
             # floating point precision errors.
             units = Decimal(units)
             paid = Decimal(paid)
-            security = HeldSecurity(name, ticker, units, currency, paid)
+            security = HeldSecurity(name, symbol, units, currency, paid)
             portfolio.append(security)
 
         return portfolio
@@ -318,7 +327,7 @@ if __name__ == "__main__":
         # Create a table to store securities in the user's portfolio.
         conn.execute(
             "CREATE TABLE IF NOT EXISTS portfolio ("
-            "ticker TEXT PRIMARY KEY, "
+            "symbol TEXT PRIMARY KEY, "
             "name TEXT NOT NULL, "
             "units TEXT NOT NULL, "
             "currency TEXT NOT NULL, "
