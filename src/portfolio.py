@@ -31,14 +31,14 @@ class UpdateWorker(QObject):
         # Connects the timer timeout to the method to update stock prices
         self.timer.timeout.connect(self.update_stock_prices)
 
-    def start_update(self):
+    def start_update(self) -> None:
         """
         Starts the loop to update stock prices
         at regular intervals.
         """
         self.timer.start(self.interval)
 
-    def update_stock_prices(self):
+    def update_stock_prices(self) -> None:
         """
         Calls update stock prices from a thread and
         restarts timer.
@@ -84,12 +84,8 @@ class MainWindow(QMainWindow, Ui_main_window):
         self.thread = QThread()
         self.worker.moveToThread(self.thread)
 
-        # Connects finished signal to thread's quit method
         self.worker.finished.connect(self.thread.quit)
-
-        # Starts the thread
         self.thread.start()
-
         # Starts the update loop
         self.worker.start_update()
 
