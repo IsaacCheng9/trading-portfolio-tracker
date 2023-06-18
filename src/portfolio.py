@@ -204,6 +204,8 @@ class MainWindow(QMainWindow, Ui_main_window):
         """
         Update live stock current prices, change in value, and
         absolute rate of return.
+
+        # TODO: Avoid code duplication by using load_portfolio_table() instead.
         """
         portfolio = HeldSecurity.load_portfolio()
         self.get_pricing_data_for_securities(portfolio)
