@@ -331,7 +331,7 @@ class HeldSecurity:
 
     @staticmethod
     def get_total_value(
-        current_values: dict[str, tuple(Decimal, Decimal, Decimal)]
+        current_values: dict[str, tuple[Decimal, Decimal, Decimal]]
     ) -> Decimal:
         """
         Calculate the total current value of the user's portfolio.
