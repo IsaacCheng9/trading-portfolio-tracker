@@ -14,16 +14,16 @@ from requests import exceptions
 DB_PATH = "resources/portfolio.db"
 
 
-def get_ticker(name: str) -> str:
+def get_symbol(name: str) -> str:
     """
-    Gets the ticker of a company given a name.
+    Gets the symbol of a company given a name.
     Credit: https://gist.github.com/bruhbruhroblox/dd9d981c8c37983f61e423a45085e063
 
     Args:
-      name: Name of the company/index.
+        name: Name of the company/index.
 
     Returns:
-      Ticker of the company.
+        Symbol of the company.
     """
     yfinance = "https://query2.finance.yahoo.com/v1/finance/search"
     user_agent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36"
@@ -59,14 +59,14 @@ def get_history(name: str, period: str = "1mo") -> pd.DataFrame:
     Gets the stock history of a company or index given a name.
 
     Args:
-      name: Name of the company/index.
-      period: Duration in which you want to retrieve data.
+        name: Name of the company/index.
+        period: Duration in which you want to retrieve data.
 
     Returns:
-      Historical data relating to the stock.
+        Historical data relating to the stock.
     """
 
-    tick = yf.Ticker(get_ticker(name))
+    tick = yf.Ticker(get_symbol(name))
     return tick.history(period=period)
 
 
@@ -78,14 +78,14 @@ def get_info(name: str) -> dict[str, str]:
     delay in reporting of price.
 
     Args:
-      name: Name of the company/index/asset/...
+        name: Name of the company/index/asset/...
 
     Returns:
-      Dictionary containing information about the stock, future, or index.
+        Dictionary containing information about the stock, future, or index.
     """
     # Creates a yfinance ticker object for a given asset
     try:
-        ticker = yf.Ticker(get_ticker(name))
+        ticker = yf.Ticker(get_symbol(name))
     except:
         return False
 
@@ -117,11 +117,11 @@ def get_absolute_rate_of_return(current: Decimal, purchase: Decimal) -> Decimal:
     asset.
 
     Args:
-      current: Current price of asset.
-      purchase: Purchase price of asset.
+        current: Current price of asset.
+        purchase: Purchase price of asset.
 
     Returns:
-      absolute rate of return.
+        absolute rate of return.
     """
     return ((current - purchase) / purchase) * 100
 
