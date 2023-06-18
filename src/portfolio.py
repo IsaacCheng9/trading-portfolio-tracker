@@ -4,18 +4,28 @@ portfolio.
 """
 
 from __future__ import annotations
+
 import time
 from dataclasses import dataclass
 from decimal import Decimal
+from uuid import uuid4
 
 import duckdb
 from PySide6 import QtWidgets
-from PySide6.QtWidgets import QMainWindow
-from PySide6.QtCore import QTimer, QThread, QObject, Signal
+from PySide6.QtCore import QDateTime, QObject, QThread, QTimer, Signal
+from PySide6.QtGui import QDoubleValidator
+from PySide6.QtWidgets import QDialog, QMainWindow
 
-from src.transactions import AddTransactionDialog, TransactionHistoryDialog
+from src.finance import (
+    get_absolute_rate_of_return,
+    get_info,
+    get_name_from_symbol,
+    upsert_transaction_into_portfolio,
+)
+from src.transactions import Transaction
+from src.ui.add_transaction_ui import Ui_dialog_add_transaction
 from src.ui.main_window_ui import Ui_main_window
-from src.finance import get_info, get_absolute_rate_of_return
+from src.ui.transaction_history_ui import Ui_dialog_transaction_history
 
 DB_PATH = "resources/portfolio.db"
 
@@ -102,7 +112,7 @@ class MainWindow(QMainWindow, Ui_main_window):
         """
         Open the dialog to add a new transaction.
         """
-        self.add_transaction_dialog = AddTransactionDialog()
+        self.add_transaction_dialog = AddTransactionDialog(self)
         self.add_transaction_dialog.open()
 
     def open_transaction_history_dialog(self) -> None:
@@ -117,35 +127,20 @@ class MainWindow(QMainWindow, Ui_main_window):
         Load the user's portfolio into the table widget.
         """
         portfolio = HeldSecurity.load_portfolio()
+        self.get_pricing_data_for_securities(portfolio)
+        # Clear all rows except the header row.
+        self.table_widget_portfolio.setRowCount(0)
 
-        # Gets the current value, change in value, and rate of return of each security
-        # and stores it in the current_security_info dictionary
-        for security in portfolio:
-            stock_info = get_info(security.name)
-            cur_val = Decimal(stock_info["current_value"]) * security.units
-            val_change = (
-                Decimal(stock_info["current_value"]) - security.paid
-            ) * security.units
-            rate_of_return_abs = get_absolute_rate_of_return(
-                Decimal(stock_info["current_value"]), security.paid
-            )
-
-            # Stores the live security information in a dictionary indexed
-            # by the name of the security
-            self.current_security_info[security.name] = (
-                cur_val,
-                val_change,
-                rate_of_return_abs,
-            )
-
-        for n, security in enumerate(portfolio):
+        for row, security in enumerate(portfolio):
+            cur_val, val_change, rate_of_return_abs = self.current_security_info[
+                security.name
+            ]
             self.table_widget_portfolio.insertRow(0)
-            # TODO: Why are these two flipped (symbol and name)?
             self.table_widget_portfolio.setItem(
-                0, 1, QtWidgets.QTableWidgetItem(security.symbol)
+                0, 0, QtWidgets.QTableWidgetItem(security.symbol)
             )
             self.table_widget_portfolio.setItem(
-                0, 0, QtWidgets.QTableWidgetItem(security.name)
+                0, 1, QtWidgets.QTableWidgetItem(security.name)
             )
             weight = str(
                 round(
@@ -170,50 +165,42 @@ class MainWindow(QMainWindow, Ui_main_window):
             self.table_widget_portfolio.setItem(
                 0,
                 5,
-                QtWidgets.QTableWidgetItem(
-                    f"{self.current_security_info[security.name][0]:.2f}"
-                ),
+                QtWidgets.QTableWidgetItem(f"{cur_val:.2f}"),
             )
             self.table_widget_portfolio.setItem(
                 0,
                 6,
-                QtWidgets.QTableWidgetItem(
-                    f"{self.current_security_info[security.name][1]:+.2f}"  # Change in value
-                ),
+                QtWidgets.QTableWidgetItem(f"{val_change:+.2f}"),
             )
             self.table_widget_portfolio.setItem(
                 0,
                 7,
-                QtWidgets.QTableWidgetItem(
-                    f"{self.current_security_info[security.name][2]:+.2f}%"
-                ),
+                QtWidgets.QTableWidgetItem(f"{rate_of_return_abs:+.2f}%"),
             )
 
             # Assigns the index in the portfolio view list of the security
-            self.portfolio_view_mapping[security.name] = len(portfolio) - n - 1
+            self.portfolio_view_mapping[security.name] = len(portfolio) - row - 1
 
         # Get the current time in DD/MM/YYYY HH:MM:SS format.
         cur_time = time.strftime("%d/%m/%Y %H:%M:%S")
         self.lbl_last_updated.setText(f"Last Updated: {cur_time}")
 
-    def update_stock_prices(self) -> None:
+    def get_pricing_data_for_securities(self, portfolio: list[HeldSecurity]) -> None:
         """
-        Update live stock current prices, change in value, and
-        absolute rate of return.
-        """
-        portfolio = HeldSecurity.load_portfolio()
+        Get the current value, change in value, and rate of return (absolute)
+        for each security in the portfolio.
 
-        # Gets the current value, change in value, and rate of return of the current stock
-        # and stores it in the current_security_info dictionary
+        Args:
+            portfolio: A list of HeldSecurity objects.
+        """
         for security in portfolio:
             stock_info = get_info(security.name)
-
             cur_val = Decimal(stock_info["current_value"]) * security.units
             val_change = (
-                Decimal(stock_info["current_value"]) - security.paid
-            ) * security.units
+                (Decimal(stock_info["current_value"]) * security.units)
+            ) - security.paid
             rate_of_return_abs = get_absolute_rate_of_return(
-                Decimal(stock_info["current_value"]), security.paid
+                Decimal(stock_info["current_value"]) * security.units, security.paid
             )
 
             # Stores the live security information in a dictionary indexed
@@ -223,6 +210,16 @@ class MainWindow(QMainWindow, Ui_main_window):
                 val_change,
                 rate_of_return_abs,
             )
+
+    def update_stock_prices(self) -> None:
+        """
+        Update live stock current prices, change in value, and
+        absolute rate of return.
+
+        # TODO: Avoid code duplication by using load_portfolio_table() instead.
+        """
+        portfolio = HeldSecurity.load_portfolio()
+        self.get_pricing_data_for_securities(portfolio)
 
         # Clear the table portfolio widget without clearing headers
         for row in range(self.table_widget_portfolio.rowCount()):
@@ -288,6 +285,144 @@ class MainWindow(QMainWindow, Ui_main_window):
         self.lbl_last_updated.setText(f"Last Updated: {cur_time}")
 
 
+class TransactionHistoryDialog(QDialog, Ui_dialog_transaction_history):
+    def __init__(self) -> None:
+        super().__init__()
+        self.setupUi(self)
+
+        # Set the resize mode of the table to resize the columns to fit
+        # the contents by default.
+        table_header = self.table_widget_transactions.horizontalHeader()
+        table_header.setSectionResizeMode(
+            QtWidgets.QHeaderView.ResizeMode.ResizeToContents
+        )
+        self.load_transaction_history_table()
+
+    def load_transaction_history_table(self) -> None:
+        """
+        Load the user's transaction history into the table.
+        """
+        transactions = Transaction.load_transaction_history()
+        for transaction in transactions:
+            self.table_widget_transactions.insertRow(0)
+            self.table_widget_transactions.setItem(
+                0, 0, QtWidgets.QTableWidgetItem(transaction.type)
+            )
+            self.table_widget_transactions.setItem(
+                0, 1, QtWidgets.QTableWidgetItem(str(transaction.timestamp))
+            )
+            self.table_widget_transactions.setItem(
+                0, 2, QtWidgets.QTableWidgetItem(str(transaction.symbol))
+            )
+            self.table_widget_transactions.setItem(
+                0,
+                3,
+                QtWidgets.QTableWidgetItem(get_name_from_symbol(transaction.symbol)),
+            )
+            self.table_widget_transactions.setItem(
+                0, 4, QtWidgets.QTableWidgetItem(str(transaction.platform))
+            )
+            self.table_widget_transactions.setItem(
+                0, 5, QtWidgets.QTableWidgetItem(str(transaction.currency))
+            )
+            self.table_widget_transactions.setItem(
+                0, 6, QtWidgets.QTableWidgetItem(str(transaction.amount))
+            )
+            self.table_widget_transactions.setItem(
+                0, 7, QtWidgets.QTableWidgetItem(str(transaction.unit_price))
+            )
+            self.table_widget_transactions.setItem(
+                0, 8, QtWidgets.QTableWidgetItem(str(transaction.units))
+            )
+            self.table_widget_transactions.setItem(
+                0, 9, QtWidgets.QTableWidgetItem(str(transaction.id))
+            )
+
+        # Get the current time in DD/MM/YYYY HH:MM:SS format.
+        cur_time = time.strftime("%d/%m/%Y %H:%M:%S")
+        self.lbl_last_updated.setText(f"Last Updated: {cur_time}")
+
+
+class AddTransactionDialog(QDialog, Ui_dialog_add_transaction):
+    def __init__(self, main_window_instance) -> None:
+        super().__init__()
+        self.setupUi(self)
+        self.main_window = main_window_instance
+
+        # Set the datetime edit to the current date and time.
+        self.datetime_edit_transaction.setDateTime(QDateTime.currentDateTime())
+        # Ensure that the amount field only accepts up to two decimal places.
+        self.line_edit_amount.setValidator(QDoubleValidator(decimals=2))
+        # Ensure that the unit price field only accepts up to two decimal places.
+        self.line_edit_unit_price.setValidator(QDoubleValidator(decimals=2))
+
+        # Connect the 'Submit' button to create a new transaction.
+        self.btn_submit_transaction.clicked.connect(self.add_transaction)
+        # Close the dialog when the 'Cancel' button is clicked.
+        self.btn_cancel_transaction.clicked.connect(self.close)
+
+    def add_transaction(self) -> None:
+        """
+        Add a new transaction to the database if it's valid.
+        """
+        # Ensure that none of the fields are empty.
+        if (
+            not self.combo_box_transaction_type.currentText()
+            or not self.line_edit_symbol.text()
+            or not self.line_edit_platform.text()
+            or not self.line_edit_currency.text()
+            or not self.line_edit_amount.text()
+            or not self.line_edit_unit_price.text()
+        ):
+            self.lbl_status_msg.setText("Please fill in all of the details.")
+            return
+        # Ensure that the timestamp isn't in the future.
+        if self.datetime_edit_transaction.dateTime() > QDateTime.currentDateTime():
+            self.lbl_status_msg.setText(
+                "The transaction timestamp cannot be in the future."
+            )
+            return
+        # Ensure that the ticker exists.
+        if not get_name_from_symbol(self.line_edit_symbol.text().upper()):
+            self.lbl_status_msg.setText("The ticker symbol is invalid.")
+            return
+        # Ensure that the amount and unit price are positive.
+        if (
+            float(self.line_edit_amount.text()) <= 0.0
+            or float(self.line_edit_unit_price.text()) <= 0.0
+        ):
+            self.lbl_status_msg.setText("The amount and unit price must be positive.")
+            return
+
+        # Extract the transaction details from the form.
+        transaction_type = self.combo_box_transaction_type.currentText()
+        timestamp = self.datetime_edit_transaction.dateTime().toPython()
+        symbol = self.line_edit_symbol.text().upper()
+        platform = self.line_edit_platform.text()
+        currency = self.line_edit_currency.text()
+        amount = Decimal(self.line_edit_amount.text())
+        unit_price = Decimal(self.line_edit_unit_price.text())
+        units = Decimal(amount / unit_price)
+        # Create a new transaction object and save it to the database.
+        new_transaction = Transaction(
+            uuid4(),
+            transaction_type,
+            timestamp,
+            symbol,
+            platform,
+            currency,
+            amount,
+            unit_price,
+            units,
+        )
+        new_transaction.save()
+        upsert_transaction_into_portfolio(
+            transaction_type, symbol, currency, amount, unit_price
+        )
+        self.main_window.load_portfolio_table()
+        self.close()
+
+
 @dataclass
 class HeldSecurity:
     """
@@ -299,22 +434,6 @@ class HeldSecurity:
     units: Decimal
     currency: str
     paid: Decimal
-
-    def save(self) -> None:
-        """
-        Insert or update the security in the portfolio table.
-        """
-        with duckdb.connect(database=DB_PATH) as conn:
-            conn.execute(
-                "INSERT OR REPLACE INTO portfolio VALUES (?, ?, ?, ?, ?)",
-                (
-                    self.symbol,
-                    self.name,
-                    str(self.units),
-                    self.currency,
-                    str(self.paid),
-                ),
-            )
 
     @staticmethod
     def load_portfolio() -> list[HeldSecurity]:
@@ -328,14 +447,14 @@ class HeldSecurity:
         with duckdb.connect(database=DB_PATH) as conn:
             # Retrieve securities from the portfolio table
             result = conn.execute(
-                "SELECT name, symbol, units, currency, paid FROM portfolio"
+                "SELECT symbol, name, units, currency, paid FROM portfolio"
             )
             records = result.fetchall()
 
         # Create HeldSecurity objects for each record.
         portfolio = []
         for record in records:
-            name, symbol, units, currency, paid = record
+            symbol, name, units, currency, paid = record
             # Convert the units and paid values to Decimal objects to avoid
             # floating point precision errors.
             units = Decimal(units)
@@ -347,7 +466,7 @@ class HeldSecurity:
 
     @staticmethod
     def get_total_value(
-        current_values: dict[str, tuple(Decimal, Decimal, Decimal)]
+        current_values: dict[str, tuple[Decimal, Decimal, Decimal]]
     ) -> Decimal:
         """
         Calculate the total current value of the user's portfolio.
@@ -360,15 +479,6 @@ class HeldSecurity:
             total_value += current_values[key][0]
 
         return total_value
-
-    @staticmethod
-    def print_portfolio() -> None:
-        """
-        Print the user's portfolio to the console.
-        """
-        portfolio = HeldSecurity.load_portfolio()
-        for security in portfolio:
-            print(security)
 
 
 if __name__ == "__main__":
@@ -383,15 +493,14 @@ if __name__ == "__main__":
             "paid TEXT NOT NULL"
             ")"
         )
-        # Load some mock data into the table.
-        conn.execute(
-            "INSERT OR REPLACE INTO portfolio VALUES "
-            "('AAPL', 'Apple Inc.', '10', 'USD', '1000'), "
-            "('TSLA', 'Tesla Inc.', '5', 'USD', '3000'), "
-            "('BTC', 'Bitcoin', '0.2', 'USD', '1000'),"
-            "('HMC', 'Honda', '40', 'USD', '39.5'),"
-            "('^IXIC', 'NASDAQ Composite', '10', 'USD', '10000'),"
-            "('FTMC', 'FTSE 250', '2', 'GBP', '13520')"
-        )
+        # # Load some mock data into the table.
+        # conn.execute(
+        #     "INSERT OR REPLACE INTO portfolio VALUES "
+        #     "('AAPL', 'Apple Inc.', '10', 'USD', '1000'), "
+        #     "('TSLA', 'Tesla Inc.', '5', 'USD', '3000'), "
+        #     "('BTC', 'Bitcoin', '0.2', 'USD', '1000'),"
+        #     "('HMC', 'Honda', '40', 'USD', '39.5'),"
+        #     "('^IXIC', 'NASDAQ Composite', '10', 'USD', '10000'),"
+        #     "('FTMC', 'FTSE 250', '2', 'GBP', '13520')"
+        # )
     portfolio = HeldSecurity.load_portfolio()
-    HeldSecurity.print_portfolio()

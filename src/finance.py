@@ -3,11 +3,15 @@ Module containing functions relating to retrieving financial data from yahoo fin
 using yfinance and performing financial calculations 
 """
 
+import duckdb
 import requests
 import yfinance as yf
 import pandas as pd
 from decimal import Decimal
 from requests import exceptions
+
+
+DB_PATH = "resources/portfolio.db"
 
 
 def get_symbol(name: str) -> str:
@@ -46,7 +50,7 @@ def get_name_from_symbol(symbol: str) -> str:
     try:
         name = tick.info["shortName"]
         return name
-    except exceptions.HTTPError:
+    except (exceptions.HTTPError, KeyError):
         return ""
 
 
@@ -120,6 +124,88 @@ def get_absolute_rate_of_return(current: Decimal, purchase: Decimal) -> Decimal:
         absolute rate of return.
     """
     return ((current - purchase) / purchase) * 100
+
+
+def upsert_transaction_into_portfolio(
+    type: str,
+    symbol: str,
+    currency: str,
+    amount: Decimal,
+    unit_price: Decimal,
+) -> None:
+    """
+    Update/insert the portfolio based on a new transaction.
+
+    Args:
+        type: The type of transaction (Buy/Sell).
+        symbol: The symbol of the security.
+        currency: The currency of the security.
+        amount: The amount of the transaction.
+        unit_price: The unit price of the security.
+    """
+    # Search for the security in the portfolio.
+    with duckdb.connect(database=DB_PATH) as conn:
+        # Retrieve the security from the portfolio table based on the symbol
+        result = conn.execute(
+            "SELECT symbol, name, units, currency, paid FROM portfolio "
+            "WHERE symbol = ?",
+            (symbol,),
+        ).fetchone()
+
+    # Create a new HeldSecurity object for the transaction and save it if it
+    # wasn't previously held.
+    if not result:
+        if type == "Sell":
+            raise Exception("Cannot sell a security that is not held.")
+
+        name = get_name_from_symbol(symbol)
+        units = Decimal(amount / unit_price)
+        with duckdb.connect(database=DB_PATH) as conn:
+            conn.execute(
+                "INSERT OR REPLACE INTO portfolio VALUES (?, ?, ?, ?, ?)",
+                (
+                    symbol,
+                    name,
+                    str(units),
+                    currency,
+                    str(amount),
+                ),
+            )
+        return
+
+    # Otherwise, update the security in the portfolio.
+    symbol, _, units, _, paid = result
+    units = Decimal(units)
+    paid = Decimal(paid)
+    if type == "Buy":
+        units += Decimal(amount / unit_price)
+        paid += Decimal(amount)
+    elif type == "Sell":
+        units -= Decimal(amount / unit_price)
+        paid -= Decimal(amount)
+    # If the user has sold all of their units, remove the security from the
+    # portfolio.
+    if units == 0:
+        # Delete the security from the portfolio.
+        remove_security_from_portfolio(symbol)
+    else:
+        # Update the security in the portfolio
+        with duckdb.connect(database=DB_PATH) as conn:
+            conn.execute(
+                "UPDATE portfolio SET units = ?, paid = ? WHERE symbol = ?",
+                (str(units), str(paid), symbol),
+            )
+
+
+def remove_security_from_portfolio(symbol) -> None:
+    """
+    Remove the security from the portfolio table.
+
+    Args:
+        symbol: The symbol of the security.
+    """
+    with duckdb.connect(database=DB_PATH) as conn:
+        conn.execute("DELETE FROM portfolio WHERE symbol = ?", (symbol,))
 
 
 if __name__ == "__main__":
