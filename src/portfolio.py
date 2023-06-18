@@ -20,7 +20,7 @@ from src.finance import get_info, get_absolute_rate_of_return
 DB_PATH = "resources/portfolio.db"
 
 
-class UpdateWorker(QObject):
+class UpdateStockPricesWorker(QObject):
     finished = Signal()
 
     def __init__(self, interval, main_window):
@@ -77,14 +77,14 @@ class MainWindow(QMainWindow, Ui_main_window):
 
         diff = 2000 - (2 * (60 * len(portfolio)))
         if diff > 0:
-            interval = 60000
+            interval = 6000
         else:
             # TODO Potentially improve dynamic calculation?
             diff = abs(diff)
             interval = 60000 + (diff * 1.1 * 60)
 
         # Creates a worker for the updating of stock prices
-        self.worker = UpdateWorker(interval, self)
+        self.worker = UpdateStockPricesWorker(interval, self)
 
         # Moves worker to a seperate thread
         self.thread = QThread()
@@ -117,7 +117,7 @@ class MainWindow(QMainWindow, Ui_main_window):
 
         for security in portfolio:
             info = get_info(security.name)
-            security.current = Decimal(info["current_value"])
+            security.current = Decimal(info["current_value"]) * security.units
 
         for n, security in enumerate(portfolio):
             self.table_widget_portfolio.insertRow(0)
@@ -147,13 +147,15 @@ class MainWindow(QMainWindow, Ui_main_window):
             self.table_widget_portfolio.setItem(
                 0,
                 5,
-                QtWidgets.QTableWidgetItem(f"{stock_info['current_value']:.2f}"),
+                QtWidgets.QTableWidgetItem(
+                    f"{(Decimal(stock_info['current_value'])*security.units):.2f}"
+                ),
             )
             self.table_widget_portfolio.setItem(
                 0,
                 6,
                 QtWidgets.QTableWidgetItem(
-                    f"{(Decimal(stock_info['current_value'])- security.paid):+.2f}"  # Change in value
+                    f"{(Decimal(stock_info['current_value'])- security.paid)*security.units:+.2f}"  # Change in value
                 ),
             )
             self.table_widget_portfolio.setItem(
@@ -164,6 +166,7 @@ class MainWindow(QMainWindow, Ui_main_window):
                 ),
             )
 
+            # Assigns the index in the portfolio view list of the security
             self.portfolio_view_mapping[security.name] = len(portfolio) - n - 1
 
         # Get the current time in DD/MM/YYYY HH:MM:SS format.
@@ -181,8 +184,10 @@ class MainWindow(QMainWindow, Ui_main_window):
         for security in portfolio:
             stock_info = get_info(security.name)
 
-            security.current = Decimal(stock_info["current_value"])
-            security.change = Decimal(stock_info["current_value"]) - security.paid
+            security.current = Decimal(stock_info["current_value"]) * security.units
+            security.change = (
+                Decimal(stock_info["current_value"]) - security.paid
+            ) * security.units
             security.rate_of_return = get_absolute_rate_of_return(
                 Decimal(stock_info["current_value"]), security.paid
             )
@@ -302,7 +307,7 @@ class HeldSecurity:
         return portfolio
 
     @staticmethod
-    def get_total_value(portfolio) -> Decimal:  # TODO Maybe change this
+    def get_total_value(portfolio) -> Decimal:
         """
         Calculate the total current value of the user's portfolio.
 
