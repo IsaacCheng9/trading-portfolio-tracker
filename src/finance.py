@@ -126,14 +126,22 @@ def get_absolute_rate_of_return(current: Decimal, purchase: Decimal) -> Decimal:
     return ((current - purchase) / purchase) * 100
 
 
-def upsert_portfolio_with_transaction(
-    type, symbol, currency, amount, unit_price
+def upsert_transaction_into_portfolio(
+    type: str,
+    symbol: str,
+    currency: str,
+    amount: Decimal,
+    unit_price: Decimal,
 ) -> None:
     """
-    Update/insert the security in the portfolio based on a new transaction.
+    Update/insert the portfolio based on a new transaction.
 
     Args:
-        transaction: The transaction to upsert the portfolio based on.
+        type: The type of transaction (Buy/Sell).
+        symbol: The symbol of the security.
+        currency: The currency of the security.
+        amount: The amount of the transaction.
+        unit_price: The unit price of the security.
     """
     # Search for the security in the portfolio.
     with duckdb.connect(database=DB_PATH) as conn:
