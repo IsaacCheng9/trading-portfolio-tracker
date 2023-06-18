@@ -55,8 +55,8 @@ class Ui_dialog_transaction_history(object):
         self.vert_layout_dialog.addWidget(self.lbl_last_updated)
 
         self.table_widget_transactions = QTableWidget(self.verticalLayoutWidget)
-        if (self.table_widget_transactions.columnCount() < 9):
-            self.table_widget_transactions.setColumnCount(9)
+        if (self.table_widget_transactions.columnCount() < 10):
+            self.table_widget_transactions.setColumnCount(10)
         __qtablewidgetitem = QTableWidgetItem()
         self.table_widget_transactions.setHorizontalHeaderItem(0, __qtablewidgetitem)
         __qtablewidgetitem1 = QTableWidgetItem()
@@ -75,6 +75,8 @@ class Ui_dialog_transaction_history(object):
         self.table_widget_transactions.setHorizontalHeaderItem(7, __qtablewidgetitem7)
         __qtablewidgetitem8 = QTableWidgetItem()
         self.table_widget_transactions.setHorizontalHeaderItem(8, __qtablewidgetitem8)
+        __qtablewidgetitem9 = QTableWidgetItem()
+        self.table_widget_transactions.setHorizontalHeaderItem(9, __qtablewidgetitem9)
         self.table_widget_transactions.setObjectName(u"table_widget_transactions")
         sizePolicy = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
@@ -130,6 +132,8 @@ class Ui_dialog_transaction_history(object):
         ___qtablewidgetitem7 = self.table_widget_transactions.horizontalHeaderItem(7)
         ___qtablewidgetitem7.setText(QCoreApplication.translate("dialog_transaction_history", u"Unit Price", None));
         ___qtablewidgetitem8 = self.table_widget_transactions.horizontalHeaderItem(8)
-        ___qtablewidgetitem8.setText(QCoreApplication.translate("dialog_transaction_history", u"Transaction ID", None));
+        ___qtablewidgetitem8.setText(QCoreApplication.translate("dialog_transaction_history", u"Units", None));
+        ___qtablewidgetitem9 = self.table_widget_transactions.horizontalHeaderItem(9)
+        ___qtablewidgetitem9.setText(QCoreApplication.translate("dialog_transaction_history", u"Transaction ID", None));
     # retranslateUi
 

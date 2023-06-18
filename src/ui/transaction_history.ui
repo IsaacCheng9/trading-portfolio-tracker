@@ -151,6 +151,11 @@
       </column>
       <column>
        <property name="text">
+        <string>Units</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
         <string>Transaction ID</string>
        </property>
       </column>
