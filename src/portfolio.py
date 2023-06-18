@@ -14,8 +14,8 @@ from PySide6 import QtWidgets
 from PySide6.QtCore import QTimer
 from PySide6.QtWidgets import QMainWindow
 
-from src.finance import get_absolute_rate_of_return, get_info, get_name_from_symbol
-from src.transactions import AddTransactionDialog, Transaction, TransactionHistoryDialog
+from src.finance import get_absolute_rate_of_return, get_info
+from src.transactions import AddTransactionDialog, TransactionHistoryDialog
 from src.ui.main_window_ui import Ui_main_window
 
 DB_PATH = "resources/portfolio.db"
@@ -176,29 +176,6 @@ class HeldSecurity:
     currency: str
     paid: Decimal
 
-    def save(self) -> None:
-        """
-        Insert or update the security in the portfolio table.
-        """
-        with duckdb.connect(database=DB_PATH) as conn:
-            conn.execute(
-                "INSERT OR REPLACE INTO portfolio VALUES (?, ?, ?, ?, ?)",
-                (
-                    self.symbol,
-                    self.name,
-                    str(self.units),
-                    self.currency,
-                    str(self.paid),
-                ),
-            )
-
-    def remove(self) -> None:
-        """
-        Remove the security from the portfolio table.
-        """
-        with duckdb.connect(database=DB_PATH) as conn:
-            conn.execute("DELETE FROM portfolio WHERE symbol = ?", (self.symbol,))
-
     @staticmethod
     def load_portfolio() -> list[HeldSecurity]:
         """
@@ -218,7 +195,7 @@ class HeldSecurity:
         # Create HeldSecurity objects for each record.
         portfolio = []
         for record in records:
-            name, symbol, units, currency, paid = record
+            symbol, name, units, currency, paid = record
             # Convert the units and paid values to Decimal objects to avoid
             # floating point precision errors.
             units = Decimal(units)
@@ -254,37 +231,6 @@ class HeldSecurity:
         for security in portfolio:
             print(security)
 
-    def upsert_portfolio_with_transaction(self, transaction: Transaction) -> None:
-        """
-        Update/insert the security in the portfolio based on a new transaction.
-
-        Args:
-            transaction: The transaction to upsert the portfolio based on.
-        """
-        if self.symbol == transaction.symbol:
-            if transaction.type == "Buy":
-                self.units += Decimal(transaction.amount / transaction.unit_price)
-                self.paid += transaction.amount
-            elif transaction.type == "Sell":
-                self.units -= Decimal(transaction.amount / transaction.unit_price)
-                self.paid -= transaction.amount
-                # If the user has sold all of their units, remove the security from the
-                # portfolio.
-                if self.units == 0:
-                    self.remove()
-            self.save()
-        else:
-            # The transaction is for a different security
-            # Create a new HeldSecurity object for the transaction and save it
-            new_security = HeldSecurity(
-                symbol=transaction.symbol,
-                name=get_name_from_symbol(transaction.symbol),
-                units=Decimal(transaction.amount / transaction.unit_price),
-                currency=transaction.currency,
-                paid=Decimal(transaction.amount),
-            )
-            new_security.save()
-
 
 if __name__ == "__main__":
     with duckdb.connect(database=DB_PATH) as conn:
@@ -301,12 +247,12 @@ if __name__ == "__main__":
         # Load some mock data into the table.
         conn.execute(
             "INSERT OR REPLACE INTO portfolio VALUES "
-            "('Apple Inc.', 'AAPL', '10', 'USD', '1000'), "
-            "('Tesla Inc.', 'TSLA', '5', 'USD', '3000'), "
-            "('Bitcoin', 'BTC', '0.2', 'USD', '1000'),"
-            "('Honda', 'HMC', '40', 'USD', '39.5'),"
-            "('NASDAQ Composite', '^IXIC', '10', 'USD', '10000'),"
-            "('FTSE 250', 'FTMC', '2', 'GBP', '13520')"
+            "('AAPL', 'Apple Inc.', '10', 'USD', '1000'), "
+            "('TSLA', 'Tesla Inc.', '5', 'USD', '3000'), "
+            "('BTC', 'Bitcoin', '0.2', 'USD', '1000'),"
+            "('HMC', 'Honda', '40', 'USD', '39.5'),"
+            "('^IXIC', 'NASDAQ Composite', '10', 'USD', '10000'),"
+            "('FTMC', 'FTSE 250', '2', 'GBP', '13520')"
         )
     portfolio = HeldSecurity.load_portfolio()
     HeldSecurity.print_portfolio()
