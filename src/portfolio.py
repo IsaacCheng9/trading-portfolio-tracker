@@ -21,6 +21,7 @@ from src.finance import (
     get_info,
     get_name_from_symbol,
     upsert_transaction_into_portfolio,
+    get_current_usd_exchange_rate,
 )
 from src.transactions import Transaction
 from src.ui.add_transaction_ui import Ui_dialog_add_transaction
@@ -403,6 +404,7 @@ class AddTransactionDialog(QDialog, Ui_dialog_add_transaction):
         amount = Decimal(self.line_edit_amount.text())
         unit_price = Decimal(self.line_edit_unit_price.text())
         units = Decimal(amount / unit_price)
+        exchange_rate = get_current_usd_exchange_rate(currency)
         # Create a new transaction object and save it to the database.
         new_transaction = Transaction(
             uuid4(),
@@ -414,6 +416,7 @@ class AddTransactionDialog(QDialog, Ui_dialog_add_transaction):
             amount,
             unit_price,
             units,
+            exchange_rate,
         )
         new_transaction.save()
         upsert_transaction_into_portfolio(
