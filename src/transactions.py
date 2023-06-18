@@ -24,6 +24,7 @@ class Transaction:
     currency: str
     amount: Decimal
     unit_price: Decimal
+    units: Decimal
 
     @staticmethod
     def load_transaction_history() -> list[Transaction]:
@@ -55,15 +56,17 @@ class Transaction:
                 currency,
                 amount,
                 unit_price,
+                units,
             ) = record
             # Convert timestamp to remove the milliseconds.
             timestamp = datetime.datetime.strptime(
                 str(timestamp), "%Y-%m-%d %H:%M:%S.%f"
             ).replace(microsecond=0)
-            # Convert the amount and unit price to Decimal objects to avoid
-            # floating point precision errors.
+            # Convert to Decimal objects to avoid floating point precision
+            # errors.
             amount = Decimal(amount)
             unit_price = Decimal(unit_price)
+            units = Decimal(units)
             transaction = Transaction(
                 transaction_id,
                 transaction_type,
@@ -73,6 +76,7 @@ class Transaction:
                 currency,
                 amount,
                 unit_price,
+                units,
             )
             transactions.append(transaction)
 
@@ -84,7 +88,7 @@ class Transaction:
         """
         with duckdb.connect(database=DB_PATH) as conn:
             conn.execute(
-                "INSERT OR REPLACE INTO transaction VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+                "INSERT OR REPLACE INTO transaction VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
                 (
                     self.id,
                     self.type,
@@ -94,6 +98,7 @@ class Transaction:
                     self.currency,
                     str(self.amount),
                     str(self.unit_price),
+                    str(self.units),
                 ),
             )
 
@@ -110,6 +115,7 @@ if __name__ == "__main__":
             "platform TEXT NOT NULL, "
             "currency TEXT NOT NULL, "
             "amount TEXT NOT NULL, "
-            "unit_price TEXT NOT NULL"
+            "unit_price TEXT NOT NULL,"
+            "units TEXT NOT NULL"
             ")"
         )

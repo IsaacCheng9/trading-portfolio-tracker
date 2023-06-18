@@ -20,7 +20,7 @@ from src.finance import (
     get_absolute_rate_of_return,
     get_info,
     get_name_from_symbol,
-    upsert_portfolio_with_transaction,
+    upsert_transaction_into_portfolio,
 )
 from src.transactions import Transaction
 from src.ui.add_transaction_ui import Ui_dialog_add_transaction
@@ -127,9 +127,7 @@ class MainWindow(QMainWindow, Ui_main_window):
         Load the user's portfolio into the table widget.
         """
         portfolio = HeldSecurity.load_portfolio()
-        print(portfolio)
         self.get_pricing_data_for_securities(portfolio)
-
         # Clear all rows except the header row.
         self.table_widget_portfolio.setRowCount(0)
 
@@ -334,7 +332,10 @@ class TransactionHistoryDialog(QDialog, Ui_dialog_transaction_history):
                 0, 7, QtWidgets.QTableWidgetItem(str(transaction.unit_price))
             )
             self.table_widget_transactions.setItem(
-                0, 8, QtWidgets.QTableWidgetItem(str(transaction.id))
+                0, 8, QtWidgets.QTableWidgetItem(str(transaction.units))
+            )
+            self.table_widget_transactions.setItem(
+                0, 9, QtWidgets.QTableWidgetItem(str(transaction.id))
             )
 
         # Get the current time in DD/MM/YYYY HH:MM:SS format.
@@ -401,6 +402,7 @@ class AddTransactionDialog(QDialog, Ui_dialog_add_transaction):
         currency = self.line_edit_currency.text()
         amount = Decimal(self.line_edit_amount.text())
         unit_price = Decimal(self.line_edit_unit_price.text())
+        units = Decimal(amount / unit_price)
         # Create a new transaction object and save it to the database.
         new_transaction = Transaction(
             uuid4(),
@@ -411,9 +413,10 @@ class AddTransactionDialog(QDialog, Ui_dialog_add_transaction):
             currency,
             amount,
             unit_price,
+            units,
         )
         new_transaction.save()
-        upsert_portfolio_with_transaction(
+        upsert_transaction_into_portfolio(
             transaction_type, symbol, currency, amount, unit_price
         )
         self.main_window.load_portfolio_table()
