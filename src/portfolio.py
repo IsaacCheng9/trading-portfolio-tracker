@@ -118,26 +118,7 @@ class MainWindow(QMainWindow, Ui_main_window):
         Load the user's portfolio into the table widget.
         """
         portfolio = HeldSecurity.load_portfolio()
-
-        # Gets the current value, change in value, and rate of return of each security
-        # and stores it in the current_security_info dictionary
-        for security in portfolio:
-            stock_info = get_info(security.name)
-            cur_val = Decimal(stock_info["current_value"]) * security.units
-            val_change = (
-                Decimal(stock_info["current_value"]) - security.paid
-            ) * security.units
-            rate_of_return_abs = get_absolute_rate_of_return(
-                Decimal(stock_info["current_value"]), security.paid
-            )
-
-            # Stores the live security information in a dictionary indexed
-            # by the name of the security
-            self.current_security_info[security.name] = (
-                cur_val,
-                val_change,
-                rate_of_return_abs,
-            )
+        self.get_pricing_data_for_securities(portfolio)
 
         for n, security in enumerate(portfolio):
             self.table_widget_portfolio.insertRow(0)
@@ -196,24 +177,22 @@ class MainWindow(QMainWindow, Ui_main_window):
         cur_time = time.strftime("%d/%m/%Y %H:%M:%S")
         self.lbl_last_updated.setText(f"Last Updated: {cur_time}")
 
-    def update_stock_prices(self) -> None:
+    def get_pricing_data_for_securities(self, portfolio: list[HeldSecurity]) -> None:
         """
-        Update live stock current prices, change in value, and
-        absolute rate of return.
-        """
-        portfolio = HeldSecurity.load_portfolio()
+        Get the current value, change in value, and rate of return (absolute)
+        for each security in the portfolio.
 
-        # Gets the current value, change in value, and rate of return of the current stock
-        # and stores it in the current_security_info dictionary
+        Args:
+            portfolio: A list of HeldSecurity objects.
+        """
         for security in portfolio:
             stock_info = get_info(security.name)
-
             cur_val = Decimal(stock_info["current_value"]) * security.units
             val_change = (
-                Decimal(stock_info["current_value"]) - security.paid
-            ) * security.units
+                (Decimal(stock_info["current_value"]) * security.units)
+            ) - security.paid
             rate_of_return_abs = get_absolute_rate_of_return(
-                Decimal(stock_info["current_value"]), security.paid
+                Decimal(stock_info["current_value"]) * security.units, security.paid
             )
 
             # Stores the live security information in a dictionary indexed
@@ -223,6 +202,14 @@ class MainWindow(QMainWindow, Ui_main_window):
                 val_change,
                 rate_of_return_abs,
             )
+
+    def update_stock_prices(self) -> None:
+        """
+        Update live stock current prices, change in value, and
+        absolute rate of return.
+        """
+        portfolio = HeldSecurity.load_portfolio()
+        self.get_pricing_data_for_securities(portfolio)
 
         # Clear the table portfolio widget without clearing headers
         for row in range(self.table_widget_portfolio.rowCount()):
