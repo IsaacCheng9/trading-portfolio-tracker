@@ -222,15 +222,6 @@ class HeldSecurity:
 
         return total_value
 
-    @staticmethod
-    def print_portfolio() -> None:
-        """
-        Print the user's portfolio to the console.
-        """
-        portfolio = HeldSecurity.load_portfolio()
-        for security in portfolio:
-            print(security)
-
 
 if __name__ == "__main__":
     with duckdb.connect(database=DB_PATH) as conn:
