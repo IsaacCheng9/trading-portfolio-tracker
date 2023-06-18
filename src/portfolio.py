@@ -54,6 +54,9 @@ class MainWindow(QMainWindow, Ui_main_window):
         super().__init__()
         self.setupUi(self)
 
+        # Stores current information about each security (current price, change, abs rate of return)
+        self.current_security_info = {}
+
         # Mapping between asset name and the row it occupies in the
         # portfolio table widget for updating purposes.
         self.portfolio_view_mapping = {}
@@ -115,9 +118,25 @@ class MainWindow(QMainWindow, Ui_main_window):
         """
         portfolio = HeldSecurity.load_portfolio()
 
+        # Gets the current value, change in value, and rate of return of each security
+        # and stores it in the current_security_info dictionary
         for security in portfolio:
-            info = get_info(security.name)
-            security.current = Decimal(info["current_value"]) * security.units
+            stock_info = get_info(security.name)
+            cur_val = Decimal(stock_info["current_value"]) * security.units
+            val_change = (
+                Decimal(stock_info["current_value"]) - security.paid
+            ) * security.units
+            rate_of_return_abs = get_absolute_rate_of_return(
+                Decimal(stock_info["current_value"]), security.paid
+            )
+
+            # Stores the live security information in a dictionary indexed
+            # by the name of the security
+            self.current_security_info[security.name] = (
+                cur_val,
+                val_change,
+                rate_of_return_abs,
+            )
 
         for n, security in enumerate(portfolio):
             self.table_widget_portfolio.insertRow(0)
@@ -130,7 +149,11 @@ class MainWindow(QMainWindow, Ui_main_window):
             )
             weight = str(
                 round(
-                    (security.current / HeldSecurity.get_total_value(portfolio)) * 100,
+                    (
+                        self.current_security_info[security.name][0]
+                        / HeldSecurity.get_total_value(self.current_security_info)
+                    )
+                    * 100,
                     3,
                 )
             )
@@ -143,26 +166,26 @@ class MainWindow(QMainWindow, Ui_main_window):
             self.table_widget_portfolio.setItem(
                 0, 4, QtWidgets.QTableWidgetItem(security.currency)
             )
-            stock_info = get_info(security.name)
+
             self.table_widget_portfolio.setItem(
                 0,
                 5,
                 QtWidgets.QTableWidgetItem(
-                    f"{(Decimal(stock_info['current_value'])*security.units):.2f}"
+                    f"{self.current_security_info[security.name][0]:.2f}"
                 ),
             )
             self.table_widget_portfolio.setItem(
                 0,
                 6,
                 QtWidgets.QTableWidgetItem(
-                    f"{(Decimal(stock_info['current_value'])- security.paid)*security.units:+.2f}"  # Change in value
+                    f"{self.current_security_info[security.name][1]:+.2f}"  # Change in value
                 ),
             )
             self.table_widget_portfolio.setItem(
                 0,
                 7,
                 QtWidgets.QTableWidgetItem(
-                    f"{get_absolute_rate_of_return(Decimal(stock_info['current_value']),security.paid):+.2f}%"
+                    f"{self.current_security_info[security.name][2]:+.2f}%"
                 ),
             )
 
@@ -181,15 +204,24 @@ class MainWindow(QMainWindow, Ui_main_window):
         portfolio = HeldSecurity.load_portfolio()
 
         # Gets the current value, change in value, and rate of return of the current stock
+        # and stores it in the current_security_info dictionary
         for security in portfolio:
             stock_info = get_info(security.name)
 
-            security.current = Decimal(stock_info["current_value"]) * security.units
-            security.change = (
+            cur_val = Decimal(stock_info["current_value"]) * security.units
+            val_change = (
                 Decimal(stock_info["current_value"]) - security.paid
             ) * security.units
-            security.rate_of_return = get_absolute_rate_of_return(
+            rate_of_return_abs = get_absolute_rate_of_return(
                 Decimal(stock_info["current_value"]), security.paid
+            )
+
+            # Stores the live security information in a dictionary indexed
+            # by the name of the security
+            self.current_security_info[security.name] = (
+                cur_val,
+                val_change,
+                rate_of_return_abs,
             )
 
         # Clear the table portfolio widget without clearing headers
@@ -212,7 +244,11 @@ class MainWindow(QMainWindow, Ui_main_window):
             )
             weight = str(
                 round(
-                    (security.current / HeldSecurity.get_total_value(portfolio)) * 100,
+                    (
+                        self.current_security_info[security.name][0]
+                        / HeldSecurity.get_total_value(self.current_security_info)
+                    )
+                    * 100,
                     3,
                 )
             )
@@ -228,17 +264,23 @@ class MainWindow(QMainWindow, Ui_main_window):
             self.table_widget_portfolio.setItem(
                 row,
                 5,
-                QtWidgets.QTableWidgetItem(f"{security.current:.2f}"),
+                QtWidgets.QTableWidgetItem(
+                    f"{self.current_security_info[security.name][0]:.2f}"
+                ),
             )
             self.table_widget_portfolio.setItem(
                 row,
                 6,
-                QtWidgets.QTableWidgetItem(f"{security.change:+.2f}"),
+                QtWidgets.QTableWidgetItem(
+                    f"{self.current_security_info[security.name][1]:+.2f}"
+                ),
             )
             self.table_widget_portfolio.setItem(
                 row,
                 7,
-                QtWidgets.QTableWidgetItem(f"{security.rate_of_return:+.2f}%"),
+                QtWidgets.QTableWidgetItem(
+                    f"{self.current_security_info[security.name][2]:+.2f}%"
+                ),
             )
 
         # Update last updated time label in dd-mm-yyyy hh:mm:ss format
@@ -257,9 +299,6 @@ class HeldSecurity:
     units: Decimal
     currency: str
     paid: Decimal
-    current: Decimal = 0
-    change: Decimal = 0
-    rate_of_return: Decimal = 0
 
     def save(self) -> None:
         """
@@ -307,7 +346,9 @@ class HeldSecurity:
         return portfolio
 
     @staticmethod
-    def get_total_value(portfolio) -> Decimal:
+    def get_total_value(
+        current_values: dict[str, tuple(Decimal, Decimal, Decimal)]
+    ) -> Decimal:
         """
         Calculate the total current value of the user's portfolio.
 
@@ -315,8 +356,8 @@ class HeldSecurity:
             The total value of the portfolio.
         """
         total_value = Decimal(0)
-        for security in portfolio:
-            total_value += security.current
+        for key in current_values:
+            total_value += current_values[key][0]
 
         return total_value
 
