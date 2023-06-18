@@ -208,6 +208,30 @@ def remove_security_from_portfolio(symbol) -> None:
         conn.execute("DELETE FROM portfolio WHERE symbol = ?", (symbol,))
 
 
+def get_current_usd_exchange_rate(original_currency: str) -> Decimal:
+    """
+    Gets the current exchange rate from a given currency
+    to USD using ExchangeRate-API (https://www.exchangerate-api.com/).
+
+    Args:
+        original_currency: original currency to convert to USD.
+
+    Returns:
+        Current exchange rate from original currency -> USD.
+    """
+    key = ""
+    url = f"https://v6.exchangerate-api.com/v6/{key}/latest/USD"
+
+    response = requests.get(url)
+    data = response.json()
+
+    if data["result"] == "success":
+        rate = data["conversion_rates"][original_currency]
+        return Decimal(rate)
+    else:
+        return ""
+
+
 if __name__ == "__main__":
     print(get_info("FTSE 250"))
     print(get_info("Apple"))
