@@ -16,7 +16,7 @@ from PySide6.QtCore import QDateTime
 from PySide6.QtGui import QDoubleValidator
 from PySide6.QtWidgets import QDialog
 
-from src.finance import get_name_from_symbol
+from src.finance import get_name_from_symbol, upsert_portfolio_with_transaction
 from src.ui.add_transaction_ui import Ui_dialog_add_transaction
 from src.ui.transaction_history_ui import Ui_dialog_transaction_history
 
@@ -128,18 +128,29 @@ class AddTransactionDialog(QDialog, Ui_dialog_add_transaction):
             self.lbl_status_msg.setText("The amount and unit price must be positive.")
             return
 
+        # Extract the transaction details from the form.
+        transaction_type = self.combo_box_transaction_type.currentText()
+        timestamp = self.datetime_edit_transaction.dateTime().toPython()
+        symbol = self.line_edit_symbol.text().upper()
+        platform = self.line_edit_platform.text()
+        currency = self.line_edit_currency.text()
+        amount = Decimal(self.line_edit_amount.text())
+        unit_price = Decimal(self.line_edit_unit_price.text())
         # Create a new transaction object and save it to the database.
         new_transaction = Transaction(
             uuid4(),
-            self.combo_box_transaction_type.currentText(),
-            self.datetime_edit_transaction.dateTime().toPython(),
-            self.line_edit_symbol.text().upper(),
-            self.line_edit_platform.text(),
-            self.line_edit_currency.text(),
-            Decimal(self.line_edit_amount.text()),
-            Decimal(self.line_edit_unit_price.text()),
+            transaction_type,
+            timestamp,
+            symbol,
+            platform,
+            currency,
+            amount,
+            unit_price,
         )
         new_transaction.save()
+        upsert_portfolio_with_transaction(
+            transaction_type, symbol, currency, amount, unit_price
+        )
         self.close()
 
 
