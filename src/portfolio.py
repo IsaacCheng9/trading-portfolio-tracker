@@ -369,4 +369,3 @@ if __name__ == "__main__":
         #     "('FTMC', 'FTSE 250', '2', 'GBP', '13520')"
         # )
     portfolio = HeldSecurity.load_portfolio()
-    HeldSecurity.print_portfolio()
