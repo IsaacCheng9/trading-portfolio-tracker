@@ -167,6 +167,8 @@ def upsert_portfolio_with_transaction(
 
     # Otherwise, update the security in the portfolio.
     symbol, _, units, _, paid = result
+    units = Decimal(units)
+    paid = Decimal(paid)
     if type == "Buy":
         units += Decimal(amount / unit_price)
         paid += Decimal(amount)
