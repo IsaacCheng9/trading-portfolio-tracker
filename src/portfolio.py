@@ -441,7 +441,7 @@ class HeldSecurity:
         with duckdb.connect(database=DB_PATH) as conn:
             # Retrieve securities from the portfolio table
             result = conn.execute(
-                "SELECT name, symbol, units, currency, paid FROM portfolio"
+                "SELECT symbol, name, units, currency, paid FROM portfolio"
             )
             records = result.fetchall()
 
