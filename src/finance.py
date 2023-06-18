@@ -50,7 +50,7 @@ def get_name_from_symbol(symbol: str) -> str:
     try:
         name = tick.info["shortName"]
         return name
-    except exceptions.HTTPError:
+    except (exceptions.HTTPError, KeyError):
         return ""
 
 
