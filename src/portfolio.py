@@ -130,6 +130,9 @@ class MainWindow(QMainWindow, Ui_main_window):
         print(portfolio)
         self.get_pricing_data_for_securities(portfolio)
 
+        # Clear all rows except the header row.
+        self.table_widget_portfolio.setRowCount(0)
+
         for row, security in enumerate(portfolio):
             cur_val, val_change, rate_of_return_abs = self.current_security_info[
                 security.name
