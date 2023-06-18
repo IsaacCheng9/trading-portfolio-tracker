@@ -24,13 +24,13 @@ class Ui_dialog_transaction_history(object):
     def setupUi(self, dialog_transaction_history):
         if not dialog_transaction_history.objectName():
             dialog_transaction_history.setObjectName(u"dialog_transaction_history")
-        dialog_transaction_history.resize(1000, 800)
+        dialog_transaction_history.resize(1350, 800)
         font = QFont()
         font.setPointSize(12)
         dialog_transaction_history.setFont(font)
         self.verticalLayoutWidget = QWidget(dialog_transaction_history)
         self.verticalLayoutWidget.setObjectName(u"verticalLayoutWidget")
-        self.verticalLayoutWidget.setGeometry(QRect(10, 6, 981, 781))
+        self.verticalLayoutWidget.setGeometry(QRect(10, 6, 1331, 781))
         self.vert_layout_dialog = QVBoxLayout(self.verticalLayoutWidget)
         self.vert_layout_dialog.setObjectName(u"vert_layout_dialog")
         self.vert_layout_dialog.setContentsMargins(0, 0, 0, 0)
@@ -112,7 +112,7 @@ class Ui_dialog_transaction_history(object):
     # setupUi
 
     def retranslateUi(self, dialog_transaction_history):
-        dialog_transaction_history.setWindowTitle(QCoreApplication.translate("dialog_transaction_history", u"Transaction History", None))
+        dialog_transaction_history.setWindowTitle(QCoreApplication.translate("dialog_transaction_history", u"Trading Portfolio Tracker \u2013\u00a0Transaction History", None))
         self.lbl_transaction_history.setText(QCoreApplication.translate("dialog_transaction_history", u"Transaction History", None))
         self.lbl_last_updated.setText(QCoreApplication.translate("dialog_transaction_history", u"Last Updated: DD/MM/YYYY HH:MM:SS", None))
         ___qtablewidgetitem = self.table_widget_transactions.horizontalHeaderItem(0)
