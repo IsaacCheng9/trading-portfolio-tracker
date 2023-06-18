@@ -120,7 +120,10 @@ class MainWindow(QMainWindow, Ui_main_window):
         portfolio = HeldSecurity.load_portfolio()
         self.get_pricing_data_for_securities(portfolio)
 
-        for n, security in enumerate(portfolio):
+        for row, security in enumerate(portfolio):
+            cur_val, val_change, rate_of_return_abs = self.current_security_info[
+                security.name
+            ]
             self.table_widget_portfolio.insertRow(0)
             self.table_widget_portfolio.setItem(
                 0, 0, QtWidgets.QTableWidgetItem(security.symbol)
@@ -151,27 +154,21 @@ class MainWindow(QMainWindow, Ui_main_window):
             self.table_widget_portfolio.setItem(
                 0,
                 5,
-                QtWidgets.QTableWidgetItem(
-                    f"{self.current_security_info[security.name][0]:.2f}"
-                ),
+                QtWidgets.QTableWidgetItem(f"{cur_val:.2f}"),
             )
             self.table_widget_portfolio.setItem(
                 0,
                 6,
-                QtWidgets.QTableWidgetItem(
-                    f"{self.current_security_info[security.name][1]:+.2f}"  # Change in value
-                ),
+                QtWidgets.QTableWidgetItem(f"{val_change:+.2f}"),
             )
             self.table_widget_portfolio.setItem(
                 0,
                 7,
-                QtWidgets.QTableWidgetItem(
-                    f"{self.current_security_info[security.name][2]:+.2f}%"
-                ),
+                QtWidgets.QTableWidgetItem(f"{rate_of_return_abs:+.2f}%"),
             )
 
             # Assigns the index in the portfolio view list of the security
-            self.portfolio_view_mapping[security.name] = len(portfolio) - n - 1
+            self.portfolio_view_mapping[security.name] = len(portfolio) - row - 1
 
         # Get the current time in DD/MM/YYYY HH:MM:SS format.
         cur_time = time.strftime("%d/%m/%Y %H:%M:%S")
