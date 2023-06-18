@@ -177,12 +177,12 @@ def upsert_transaction_into_portfolio(
     symbol, _, units, _, paid = result
     units = Decimal(units)
     paid = Decimal(paid)
-    if type == "Buy":
+    if type == "Buy":  # TODO modify this with exchange rates
         units += Decimal(amount / unit_price)
-        paid += Decimal(amount)
+        paid += Decimal(amount)  # TODO / stored exchange rate
     elif type == "Sell":
         units -= Decimal(amount / unit_price)
-        paid -= Decimal(amount)
+        paid -= Decimal(amount)  # TODO / current exchange rate
     # If the user has sold all of their units, remove the security from the
     # portfolio.
     if units == 0:
