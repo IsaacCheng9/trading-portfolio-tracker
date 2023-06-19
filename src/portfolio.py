@@ -194,14 +194,17 @@ class MainWindow(QMainWindow, Ui_main_window):
         Args:
             portfolio: A list of HeldSecurity objects.
         """
+        # TODO Add conversion rate here
         for security in portfolio:
             stock_info = get_info(security.name)
-            cur_val = Decimal(stock_info["current_value"]) * security.units
-            val_change = (
-                (Decimal(stock_info["current_value"]) * security.units)
-            ) - security.paid
+            exchange_rate = get_current_usd_exchange_rate(stock_info["currency"])
+
+            cur_val = (
+                Decimal(stock_info["current_value"]) * security.units
+            ) / exchange_rate
+            val_change = ((cur_val * security.units)) - security.paid
             rate_of_return_abs = get_absolute_rate_of_return(
-                Decimal(stock_info["current_value"]) * security.units, security.paid
+                cur_val * security.units, security.paid
             )
 
             # Stores the live security information in a dictionary indexed
