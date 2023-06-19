@@ -126,12 +126,13 @@ def get_absolute_rate_of_return(current: Decimal, purchase: Decimal) -> Decimal:
     return ((current - purchase) / purchase) * 100
 
 
-def upsert_transaction_into_portfolio(
+def upsert_transaction_into_portfolio(  # TODO: SEE WHERE THIS IS CALLED, MAYBE PASS STORED EXCH RATE IN HERE
     type: str,
     symbol: str,
     currency: str,
     amount: Decimal,
     unit_price: Decimal,
+    exchange_rate: Decimal,
 ) -> None:
     """
     Update/insert the portfolio based on a new transaction.
@@ -142,6 +143,7 @@ def upsert_transaction_into_portfolio(
         currency: The currency of the security.
         amount: The amount of the transaction.
         unit_price: The unit price of the security.
+        exchange_rate: The exchange rate to USD at the time of purchase.
     """
     # Search for the security in the portfolio.
     with duckdb.connect(database=DB_PATH) as conn:
@@ -179,10 +181,10 @@ def upsert_transaction_into_portfolio(
     paid = Decimal(paid)
     if type == "Buy":  # TODO modify this with exchange rates
         units += Decimal(amount / unit_price)
-        paid += Decimal(amount)  # TODO / stored exchange rate
+        paid += Decimal(amount) / exchange_rate
     elif type == "Sell":
         units -= Decimal(amount / unit_price)
-        paid -= Decimal(amount)  # TODO / current exchange rate
+        paid -= Decimal(amount) / exchange_rate
     # If the user has sold all of their units, remove the security from the
     # portfolio.
     if units == 0:

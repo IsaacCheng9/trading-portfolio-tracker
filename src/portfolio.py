@@ -234,11 +234,11 @@ class MainWindow(QMainWindow, Ui_main_window):
             row = self.portfolio_view_mapping[security.name]
             self.table_widget_portfolio.setItem(
                 row,
-                1,
+                0,
                 QtWidgets.QTableWidgetItem(security.symbol),
             )
             self.table_widget_portfolio.setItem(
-                row, 0, QtWidgets.QTableWidgetItem(security.name)
+                row, 1, QtWidgets.QTableWidgetItem(security.name)
             )
             weight = str(
                 round(
@@ -420,7 +420,7 @@ class AddTransactionDialog(QDialog, Ui_dialog_add_transaction):
         )
         new_transaction.save()
         upsert_transaction_into_portfolio(
-            transaction_type, symbol, currency, amount, unit_price
+            transaction_type, symbol, currency, amount, unit_price, exchange_rate
         )
         self.main_window.load_portfolio_table()
         self.close()
