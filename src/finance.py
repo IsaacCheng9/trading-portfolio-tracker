@@ -9,7 +9,7 @@ import yfinance as yf
 import pandas as pd
 from decimal import Decimal
 from requests import exceptions
-
+from datetime import date
 
 DB_PATH = "resources/portfolio.db"
 
@@ -126,7 +126,7 @@ def get_absolute_rate_of_return(current: Decimal, purchase: Decimal) -> Decimal:
     return ((current - purchase) / purchase) * 100
 
 
-def upsert_transaction_into_portfolio(  # TODO: SEE WHERE THIS IS CALLED, MAYBE PASS STORED EXCH RATE IN HERE
+def upsert_transaction_into_portfolio(
     type: str,
     symbol: str,
     currency: str,
@@ -179,12 +179,12 @@ def upsert_transaction_into_portfolio(  # TODO: SEE WHERE THIS IS CALLED, MAYBE 
     symbol, _, units, _, paid = result
     units = Decimal(units)
     paid = Decimal(paid)
-    if type == "Buy":  # TODO modify this with exchange rates
+    if type == "Buy":
         units += Decimal(amount / unit_price)
-        paid += Decimal(amount) / exchange_rate
+        paid += Decimal(amount) * exchange_rate
     elif type == "Sell":
         units -= Decimal(amount / unit_price)
-        paid -= Decimal(amount) / exchange_rate
+        paid -= Decimal(amount) * exchange_rate
     # If the user has sold all of their units, remove the security from the
     # portfolio.
     if units == 0:
@@ -210,31 +210,42 @@ def remove_security_from_portfolio(symbol) -> None:
         conn.execute("DELETE FROM portfolio WHERE symbol = ?", (symbol,))
 
 
-def get_current_usd_exchange_rate(original_currency: str) -> Decimal:
+def get_usd_exchange_rate(original_currency: str, date: str = None) -> Decimal:
     """
-    Gets the current exchange rate from a given currency
-    to USD using ExchangeRate-API (https://www.exchangerate-api.com/).
+    Gets the exchange rate from a given currency
+    to USD using Frankfurter API (https://www.frankfurter.app/).
 
     Args:
         original_currency: original currency to convert to USD.
+        date: date to retrieve exchange rate from.
 
     Returns:
-        Current exchange rate from original currency -> USD.
+        Exchange rate from original currency -> USD.
     """
-    key = ""
-    url = f"https://v6.exchangerate-api.com/v6/{key}/latest/USD"
+    if original_currency == "USD":
+        return 1
+
+    url = None
+
+    if not date:
+        url = f"https://api.frankfurter.app/latest?from={original_currency}&to=USD"
+    else:
+        # Checks to see if data is available for the date provided
+        # Frankfurter API only provides exchange rate data since 4th January 1999
+        pdate = date.date()
+        if pdate < date(1999, 1, 4):
+            date = "1999-01-04"
+
+        url = f"https://api.frankfurter.app/{date}?from={original_currency}&to=USD"
 
     response = requests.get(url)
     data = response.json()
-
-    if data["result"] == "success":
-        rate = data["conversion_rates"][original_currency]
-        return Decimal(rate)
-    else:
-        return ""
+    return Decimal(data["rates"]["USD"])
 
 
 if __name__ == "__main__":
     print(get_info("FTSE 250"))
     print(get_info("Apple"))
     print(get_info("Ethereum"))
+
+    print((get_usd_exchange_rate("JPY", "2010-04-04")))

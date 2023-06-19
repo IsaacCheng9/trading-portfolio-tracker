@@ -21,7 +21,7 @@ from src.finance import (
     get_info,
     get_name_from_symbol,
     upsert_transaction_into_portfolio,
-    get_current_usd_exchange_rate,
+    get_usd_exchange_rate,
 )
 from src.transactions import Transaction
 from src.ui.add_transaction_ui import Ui_dialog_add_transaction
@@ -194,14 +194,13 @@ class MainWindow(QMainWindow, Ui_main_window):
         Args:
             portfolio: A list of HeldSecurity objects.
         """
-        # TODO Add conversion rate here
         for security in portfolio:
             stock_info = get_info(security.name)
-            exchange_rate = get_current_usd_exchange_rate(stock_info["currency"])
+            exchange_rate = get_usd_exchange_rate(stock_info["currency"])
 
             cur_val = (
                 Decimal(stock_info["current_value"]) * security.units
-            ) / exchange_rate
+            ) * exchange_rate
             val_change = ((cur_val * security.units)) - security.paid
             rate_of_return_abs = get_absolute_rate_of_return(
                 cur_val * security.units, security.paid
@@ -407,7 +406,7 @@ class AddTransactionDialog(QDialog, Ui_dialog_add_transaction):
         amount = Decimal(self.line_edit_amount.text())
         unit_price = Decimal(self.line_edit_unit_price.text())
         units = Decimal(amount / unit_price)
-        exchange_rate = get_current_usd_exchange_rate(currency)
+        exchange_rate = get_usd_exchange_rate(currency, str(timestamp.date()))
         # Create a new transaction object and save it to the database.
         new_transaction = Transaction(
             uuid4(),
