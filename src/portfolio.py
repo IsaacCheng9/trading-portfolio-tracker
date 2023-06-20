@@ -21,7 +21,7 @@ from src.finance import (
     get_info,
     get_name_from_symbol,
     upsert_transaction_into_portfolio,
-    get_usd_exchange_rate,
+    get_exchange_rate,
 )
 from src.transactions import Transaction
 from src.ui.add_transaction_ui import Ui_dialog_add_transaction
@@ -196,7 +196,7 @@ class MainWindow(QMainWindow, Ui_main_window):
         """
         for security in portfolio:
             stock_info = get_info(security.name)
-            exchange_rate = get_usd_exchange_rate(stock_info["currency"])
+            exchange_rate = get_exchange_rate(stock_info["currency"])
 
             cur_val = (
                 Decimal(stock_info["current_value"]) * security.units * exchange_rate
@@ -330,13 +330,16 @@ class TransactionHistoryDialog(QDialog, Ui_dialog_transaction_history):
                 0, 6, QtWidgets.QTableWidgetItem(str(transaction.amount))
             )
             self.table_widget_transactions.setItem(
-                0, 7, QtWidgets.QTableWidgetItem(str(transaction.unit_price))
+                0, 7, QtWidgets.QTableWidgetItem(str(transaction.amount_usd))
             )
             self.table_widget_transactions.setItem(
-                0, 8, QtWidgets.QTableWidgetItem(str(transaction.units))
+                0, 8, QtWidgets.QTableWidgetItem(str(transaction.unit_price))
             )
             self.table_widget_transactions.setItem(
-                0, 9, QtWidgets.QTableWidgetItem(str(transaction.id))
+                0, 9, QtWidgets.QTableWidgetItem(str(transaction.units))
+            )
+            self.table_widget_transactions.setItem(
+                0, 10, QtWidgets.QTableWidgetItem(str(transaction.id))
             )
 
         # Get the current time in DD/MM/YYYY HH:MM:SS format.
@@ -404,7 +407,7 @@ class AddTransactionDialog(QDialog, Ui_dialog_add_transaction):
         amount = Decimal(self.line_edit_amount.text())
         unit_price = Decimal(self.line_edit_unit_price.text())
         units = Decimal(amount / unit_price)
-        exchange_rate = get_usd_exchange_rate(currency, str(timestamp.date()))
+        exchange_rate = get_exchange_rate(currency, str(timestamp.date()))
         amount_usd = amount * exchange_rate
         # Create a new transaction object and save it to the database.
         new_transaction = Transaction(
