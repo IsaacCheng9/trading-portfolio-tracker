@@ -144,12 +144,13 @@ class MainWindow(QMainWindow, Ui_main_window):
         total_paid = get_total_paid_into_portfolio()
         # Sum the current value and value change for all securities in the
         # portfolio.
-        total_cur_val = sum(
-            self.current_security_info[security.name][0] for security in portfolio
+        total_cur_val = Decimal(
+            sum(self.current_security_info[security.name][0] for security in portfolio)
         )
-        total_val_change = sum(
-            self.current_security_info[security.name][1] for security in portfolio
+        total_val_change = Decimal(
+            sum(self.current_security_info[security.name][1] for security in portfolio)
         )
+        rate_of_return_absolute = get_absolute_rate_of_return(total_paid, total_cur_val)
         self.table_widget_returns.setItem(
             0, 0, QtWidgets.QTableWidgetItem(f"{total_paid:.2f}")
         )
@@ -158,6 +159,9 @@ class MainWindow(QMainWindow, Ui_main_window):
         )
         self.table_widget_returns.setItem(
             0, 2, QtWidgets.QTableWidgetItem(f"{total_val_change:.2f}")
+        )
+        self.table_widget_returns.setItem(
+            0, 3, QtWidgets.QTableWidgetItem(f"{rate_of_return_absolute:.3f}%")
         )
 
     def load_portfolio_table(self) -> None:
