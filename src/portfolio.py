@@ -138,10 +138,10 @@ class MainWindow(QMainWindow, Ui_main_window):
             ]
             self.table_widget_portfolio.insertRow(0)
             self.table_widget_portfolio.setItem(
-                0, 0, QtWidgets.QTableWidgetItem(security.symbol)
+                0, 1, QtWidgets.QTableWidgetItem(security.symbol)
             )
             self.table_widget_portfolio.setItem(
-                0, 1, QtWidgets.QTableWidgetItem(security.name)
+                0, 0, QtWidgets.QTableWidgetItem(security.name)
             )
             weight = str(
                 round(
@@ -234,11 +234,11 @@ class MainWindow(QMainWindow, Ui_main_window):
             row = self.portfolio_view_mapping[security.name]
             self.table_widget_portfolio.setItem(
                 row,
-                0,
+                1,
                 QtWidgets.QTableWidgetItem(security.symbol),
             )
             self.table_widget_portfolio.setItem(
-                row, 1, QtWidgets.QTableWidgetItem(security.name)
+                row, 0, QtWidgets.QTableWidgetItem(security.name)
             )
             weight = str(
                 round(
