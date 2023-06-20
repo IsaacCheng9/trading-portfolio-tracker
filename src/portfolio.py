@@ -20,6 +20,7 @@ from src.finance import (
     get_absolute_rate_of_return,
     get_info,
     get_name_from_symbol,
+    get_total_paid_into_portfolio,
     upsert_transaction_into_portfolio,
 )
 from src.transactions import Transaction
@@ -96,6 +97,7 @@ class MainWindow(QMainWindow, Ui_main_window):
 
         # Calculates the interval for the refreshing of stock prices
         self.load_portfolio_table()
+        self.update_returns_table()
         portfolio = HeldSecurity.load_portfolio()
         interval = None
 
@@ -132,6 +134,31 @@ class MainWindow(QMainWindow, Ui_main_window):
         """
         self.transaction_history_dialog = TransactionHistoryDialog()
         self.transaction_history_dialog.open()
+
+    def update_returns_table(self) -> None:
+        """
+        Update the table of returns based on the latest prices.
+        """
+        portfolio = HeldSecurity.load_portfolio()
+        self.get_pricing_data_for_securities(portfolio)
+        total_paid = get_total_paid_into_portfolio()
+        # Sum the current value and value change for all securities in the
+        # portfolio.
+        total_cur_val = sum(
+            self.current_security_info[security.name][0] for security in portfolio
+        )
+        total_val_change = sum(
+            self.current_security_info[security.name][1] for security in portfolio
+        )
+        self.table_widget_returns.setItem(
+            0, 0, QtWidgets.QTableWidgetItem(f"{total_paid:.2f}")
+        )
+        self.table_widget_returns.setItem(
+            0, 1, QtWidgets.QTableWidgetItem(f"{total_cur_val:.2f}")
+        )
+        self.table_widget_returns.setItem(
+            0, 2, QtWidgets.QTableWidgetItem(f"{total_val_change:.2f}")
+        )
 
     def load_portfolio_table(self) -> None:
         """

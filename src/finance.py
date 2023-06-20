@@ -208,6 +208,21 @@ def remove_security_from_portfolio(symbol) -> None:
         conn.execute("DELETE FROM portfolio WHERE symbol = ?", (symbol,))
 
 
+def get_total_paid_into_portfolio() -> Decimal:
+    """
+    Get the total amount paid into the portfolio.
+
+    Returns:
+        The total amount paid into the portfolio.
+    """
+    with duckdb.connect(database=DB_PATH) as conn:
+        result = conn.execute(
+            "SELECT SUM(CAST(paid AS DECIMAL)) FROM portfolio"
+        ).fetchone()
+
+    return Decimal(result[0]) if result else Decimal(0)
+
+
 if __name__ == "__main__":
     print(get_info("FTSE 250"))
     print(get_info("Apple"))
