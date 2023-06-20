@@ -64,7 +64,8 @@ class MainWindow(QMainWindow, Ui_main_window):
         super().__init__()
         self.setupUi(self)
 
-        # Stores current information about each security (current price, change, abs rate of return)
+        # Stores current information about each security:
+        # (current price, change, abs rate of return)
         self.current_security_info = {}
 
         # Mapping between asset name and the row it occupies in the
@@ -78,13 +79,23 @@ class MainWindow(QMainWindow, Ui_main_window):
 
         # Set the resize mode of the table to resize the columns to fit
         # the contents by default.
-        table_header = self.table_widget_portfolio.horizontalHeader()
-        table_header.setSectionResizeMode(
+        returns_table_header = self.table_widget_returns.horizontalHeader()
+        returns_table_header.setSectionResizeMode(
             QtWidgets.QHeaderView.ResizeMode.ResizeToContents
         )
-        self.load_portfolio_table()
+        portfolio_table_header = self.table_widget_portfolio.horizontalHeader()
+        portfolio_table_header.setSectionResizeMode(
+            QtWidgets.QHeaderView.ResizeMode.ResizeToContents
+        )
+        # Resize the returns table to fit one row.
+        self.table_widget_returns.setFixedHeight(
+            self.table_widget_returns.rowHeight(0)
+            + self.table_widget_returns.horizontalHeader().height()
+            + 2
+        )
 
         # Calculates the interval for the refreshing of stock prices
+        self.load_portfolio_table()
         portfolio = HeldSecurity.load_portfolio()
         interval = None
 
@@ -92,7 +103,7 @@ class MainWindow(QMainWindow, Ui_main_window):
         if diff > 0:
             interval = 6000
         else:
-            # TODO Potentially improve dynamic calculation?
+            # TODO Potentially improve dynamic calculation? See 'Smarter scraping' section: https://pypi.org/project/yfinance/
             diff = abs(diff)
             interval = 60000 + (diff * 1.1 * 60)
 
