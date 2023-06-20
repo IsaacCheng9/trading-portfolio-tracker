@@ -70,7 +70,7 @@ def get_history(name: str, period: str = "1mo") -> pd.DataFrame:
     return tick.history(period=period)
 
 
-def get_info(name: str) -> dict[str, str]:
+def get_info(symbol: str) -> dict[str, str]:
     """
     Returns information about a stock/company.
     Accounts for the difference in the yfinance library in returning
@@ -78,14 +78,14 @@ def get_info(name: str) -> dict[str, str]:
     delay in reporting of price.
 
     Args:
-        name: Name of the company/index/asset/...
+        symbol: Symbol of the company/index/asset/...
 
     Returns:
         Dictionary containing information about the stock, future, or index.
     """
     # Creates a yfinance ticker object for a given asset
     try:
-        ticker = yf.Ticker(get_symbol(name))
+        ticker = yf.Ticker(symbol)
     except:
         return False
 
@@ -145,6 +145,8 @@ def upsert_transaction_into_portfolio(
         unit_price: The unit price of the security.
         paid_standard_currency: The amount of the transaction after conversion to a currency.
     """
+    #TODO MODIFY tHIS WItH PAID_STANDARD_CURRENCY
+    #TODO, ENSURE ACTUAL VALUE DISPLAYED
     # Search for the security in the portfolio.
     with duckdb.connect(database=DB_PATH) as conn:
         # Retrieve the security from the portfolio table based on the symbol
@@ -210,11 +212,7 @@ def remove_security_from_portfolio(symbol: str) -> None:
         conn.execute("DELETE FROM portfolio WHERE symbol = ?", (symbol,))
 
 
-def get_exchange_rate(
-    original_currency: str, 
-    convert_to: str = "GBP", 
-    provided_date: str = None
-) -> Decimal:
+def get_exchange_rate(original_currency: str, convert_to: str = "GBP", provided_date: str = None) -> Decimal:
     """
     Gets the exchange rate from a given currency
     to a given currency using Frankfurter API (https://www.frankfurter.app/).
@@ -253,5 +251,7 @@ if __name__ == "__main__":
     print(get_info("FTSE 250"))
     print(get_info("Apple"))
     print(get_info("Ethereum"))
+    
+    print(get_info("3697.T"))
 
     print((get_exchange_rate("JPY", "GBP", "1998-04-04")))
