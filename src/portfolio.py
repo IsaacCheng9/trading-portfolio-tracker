@@ -165,6 +165,7 @@ class MainWindow(QMainWindow, Ui_main_window):
         self.table_widget_returns.setItem(
             0, 3, QtWidgets.QTableWidgetItem(f"{rate_of_return_absolute:.3f}%")
         )
+        # TODO: Add time-weighted rate of return metric.
 
     def load_portfolio_table(self) -> None:
         """

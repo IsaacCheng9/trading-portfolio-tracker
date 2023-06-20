@@ -168,11 +168,6 @@
          <string>Rate of Return (Absolute)</string>
         </property>
        </column>
-       <column>
-        <property name="text">
-         <string>Rate of Return (Time-Weighted)</string>
-        </property>
-       </column>
        <item row="0" column="0">
         <property name="text">
          <string>N/A</string>
@@ -189,11 +184,6 @@
         </property>
        </item>
        <item row="0" column="3">
-        <property name="text">
-         <string>N/A</string>
-        </property>
-       </item>
-       <item row="0" column="4">
         <property name="text">
          <string>N/A</string>
         </property>
