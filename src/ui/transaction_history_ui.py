@@ -132,7 +132,7 @@ class Ui_dialog_transaction_history(object):
         ___qtablewidgetitem6 = self.table_widget_transactions.horizontalHeaderItem(6)
         ___qtablewidgetitem6.setText(QCoreApplication.translate("dialog_transaction_history", u"Amount", None));
         ___qtablewidgetitem7 = self.table_widget_transactions.horizontalHeaderItem(7)
-        ___qtablewidgetitem7.setText(QCoreApplication.translate("dialog_transaction_history", u"Amount (USD)", None));
+        ___qtablewidgetitem7.setText(QCoreApplication.translate("dialog_transaction_history", u"Amount (GBP)", None));
         ___qtablewidgetitem8 = self.table_widget_transactions.horizontalHeaderItem(8)
         ___qtablewidgetitem8.setText(QCoreApplication.translate("dialog_transaction_history", u"Unit Price", None));
         ___qtablewidgetitem9 = self.table_widget_transactions.horizontalHeaderItem(9)

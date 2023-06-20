@@ -200,7 +200,7 @@ class MainWindow(QMainWindow, Ui_main_window):
 
             cur_val = (
                 Decimal(stock_info["current_value"]) * security.units * exchange_rate
-            )
+            ) #TODO Change this!
             val_change = cur_val - security.paid
             rate_of_return_abs = get_absolute_rate_of_return(cur_val, security.paid)
 
@@ -330,7 +330,7 @@ class TransactionHistoryDialog(QDialog, Ui_dialog_transaction_history):
                 0, 6, QtWidgets.QTableWidgetItem(str(transaction.amount))
             )
             self.table_widget_transactions.setItem(
-                0, 7, QtWidgets.QTableWidgetItem(str(transaction.amount_usd))
+                0, 7, QtWidgets.QTableWidgetItem(str(transaction.paid_standard_currency))
             )
             self.table_widget_transactions.setItem(
                 0, 8, QtWidgets.QTableWidgetItem(str(transaction.unit_price))
@@ -407,8 +407,8 @@ class AddTransactionDialog(QDialog, Ui_dialog_add_transaction):
         amount = Decimal(self.line_edit_amount.text())
         unit_price = Decimal(self.line_edit_unit_price.text())
         units = Decimal(amount / unit_price)
-        exchange_rate = get_exchange_rate(currency, str(timestamp.date()))
-        amount_usd = amount * exchange_rate
+        exchange_rate = get_exchange_rate(currency, provided_date=str(timestamp.date()))
+        paid_standard_currency = amount * exchange_rate
         # Create a new transaction object and save it to the database.
         new_transaction = Transaction(
             uuid4(),
@@ -420,12 +420,11 @@ class AddTransactionDialog(QDialog, Ui_dialog_add_transaction):
             amount,
             unit_price,
             units,
-            exchange_rate,
-            amount_usd,
+            paid_standard_currency,
         )
         new_transaction.save()
         upsert_transaction_into_portfolio(
-            transaction_type, symbol, currency, amount, unit_price, exchange_rate
+            transaction_type, symbol, currency, amount, unit_price, paid_standard_currency
         )
         self.main_window.load_portfolio_table()
         self.close()
