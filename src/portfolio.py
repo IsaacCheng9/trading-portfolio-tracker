@@ -405,6 +405,7 @@ class AddTransactionDialog(QDialog, Ui_dialog_add_transaction):
         unit_price = Decimal(self.line_edit_unit_price.text())
         units = Decimal(amount / unit_price)
         exchange_rate = get_usd_exchange_rate(currency, str(timestamp.date()))
+        amount_usd = amount * exchange_rate
         # Create a new transaction object and save it to the database.
         new_transaction = Transaction(
             uuid4(),
@@ -417,6 +418,7 @@ class AddTransactionDialog(QDialog, Ui_dialog_add_transaction):
             unit_price,
             units,
             exchange_rate,
+            amount_usd,
         )
         new_transaction.save()
         upsert_transaction_into_portfolio(
