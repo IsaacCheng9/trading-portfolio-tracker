@@ -16,7 +16,7 @@
    </font>
   </property>
   <property name="windowTitle">
-   <string>Trading Portfolio Tracker</string>
+   <string>Trading Portfolio Tracker – Portfolio</string>
   </property>
   <widget class="QWidget" name="central_widget">
    <widget class="QWidget" name="verticalLayoutWidget">

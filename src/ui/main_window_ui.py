@@ -199,7 +199,7 @@ class Ui_main_window(object):
     # setupUi
 
     def retranslateUi(self, main_window):
-        main_window.setWindowTitle(QCoreApplication.translate("main_window", u"Trading Portfolio Tracker", None))
+        main_window.setWindowTitle(QCoreApplication.translate("main_window", u"Trading Portfolio Tracker \u2013\u00a0Portfolio", None))
         self.lbl_app_header.setText(QCoreApplication.translate("main_window", u"Trading Portfolio Tracker", None))
         self.btn_add_transaction.setText(QCoreApplication.translate("main_window", u"Add Transaction (Buy/Sell)", None))
         self.btn_view_transactions.setText(QCoreApplication.translate("main_window", u"View Transactions", None))
