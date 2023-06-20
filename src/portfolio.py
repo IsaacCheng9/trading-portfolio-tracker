@@ -151,6 +151,8 @@ class MainWindow(QMainWindow, Ui_main_window):
             sum(self.current_security_info[security.name][1] for security in portfolio)
         )
         rate_of_return_absolute = get_absolute_rate_of_return(total_paid, total_cur_val)
+
+        # Update the table with the new values.
         self.table_widget_returns.setItem(
             0, 0, QtWidgets.QTableWidgetItem(f"{total_paid:.2f}")
         )
@@ -322,6 +324,7 @@ class MainWindow(QMainWindow, Ui_main_window):
                 ),
             )
 
+        self.update_returns_table()
         # Update last updated time label in dd-mm-yyyy hh:mm:ss format
         cur_time = time.strftime("%d/%m/%Y %H:%M:%S")
         self.lbl_last_updated.setText(f"Last Updated: {cur_time}")
