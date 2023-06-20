@@ -200,9 +200,6 @@ class MainWindow(QMainWindow, Ui_main_window):
             cur_val = (
                 Decimal(stock_info["current_value"]) * security.units
             )
-            
-            gbp_cur_val = 0 # TODO PLACEHOLDER. CHANGE WEIGHTING CALCULATIONS and ROR
-            
             val_change = cur_val - security.paid
             rate_of_return_abs = get_absolute_rate_of_return(cur_val, security.paid)
 
@@ -212,7 +209,6 @@ class MainWindow(QMainWindow, Ui_main_window):
                 cur_val,
                 val_change,
                 rate_of_return_abs,
-                #gbp_cur_val
             )
 
     def update_stock_prices(self) -> None:
@@ -427,7 +423,7 @@ class AddTransactionDialog(QDialog, Ui_dialog_add_transaction):
         )
         new_transaction.save()
         upsert_transaction_into_portfolio(
-            transaction_type, symbol, currency, amount, unit_price, paid_standard_currency
+            transaction_type, symbol, currency, amount, unit_price
         )
         self.main_window.load_portfolio_table()
         self.close()
@@ -489,7 +485,6 @@ class HeldSecurity:
             total_value += current_values[key][0]
 
         return total_value
-#TODO Change storing of paid in portfolio
 
 if __name__ == "__main__":
     with duckdb.connect(database=DB_PATH) as conn:

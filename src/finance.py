@@ -132,7 +132,6 @@ def upsert_transaction_into_portfolio(
     currency: str,
     amount: Decimal,
     unit_price: Decimal,
-    paid_standard_currency: Decimal
 ) -> None:
     """
     Update/insert the portfolio based on a new transaction.
@@ -145,8 +144,6 @@ def upsert_transaction_into_portfolio(
         unit_price: The unit price of the security.
         paid_standard_currency: The amount of the transaction after conversion to a currency.
     """
-    #TODO MODIFY tHIS WItH PAID_STANDARD_CURRENCY
-    #TODO, ENSURE ACTUAL VALUE DISPLAYED
     # Search for the security in the portfolio.
     with duckdb.connect(database=DB_PATH) as conn:
         # Retrieve the security from the portfolio table based on the symbol
@@ -183,10 +180,10 @@ def upsert_transaction_into_portfolio(
     paid = Decimal(paid)
     if type == "Buy":
         units += Decimal(amount / unit_price)
-        paid += Decimal(paid)
+        paid += Decimal(amount) 
     elif type == "Sell":
         units -= Decimal(amount / unit_price)
-        paid -= Decimal(paid)
+        paid -= Decimal(amount)
     # If the user has sold all of their units, remove the security from the
     # portfolio.
     if units == 0:
