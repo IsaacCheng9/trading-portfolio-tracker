@@ -199,12 +199,10 @@ class MainWindow(QMainWindow, Ui_main_window):
             exchange_rate = get_usd_exchange_rate(stock_info["currency"])
 
             cur_val = (
-                Decimal(stock_info["current_value"]) * security.units
-            ) * exchange_rate
-            val_change = ((cur_val * security.units)) - security.paid
-            rate_of_return_abs = get_absolute_rate_of_return(
-                cur_val * security.units, security.paid
+                Decimal(stock_info["current_value"]) * security.units * exchange_rate
             )
+            val_change = cur_val - security.paid
+            rate_of_return_abs = get_absolute_rate_of_return(cur_val, security.paid)
 
             # Stores the live security information in a dictionary indexed
             # by the name of the security

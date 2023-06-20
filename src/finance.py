@@ -228,10 +228,11 @@ def get_usd_exchange_rate(original_currency: str, date: str = None) -> Decimal:
     url = None
 
     if not date:
+        # If no date is provided, the most recent exchange rate is retrieved.
         url = f"https://api.frankfurter.app/latest?from={original_currency}&to=USD"
     else:
         # Checks to see if data is available for the date provided
-        # Frankfurter API only provides exchange rate data since 4th January 1999
+        # Frankfurter API only provides exchange rate data since 4th January 1999.
         pdate = date.date()
         if pdate < date(1999, 1, 4):
             date = "1999-01-04"
