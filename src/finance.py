@@ -9,7 +9,7 @@ import yfinance as yf
 import pandas as pd
 from decimal import Decimal
 from requests import exceptions
-from datetime import date
+from datetime import datetime, date
 
 DB_PATH = "resources/portfolio.db"
 
@@ -210,14 +210,14 @@ def remove_security_from_portfolio(symbol) -> None:
         conn.execute("DELETE FROM portfolio WHERE symbol = ?", (symbol,))
 
 
-def get_usd_exchange_rate(original_currency: str, date: str = None) -> Decimal:
+def get_usd_exchange_rate(original_currency: str, provided_date: str = None) -> Decimal:
     """
     Gets the exchange rate from a given currency
     to USD using Frankfurter API (https://www.frankfurter.app/).
 
     Args:
         original_currency: original currency to convert to USD.
-        date: date to retrieve exchange rate from.
+        provided_date: date to retrieve exchange rate from.
 
     Returns:
         Exchange rate from original currency -> USD.
@@ -227,17 +227,17 @@ def get_usd_exchange_rate(original_currency: str, date: str = None) -> Decimal:
 
     url = None
 
-    if not date:
+    if not provided_date:
         # If no date is provided, the most recent exchange rate is retrieved.
         url = f"https://api.frankfurter.app/latest?from={original_currency}&to=USD"
     else:
         # Checks to see if data is available for the date provided
         # Frankfurter API only provides exchange rate data since 4th January 1999.
-        pdate = date.date()
+        pdate = datetime.strptime(provided_date, "%Y-%m-%d").date()
         if pdate < date(1999, 1, 4):
-            date = "1999-01-04"
+            provided_date = "1999-01-04"
 
-        url = f"https://api.frankfurter.app/{date}?from={original_currency}&to=USD"
+        url = f"https://api.frankfurter.app/{provided_date}?from={original_currency}&to=USD"
 
     response = requests.get(url)
     data = response.json()
@@ -249,4 +249,4 @@ if __name__ == "__main__":
     print(get_info("Apple"))
     print(get_info("Ethereum"))
 
-    print((get_usd_exchange_rate("JPY", "2010-04-04")))
+    print((get_usd_exchange_rate("JPY", "1998-04-04")))
