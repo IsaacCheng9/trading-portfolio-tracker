@@ -89,6 +89,21 @@ class Ui_main_window(object):
 
         self.vert_layout_window.addWidget(self.lbl_last_updated)
 
+        self.hori_line_last_updated = QFrame(self.verticalLayoutWidget)
+        self.hori_line_last_updated.setObjectName(u"hori_line_last_updated")
+        self.hori_line_last_updated.setFrameShape(QFrame.HLine)
+        self.hori_line_last_updated.setFrameShadow(QFrame.Sunken)
+
+        self.vert_layout_window.addWidget(self.hori_line_last_updated)
+
+        self.lbl_portfolio_perf = QLabel(self.verticalLayoutWidget)
+        self.lbl_portfolio_perf.setObjectName(u"lbl_portfolio_perf")
+        font2 = QFont()
+        font2.setPointSize(16)
+        self.lbl_portfolio_perf.setFont(font2)
+
+        self.vert_layout_window.addWidget(self.lbl_portfolio_perf)
+
         self.table_widget_returns = QTableWidget(self.verticalLayoutWidget)
         if (self.table_widget_returns.columnCount() < 5):
             self.table_widget_returns.setColumnCount(5)
@@ -122,6 +137,12 @@ class Ui_main_window(object):
         self.table_widget_returns.verticalHeader().setVisible(False)
 
         self.vert_layout_window.addWidget(self.table_widget_returns)
+
+        self.lbl_holdings = QLabel(self.verticalLayoutWidget)
+        self.lbl_holdings.setObjectName(u"lbl_holdings")
+        self.lbl_holdings.setFont(font2)
+
+        self.vert_layout_window.addWidget(self.lbl_holdings)
 
         self.table_widget_portfolio = QTableWidget(self.verticalLayoutWidget)
         if (self.table_widget_portfolio.columnCount() < 8):
@@ -184,6 +205,7 @@ class Ui_main_window(object):
         self.btn_view_transactions.setText(QCoreApplication.translate("main_window", u"View Transactions", None))
         self.btn_view_portfolio_perf.setText(QCoreApplication.translate("main_window", u"Analyse Portfolio Performance", None))
         self.lbl_last_updated.setText(QCoreApplication.translate("main_window", u"Last Updated: DD/MM/YYYY HH:MM:SS", None))
+        self.lbl_portfolio_perf.setText(QCoreApplication.translate("main_window", u"Portfolio Performance", None))
         ___qtablewidgetitem = self.table_widget_returns.horizontalHeaderItem(0)
         ___qtablewidgetitem.setText(QCoreApplication.translate("main_window", u"Total Paid In", None));
         ___qtablewidgetitem1 = self.table_widget_returns.horizontalHeaderItem(1)
@@ -211,6 +233,7 @@ class Ui_main_window(object):
         ___qtablewidgetitem10.setText(QCoreApplication.translate("main_window", u"N/A", None));
         self.table_widget_returns.setSortingEnabled(__sortingEnabled)
 
+        self.lbl_holdings.setText(QCoreApplication.translate("main_window", u"Your Holdings", None))
         ___qtablewidgetitem11 = self.table_widget_portfolio.horizontalHeaderItem(0)
         ___qtablewidgetitem11.setText(QCoreApplication.translate("main_window", u"Symbol", None));
         ___qtablewidgetitem12 = self.table_widget_portfolio.horizontalHeaderItem(1)

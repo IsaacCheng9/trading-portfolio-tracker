@@ -114,6 +114,25 @@
       </widget>
      </item>
      <item>
+      <widget class="Line" name="hori_line_last_updated">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="lbl_portfolio_perf">
+       <property name="font">
+        <font>
+         <pointsize>16</pointsize>
+        </font>
+       </property>
+       <property name="text">
+        <string>Portfolio Performance</string>
+       </property>
+      </widget>
+     </item>
+     <item>
       <widget class="QTableWidget" name="table_widget_returns">
        <property name="showGrid">
         <bool>true</bool>
@@ -179,6 +198,18 @@
          <string>N/A</string>
         </property>
        </item>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="lbl_holdings">
+       <property name="font">
+        <font>
+         <pointsize>16</pointsize>
+        </font>
+       </property>
+       <property name="text">
+        <string>Your Holdings</string>
+       </property>
       </widget>
      </item>
      <item>
