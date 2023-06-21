@@ -25,6 +25,18 @@ framework ensures cross-platform compatibility and high performance.
 
 ## Usage
 
+### Operating System
+
+Compatible with:
+
+- macOS
+- Windows
+- Linux
+
+### Python Version
+
+We have developed and tested this application to work on Python 3.8 onwards.
+
 ### Running the Application
 
 To run the application, you should follow the following steps from the
@@ -48,3 +60,10 @@ To run the tests, use the following command from the [tests](tests/) directory:
 ```bash
 pytest
 ```
+
+## Data Privacy
+
+We store all data locally on the user's computer in a
+DuckDB database at [/resources/portfolio.db](./resources/portfolio.db). Live
+market data is fetched from Yahoo Finance, but we do not store any of this data
+permanently.
