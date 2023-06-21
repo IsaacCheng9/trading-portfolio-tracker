@@ -74,25 +74,25 @@ class Ui_dialog_add_transaction(object):
 
         self.form_layout_transaction.setWidget(1, QFormLayout.FieldRole, self.datetime_edit_transaction)
 
-        self.lbl_ticker = QLabel(self.verticalLayoutWidget)
-        self.lbl_ticker.setObjectName(u"lbl_ticker")
-
-        self.form_layout_transaction.setWidget(2, QFormLayout.LabelRole, self.lbl_ticker)
-
-        self.line_edit_symbol = QLineEdit(self.verticalLayoutWidget)
-        self.line_edit_symbol.setObjectName(u"line_edit_symbol")
-
-        self.form_layout_transaction.setWidget(2, QFormLayout.FieldRole, self.line_edit_symbol)
-
         self.lbl_platform = QLabel(self.verticalLayoutWidget)
         self.lbl_platform.setObjectName(u"lbl_platform")
 
-        self.form_layout_transaction.setWidget(3, QFormLayout.LabelRole, self.lbl_platform)
+        self.form_layout_transaction.setWidget(2, QFormLayout.LabelRole, self.lbl_platform)
 
         self.line_edit_platform = QLineEdit(self.verticalLayoutWidget)
         self.line_edit_platform.setObjectName(u"line_edit_platform")
 
-        self.form_layout_transaction.setWidget(3, QFormLayout.FieldRole, self.line_edit_platform)
+        self.form_layout_transaction.setWidget(2, QFormLayout.FieldRole, self.line_edit_platform)
+
+        self.lbl_ticker = QLabel(self.verticalLayoutWidget)
+        self.lbl_ticker.setObjectName(u"lbl_ticker")
+
+        self.form_layout_transaction.setWidget(3, QFormLayout.LabelRole, self.lbl_ticker)
+
+        self.line_edit_symbol = QLineEdit(self.verticalLayoutWidget)
+        self.line_edit_symbol.setObjectName(u"line_edit_symbol")
+
+        self.form_layout_transaction.setWidget(3, QFormLayout.FieldRole, self.line_edit_symbol)
 
         self.lbl_currency = QLabel(self.verticalLayoutWidget)
         self.lbl_currency.setObjectName(u"lbl_currency")
@@ -104,16 +104,6 @@ class Ui_dialog_add_transaction(object):
 
         self.form_layout_transaction.setWidget(4, QFormLayout.FieldRole, self.line_edit_currency)
 
-        self.lbl_amount = QLabel(self.verticalLayoutWidget)
-        self.lbl_amount.setObjectName(u"lbl_amount")
-
-        self.form_layout_transaction.setWidget(6, QFormLayout.LabelRole, self.lbl_amount)
-
-        self.line_edit_amount = QLineEdit(self.verticalLayoutWidget)
-        self.line_edit_amount.setObjectName(u"line_edit_amount")
-
-        self.form_layout_transaction.setWidget(6, QFormLayout.FieldRole, self.line_edit_amount)
-
         self.lbl_unit_price = QLabel(self.verticalLayoutWidget)
         self.lbl_unit_price.setObjectName(u"lbl_unit_price")
 
@@ -123,6 +113,16 @@ class Ui_dialog_add_transaction(object):
         self.line_edit_unit_price.setObjectName(u"line_edit_unit_price")
 
         self.form_layout_transaction.setWidget(5, QFormLayout.FieldRole, self.line_edit_unit_price)
+
+        self.line_edit_amount = QLineEdit(self.verticalLayoutWidget)
+        self.line_edit_amount.setObjectName(u"line_edit_amount")
+
+        self.form_layout_transaction.setWidget(6, QFormLayout.FieldRole, self.line_edit_amount)
+
+        self.lbl_amount = QLabel(self.verticalLayoutWidget)
+        self.lbl_amount.setObjectName(u"lbl_amount")
+
+        self.form_layout_transaction.setWidget(6, QFormLayout.LabelRole, self.lbl_amount)
 
 
         self.vert_layout_dialog.addLayout(self.form_layout_transaction)
@@ -176,11 +176,11 @@ class Ui_dialog_add_transaction(object):
         self.combo_box_transaction_type.setItemText(1, QCoreApplication.translate("dialog_add_transaction", u"Sell", None))
 
         self.lbl_timestamp.setText(QCoreApplication.translate("dialog_add_transaction", u"Timestamp:", None))
-        self.lbl_ticker.setText(QCoreApplication.translate("dialog_add_transaction", u"Symbol:", None))
         self.lbl_platform.setText(QCoreApplication.translate("dialog_add_transaction", u"Platform:", None))
+        self.lbl_ticker.setText(QCoreApplication.translate("dialog_add_transaction", u"Symbol:", None))
         self.lbl_currency.setText(QCoreApplication.translate("dialog_add_transaction", u"Currency:", None))
-        self.lbl_amount.setText(QCoreApplication.translate("dialog_add_transaction", u"Amount:", None))
         self.lbl_unit_price.setText(QCoreApplication.translate("dialog_add_transaction", u"Unit Price:", None))
+        self.lbl_amount.setText(QCoreApplication.translate("dialog_add_transaction", u"Amount:", None))
         self.lbl_status_msg.setText(QCoreApplication.translate("dialog_add_transaction", u"Enter all the details of your transaction before submitting.", None))
         self.btn_submit_transaction.setText(QCoreApplication.translate("dialog_add_transaction", u"Submit", None))
         self.btn_cancel_transaction.setText(QCoreApplication.translate("dialog_add_transaction", u"Cancel", None))
