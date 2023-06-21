@@ -133,7 +133,7 @@ class MainWindow(QMainWindow, Ui_main_window):
         self.table_widget_portfolio.setRowCount(0)
 
         for row, security in enumerate(portfolio):
-            cur_val, val_change, rate_of_return_abs = self.current_security_info[
+            cur_val, val_change, rate_of_return_abs, _ = self.current_security_info[
                 security.name
             ]
             self.table_widget_portfolio.insertRow(0)
@@ -146,8 +146,8 @@ class MainWindow(QMainWindow, Ui_main_window):
             weight = str(
                 round(
                     (
-                        self.current_security_info[security.name][0]
-                        / HeldSecurity.get_total_value(self.current_security_info)
+                        self.current_security_info[security.name][3]
+                        / HeldSecurity.get_total_value(self.current_security_info, True)
                     )
                     * 100,
                     3,
@@ -197,9 +197,10 @@ class MainWindow(QMainWindow, Ui_main_window):
         for security in portfolio:
             stock_info = get_info(security.symbol)
 
-            cur_val = (
-                Decimal(stock_info["current_value"]) * security.units
-            )
+            cur_val = Decimal(stock_info["current_value"]) * security.units
+            exhange_rate = get_exchange_rate(stock_info["currency"])
+            cur_val_gbp = cur_val * exhange_rate
+
             val_change = cur_val - security.paid
             rate_of_return_abs = get_absolute_rate_of_return(cur_val, security.paid)
 
@@ -209,6 +210,7 @@ class MainWindow(QMainWindow, Ui_main_window):
                 cur_val,
                 val_change,
                 rate_of_return_abs,
+                cur_val_gbp,
             )
 
     def update_stock_prices(self) -> None:
@@ -242,8 +244,8 @@ class MainWindow(QMainWindow, Ui_main_window):
             weight = str(
                 round(
                     (
-                        self.current_security_info[security.name][0]
-                        / HeldSecurity.get_total_value(self.current_security_info)
+                        self.current_security_info[security.name][3]
+                        / HeldSecurity.get_total_value(self.current_security_info, True)
                     )
                     * 100,
                     3,
@@ -329,7 +331,9 @@ class TransactionHistoryDialog(QDialog, Ui_dialog_transaction_history):
                 0, 6, QtWidgets.QTableWidgetItem(str(transaction.amount))
             )
             self.table_widget_transactions.setItem(
-                0, 7, QtWidgets.QTableWidgetItem(str(transaction.paid_standard_currency))
+                0,
+                7,
+                QtWidgets.QTableWidgetItem(str(transaction.paid_standard_currency)),
             )
             self.table_widget_transactions.setItem(
                 0, 8, QtWidgets.QTableWidgetItem(str(transaction.unit_price))
@@ -472,19 +476,25 @@ class HeldSecurity:
 
     @staticmethod
     def get_total_value(
-        current_values: dict[str, tuple[Decimal, Decimal, Decimal]]
+        current_values: dict[str, tuple[Decimal, Decimal, Decimal]], gbp: bool = False
     ) -> Decimal:
         """
         Calculate the total current value of the user's portfolio.
 
+        Args:
+            current_values: Current stock values.
+            gbp: If total value of the user's portfolio should be calculated in a standard currency (gbp)
+
         Returns:
             The total value of the portfolio.
         """
+        cur_vals_key = 3 if gbp else 0
         total_value = Decimal(0)
         for key in current_values:
-            total_value += current_values[key][0]
+            total_value += current_values[key][cur_vals_key]
 
         return total_value
+
 
 if __name__ == "__main__":
     with duckdb.connect(database=DB_PATH) as conn:
