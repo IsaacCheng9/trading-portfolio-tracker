@@ -161,6 +161,11 @@
       </column>
       <column>
        <property name="text">
+        <string>Exchange Rate to GBP</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
         <string>Transaction ID</string>
        </property>
       </column>
