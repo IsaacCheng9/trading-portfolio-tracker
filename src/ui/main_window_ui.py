@@ -107,6 +107,9 @@ class Ui_main_window(object):
         self.table_widget_returns = QTableWidget(self.verticalLayoutWidget)
         if (self.table_widget_returns.columnCount() < 4):
             self.table_widget_returns.setColumnCount(4)
+        self.table_widget_portfolio = QTableWidget(self.verticalLayoutWidget)
+        if (self.table_widget_portfolio.columnCount() < 9):
+            self.table_widget_portfolio.setColumnCount(9)
         __qtablewidgetitem = QTableWidgetItem()
         self.table_widget_returns.setHorizontalHeaderItem(0, __qtablewidgetitem)
         __qtablewidgetitem1 = QTableWidgetItem()
@@ -159,6 +162,9 @@ class Ui_main_window(object):
         self.table_widget_portfolio.setHorizontalHeaderItem(6, __qtablewidgetitem15)
         __qtablewidgetitem16 = QTableWidgetItem()
         self.table_widget_portfolio.setHorizontalHeaderItem(7, __qtablewidgetitem16)
+        self.table_widget_portfolio.setHorizontalHeaderItem(7, __qtablewidgetitem7)
+        __qtablewidgetitem8 = QTableWidgetItem()
+        self.table_widget_portfolio.setHorizontalHeaderItem(8, __qtablewidgetitem8)
         self.table_widget_portfolio.setObjectName(u"table_widget_portfolio")
         sizePolicy = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
@@ -242,5 +248,23 @@ class Ui_main_window(object):
         ___qtablewidgetitem15.setText(QCoreApplication.translate("main_window", u"Change", None));
         ___qtablewidgetitem16 = self.table_widget_portfolio.horizontalHeaderItem(7)
         ___qtablewidgetitem16.setText(QCoreApplication.translate("main_window", u"Rate of Return (Absolute)", None));
+        ___qtablewidgetitem = self.table_widget_portfolio.horizontalHeaderItem(0)
+        ___qtablewidgetitem.setText(QCoreApplication.translate("main_window", u"Symbol", None));
+        ___qtablewidgetitem1 = self.table_widget_portfolio.horizontalHeaderItem(1)
+        ___qtablewidgetitem1.setText(QCoreApplication.translate("main_window", u"Name", None));
+        ___qtablewidgetitem2 = self.table_widget_portfolio.horizontalHeaderItem(2)
+        ___qtablewidgetitem2.setText(QCoreApplication.translate("main_window", u"Weight", None));
+        ___qtablewidgetitem3 = self.table_widget_portfolio.horizontalHeaderItem(3)
+        ___qtablewidgetitem3.setText(QCoreApplication.translate("main_window", u"Currency", None));
+        ___qtablewidgetitem4 = self.table_widget_portfolio.horizontalHeaderItem(4)
+        ___qtablewidgetitem4.setText(QCoreApplication.translate("main_window", u"Units", None));
+        ___qtablewidgetitem5 = self.table_widget_portfolio.horizontalHeaderItem(5)
+        ___qtablewidgetitem5.setText(QCoreApplication.translate("main_window", u"Unit Price", None));
+        ___qtablewidgetitem6 = self.table_widget_portfolio.horizontalHeaderItem(6)
+        ___qtablewidgetitem6.setText(QCoreApplication.translate("main_window", u"Value (GBP)", None));
+        ___qtablewidgetitem7 = self.table_widget_portfolio.horizontalHeaderItem(7)
+        ___qtablewidgetitem7.setText(QCoreApplication.translate("main_window", u"Change", None));
+        ___qtablewidgetitem8 = self.table_widget_portfolio.horizontalHeaderItem(8)
+        ___qtablewidgetitem8.setText(QCoreApplication.translate("main_window", u"Rate of Return (Absolute)", None));
     # retranslateUi
 

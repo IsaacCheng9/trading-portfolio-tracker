@@ -274,17 +274,22 @@
        </column>
        <column>
         <property name="text">
-         <string>Units</string>
-        </property>
-       </column>
-       <column>
-        <property name="text">
          <string>Currency</string>
         </property>
        </column>
        <column>
         <property name="text">
-         <string>Current Value</string>
+         <string>Units</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>Unit Price</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>Value (GBP)</string>
         </property>
        </column>
        <column>
