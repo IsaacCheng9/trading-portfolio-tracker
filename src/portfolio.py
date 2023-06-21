@@ -133,9 +133,12 @@ class MainWindow(QMainWindow, Ui_main_window):
         self.table_widget_portfolio.setRowCount(0)
 
         for row, security in enumerate(portfolio):
-            cur_val, val_change, rate_of_return_abs, cur_val_gbp = self.current_security_info[
-                security.name
-            ]
+            (
+                cur_val,
+                val_change,
+                rate_of_return_abs,
+                cur_val_gbp,
+            ) = self.current_security_info[security.name]
             self.table_widget_portfolio.insertRow(0)
             self.table_widget_portfolio.setItem(
                 0, 0, QtWidgets.QTableWidgetItem(security.symbol)
@@ -157,16 +160,16 @@ class MainWindow(QMainWindow, Ui_main_window):
                 0, 2, QtWidgets.QTableWidgetItem(f"{weight}%")
             )
             self.table_widget_portfolio.setItem(
-                0, 3, QtWidgets.QTableWidgetItem(str(security.units))
+                0, 3, QtWidgets.QTableWidgetItem(security.currency)
             )
             self.table_widget_portfolio.setItem(
-                0, 4, QtWidgets.QTableWidgetItem(security.currency)
+                0, 4, QtWidgets.QTableWidgetItem(str(security.units))
             )
 
             self.table_widget_portfolio.setItem(
                 0,
                 5,
-                QtWidgets.QTableWidgetItem(f"{cur_val:.2f}"),
+                QtWidgets.QTableWidgetItem(f"{(cur_val/security.units):.2f}"),
             )
             self.table_widget_portfolio.setItem(
                 0,
@@ -203,10 +206,10 @@ class MainWindow(QMainWindow, Ui_main_window):
             stock_info = get_info(security.symbol)
 
             cur_val = Decimal(stock_info["current_value"]) * security.units
-            exhange_rate = get_exchange_rate(stock_info["currency"])
-            cur_val_gbp = cur_val * exhange_rate
+            exchange_rate = get_exchange_rate(stock_info["currency"])
+            cur_val_gbp = cur_val * exchange_rate
 
-            val_change = cur_val - security.paid
+            val_change = cur_val_gbp - (security.paid * exchange_rate)
             rate_of_return_abs = get_absolute_rate_of_return(cur_val, security.paid)
 
             # Stores the live security information in a dictionary indexed
@@ -260,22 +263,24 @@ class MainWindow(QMainWindow, Ui_main_window):
                 row, 2, QtWidgets.QTableWidgetItem(f"{weight}%")
             )
             self.table_widget_portfolio.setItem(
-                row, 3, QtWidgets.QTableWidgetItem(str(security.units))
+                row, 3, QtWidgets.QTableWidgetItem(security.currency)
             )
             self.table_widget_portfolio.setItem(
-                row, 4, QtWidgets.QTableWidgetItem(security.currency)
+                row, 4, QtWidgets.QTableWidgetItem(str(security.units))
             )
             self.table_widget_portfolio.setItem(
                 row,
                 5,
                 QtWidgets.QTableWidgetItem(
-                    f"{self.current_security_info[security.name][0]:.2f}"
+                    f"{(self.current_security_info[security.name][0] / security.units):.2f}"
                 ),
             )
             self.table_widget_portfolio.setItem(
                 row,
                 6,
-                QtWidgets.QTableWidgetItem(f"{self.current_security_info[security.name][3]:.2f}"),
+                QtWidgets.QTableWidgetItem(
+                    f"{self.current_security_info[security.name][3]:.2f}"
+                ),
             )
             self.table_widget_portfolio.setItem(
                 row,
