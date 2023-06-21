@@ -67,7 +67,7 @@ class MainWindow(QMainWindow, Ui_main_window):
         self.setupUi(self)
 
         # Stores current information about each security:
-        # (current price, change, abs rate of return)
+        # (current price, change, abs rate of return, price in GBP)
         self.current_security_info = {}
 
         # Mapping between asset name and the row it occupies in the
@@ -146,12 +146,12 @@ class MainWindow(QMainWindow, Ui_main_window):
         # Sum the current value and value change for all securities in the
         # portfolio.
         total_cur_val = Decimal(
-            sum(self.current_security_info[security.name][0] for security in portfolio)
+            sum(self.current_security_info[security.name][3] for security in portfolio)
         )
         total_val_change = Decimal(
             sum(self.current_security_info[security.name][1] for security in portfolio)
         )
-        rate_of_return_absolute = get_absolute_rate_of_return(total_paid, total_cur_val)
+        rate_of_return_absolute = get_absolute_rate_of_return(total_cur_val, total_paid)
 
         # Update the table with the new values.
         self.table_widget_returns.setItem(
@@ -207,8 +207,10 @@ class MainWindow(QMainWindow, Ui_main_window):
             self.table_widget_portfolio.setItem(
                 0, 3, QtWidgets.QTableWidgetItem(security.currency)
             )
+            # Round the units to 5 DP to prevent horizontal stretching.
+            units = round(security.units, 5)
             self.table_widget_portfolio.setItem(
-                0, 4, QtWidgets.QTableWidgetItem(str(security.units))
+                0, 4, QtWidgets.QTableWidgetItem(str(units))
             )
 
             self.table_widget_portfolio.setItem(
@@ -310,8 +312,10 @@ class MainWindow(QMainWindow, Ui_main_window):
             self.table_widget_portfolio.setItem(
                 row, 3, QtWidgets.QTableWidgetItem(security.currency)
             )
+            # Round units to 5 DP to prevent horizontal stretching.
+            units = round(security.units, 5)
             self.table_widget_portfolio.setItem(
-                row, 4, QtWidgets.QTableWidgetItem(str(security.units))
+                row, 4, QtWidgets.QTableWidgetItem(str(units))
             )
             self.table_widget_portfolio.setItem(
                 row,
@@ -320,6 +324,7 @@ class MainWindow(QMainWindow, Ui_main_window):
                     f"{(self.current_security_info[security.name][0] / security.units):.2f}"
                 ),
             )
+            # Value (GBP)
             self.table_widget_portfolio.setItem(
                 row,
                 6,
@@ -327,6 +332,7 @@ class MainWindow(QMainWindow, Ui_main_window):
                     f"{self.current_security_info[security.name][3]:.2f}"
                 ),
             )
+            # Change (GBP)
             self.table_widget_portfolio.setItem(
                 row,
                 7,
@@ -334,6 +340,7 @@ class MainWindow(QMainWindow, Ui_main_window):
                     f"{self.current_security_info[security.name][1]:+.2f}"
                 ),
             )
+            # Rate of Return (Absolute)
             self.table_widget_portfolio.setItem(
                 row,
                 8,
@@ -367,6 +374,13 @@ class TransactionHistoryDialog(QDialog, Ui_dialog_transaction_history):
         """
         transactions = Transaction.load_transaction_history()
         for transaction in transactions:
+            # Round these values to prevent horizontally stretching the table.
+            amount = round(Decimal(transaction.amount), 2)
+            amount_gbp = round(Decimal(transaction.amount_gbp), 2)
+            unit_price = round(Decimal(transaction.unit_price), 5)
+            units = round(Decimal(transaction.units), 5)
+            exchange_rate = round(Decimal(transaction.exchange_rate), 5)
+
             self.table_widget_transactions.insertRow(0)
             self.table_widget_transactions.setItem(
                 0, 0, QtWidgets.QTableWidgetItem(transaction.type)
@@ -389,21 +403,24 @@ class TransactionHistoryDialog(QDialog, Ui_dialog_transaction_history):
                 0, 5, QtWidgets.QTableWidgetItem(str(transaction.currency))
             )
             self.table_widget_transactions.setItem(
-                0, 6, QtWidgets.QTableWidgetItem(str(transaction.amount))
+                0, 6, QtWidgets.QTableWidgetItem(str(amount))
             )
             self.table_widget_transactions.setItem(
                 0,
                 7,
-                QtWidgets.QTableWidgetItem(str(transaction.paid_standard_currency)),
+                QtWidgets.QTableWidgetItem(str(amount_gbp)),
             )
             self.table_widget_transactions.setItem(
-                0, 8, QtWidgets.QTableWidgetItem(str(transaction.unit_price))
+                0, 8, QtWidgets.QTableWidgetItem(str(unit_price))
             )
             self.table_widget_transactions.setItem(
-                0, 9, QtWidgets.QTableWidgetItem(str(transaction.units))
+                0, 9, QtWidgets.QTableWidgetItem(str(units))
             )
             self.table_widget_transactions.setItem(
-                0, 10, QtWidgets.QTableWidgetItem(str(transaction.id))
+                0, 10, QtWidgets.QTableWidgetItem(str(exchange_rate))
+            )
+            self.table_widget_transactions.setItem(
+                0, 11, QtWidgets.QTableWidgetItem(str(transaction.id))
             )
 
         # Get the current time in DD/MM/YYYY HH:MM:SS format.
@@ -478,7 +495,7 @@ class AddTransactionDialog(QDialog, Ui_dialog_add_transaction):
 
         units = Decimal(amount / unit_price)
         exchange_rate = get_exchange_rate(currency, provided_date=str(timestamp.date()))
-        paid_standard_currency = amount * exchange_rate
+        paid_gbp = amount * exchange_rate
 
         # Create a new transaction object and save it to the database.
         new_transaction = Transaction(
@@ -491,13 +508,15 @@ class AddTransactionDialog(QDialog, Ui_dialog_add_transaction):
             amount,
             unit_price,
             units,
-            paid_standard_currency,
+            paid_gbp,
+            exchange_rate,
         )
         new_transaction.save()
         upsert_transaction_into_portfolio(
-            transaction_type, symbol, currency, amount, unit_price
+            transaction_type, symbol, currency, amount, unit_price, paid_gbp
         )
         self.main_window.load_portfolio_table()
+        self.main_window.update_returns_table()
         self.close()
 
 
@@ -545,19 +564,20 @@ class HeldSecurity:
     @staticmethod
     def get_total_value(
         current_values: dict[str, tuple[Decimal, Decimal, Decimal]],
-        is_gpb: bool = False,
+        is_gbp: bool = False,
     ) -> Decimal:
         """
         Calculate the total current value of the user's portfolio.
 
         Args:
             current_values: Current stock values.
-            gbp: If total value of the user's portfolio should be calculated in a standard currency (gbp)
+            is_gbp: If total value of the user's portfolio should be calculated
+                    in a standard currency (GBP).
 
         Returns:
             The total value of the portfolio.
         """
-        cur_vals_key = 3 if is_gpb else 0
+        cur_vals_key = 3 if is_gbp else 0
         total_value = Decimal(0)
         for key in current_values:
             total_value += current_values[key][cur_vals_key]
@@ -574,7 +594,8 @@ if __name__ == "__main__":
             "name TEXT NOT NULL, "
             "units TEXT NOT NULL, "
             "currency TEXT NOT NULL, "
-            "paid TEXT NOT NULL"
+            "paid TEXT NOT NULL,"
+            "paid_gbp TEXT NOT NULL"
             ")"
         )
         # # Load some mock data into the table.
