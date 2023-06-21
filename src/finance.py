@@ -111,7 +111,7 @@ def get_info(symbol: str) -> dict[str, str]:
 
     # Checks if the stock is traded on the LSE, if so GBP is converted to GBX.
     if ticker.info["symbol"][-2:] == ".L":
-        return_dict["current_value"] = ticker.info["currentPrice"] / 100
+        return_dict["current_value"] /= 100
         return_dict["currency"] = "GBP"
 
     return return_dict
