@@ -3,8 +3,25 @@
 [![code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 ![CI](https://github.com/IsaacCheng9/trading-portfolio-tracker/actions/workflows/pytest.yml/badge.svg)
 
-A platform for monitoring and managing your investment portfolios with real-time
-market data integration from Yahoo Finance, developed with Qt.
+A cross-platform desktop application for monitoring and managing your investments
+from different brokers, with real-time market data integration from Yahoo
+Finance, developed with Qt.
+
+## Motivation
+
+Managing investments across different brokers can be challenging, as existing
+broker-specific systems such as Trading 212 often limit users to viewing
+investments exclusively within their own platforms. This leads to scattered
+investment information and a lack of holistic oversight. While some users
+resort to manual data entry in spreadsheets, this approach lacks real-time
+market data and user-friendliness.
+
+This application offers a centralised solution for monitoring and managing
+investments across different brokers. By providing real-time market data
+integration and a user-friendly interface, it enhances the investment management
+experience. Additionally, as a desktop application, it prioritises data privacy
+by storing all information locally on the user's computer. Leveraging the Qt
+framework ensures cross-platform compatibility and high performance.
 
 ## Usage
 
