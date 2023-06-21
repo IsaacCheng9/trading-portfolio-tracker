@@ -231,7 +231,7 @@ def get_exchange_rate(
         Exchange rate from original currency -> given currency.
     """
     if original_currency == convert_to:
-        return 1
+        return Decimal(1)
 
     url = None
 

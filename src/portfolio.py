@@ -491,7 +491,7 @@ class HeldSecurity:
 
     @staticmethod
     def get_total_value(
-        current_values: dict[str, tuple[Decimal, Decimal, Decimal]], gbp: bool = False
+        current_values: dict[str, tuple[Decimal, Decimal, Decimal]], is_gpb: bool = False
     ) -> Decimal:
         """
         Calculate the total current value of the user's portfolio.
@@ -503,7 +503,7 @@ class HeldSecurity:
         Returns:
             The total value of the portfolio.
         """
-        cur_vals_key = 3 if gbp else 0
+        cur_vals_key = 3 if is_gpb else 0
         total_value = Decimal(0)
         for key in current_values:
             total_value += current_values[key][cur_vals_key]
