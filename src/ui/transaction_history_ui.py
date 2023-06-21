@@ -55,8 +55,8 @@ class Ui_dialog_transaction_history(object):
         self.vert_layout_dialog.addWidget(self.lbl_last_updated)
 
         self.table_widget_transactions = QTableWidget(self.verticalLayoutWidget)
-        if (self.table_widget_transactions.columnCount() < 10):
-            self.table_widget_transactions.setColumnCount(10)
+        if (self.table_widget_transactions.columnCount() < 11):
+            self.table_widget_transactions.setColumnCount(11)
         __qtablewidgetitem = QTableWidgetItem()
         self.table_widget_transactions.setHorizontalHeaderItem(0, __qtablewidgetitem)
         __qtablewidgetitem1 = QTableWidgetItem()
@@ -77,6 +77,8 @@ class Ui_dialog_transaction_history(object):
         self.table_widget_transactions.setHorizontalHeaderItem(8, __qtablewidgetitem8)
         __qtablewidgetitem9 = QTableWidgetItem()
         self.table_widget_transactions.setHorizontalHeaderItem(9, __qtablewidgetitem9)
+        __qtablewidgetitem10 = QTableWidgetItem()
+        self.table_widget_transactions.setHorizontalHeaderItem(10, __qtablewidgetitem10)
         self.table_widget_transactions.setObjectName(u"table_widget_transactions")
         sizePolicy = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
@@ -116,7 +118,7 @@ class Ui_dialog_transaction_history(object):
         self.lbl_transaction_history.setText(QCoreApplication.translate("dialog_transaction_history", u"Transaction History", None))
         self.lbl_last_updated.setText(QCoreApplication.translate("dialog_transaction_history", u"Last Updated: DD/MM/YYYY HH:MM:SS", None))
         ___qtablewidgetitem = self.table_widget_transactions.horizontalHeaderItem(0)
-        ___qtablewidgetitem.setText(QCoreApplication.translate("dialog_transaction_history", u"Transaction Type", None));
+        ___qtablewidgetitem.setText(QCoreApplication.translate("dialog_transaction_history", u"Type", None));
         ___qtablewidgetitem1 = self.table_widget_transactions.horizontalHeaderItem(1)
         ___qtablewidgetitem1.setText(QCoreApplication.translate("dialog_transaction_history", u"Timestamp", None));
         ___qtablewidgetitem2 = self.table_widget_transactions.horizontalHeaderItem(2)
@@ -130,10 +132,12 @@ class Ui_dialog_transaction_history(object):
         ___qtablewidgetitem6 = self.table_widget_transactions.horizontalHeaderItem(6)
         ___qtablewidgetitem6.setText(QCoreApplication.translate("dialog_transaction_history", u"Amount", None));
         ___qtablewidgetitem7 = self.table_widget_transactions.horizontalHeaderItem(7)
-        ___qtablewidgetitem7.setText(QCoreApplication.translate("dialog_transaction_history", u"Unit Price", None));
+        ___qtablewidgetitem7.setText(QCoreApplication.translate("dialog_transaction_history", u"Amount (GBP)", None));
         ___qtablewidgetitem8 = self.table_widget_transactions.horizontalHeaderItem(8)
-        ___qtablewidgetitem8.setText(QCoreApplication.translate("dialog_transaction_history", u"Units", None));
+        ___qtablewidgetitem8.setText(QCoreApplication.translate("dialog_transaction_history", u"Unit Price", None));
         ___qtablewidgetitem9 = self.table_widget_transactions.horizontalHeaderItem(9)
-        ___qtablewidgetitem9.setText(QCoreApplication.translate("dialog_transaction_history", u"Transaction ID", None));
+        ___qtablewidgetitem9.setText(QCoreApplication.translate("dialog_transaction_history", u"Units", None));
+        ___qtablewidgetitem10 = self.table_widget_transactions.horizontalHeaderItem(10)
+        ___qtablewidgetitem10.setText(QCoreApplication.translate("dialog_transaction_history", u"Transaction ID", None));
     # retranslateUi
 

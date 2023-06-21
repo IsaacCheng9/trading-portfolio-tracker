@@ -25,6 +25,7 @@ class Transaction:
     amount: Decimal
     unit_price: Decimal
     units: Decimal
+    paid_standard_currency: Decimal
 
     @staticmethod
     def load_transaction_history() -> list[Transaction]:
@@ -57,6 +58,7 @@ class Transaction:
                 amount,
                 unit_price,
                 units,
+                paid_standard_currency,
             ) = record
             # Convert timestamp to remove the milliseconds.
             timestamp = datetime.datetime.strptime(
@@ -77,6 +79,7 @@ class Transaction:
                 amount,
                 unit_price,
                 units,
+                paid_standard_currency,
             )
             transactions.append(transaction)
 
@@ -88,7 +91,7 @@ class Transaction:
         """
         with duckdb.connect(database=DB_PATH) as conn:
             conn.execute(
-                "INSERT OR REPLACE INTO transaction VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                "INSERT OR REPLACE INTO transaction VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
                 (
                     self.id,
                     self.type,
@@ -99,6 +102,7 @@ class Transaction:
                     str(self.amount),
                     str(self.unit_price),
                     str(self.units),
+                    str(self.paid_standard_currency),
                 ),
             )
 
@@ -116,6 +120,7 @@ if __name__ == "__main__":
             "currency TEXT NOT NULL, "
             "amount TEXT NOT NULL, "
             "unit_price TEXT NOT NULL,"
-            "units TEXT NOT NULL"
+            "units TEXT NOT NULL,"
+            "paid_standard_currency TEXT NOT NULL"
             ")"
         )
