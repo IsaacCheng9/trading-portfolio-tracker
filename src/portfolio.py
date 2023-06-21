@@ -133,7 +133,7 @@ class MainWindow(QMainWindow, Ui_main_window):
         self.table_widget_portfolio.setRowCount(0)
 
         for row, security in enumerate(portfolio):
-            cur_val, val_change, rate_of_return_abs, _ = self.current_security_info[
+            cur_val, val_change, rate_of_return_abs, cur_val_gbp = self.current_security_info[
                 security.name
             ]
             self.table_widget_portfolio.insertRow(0)
@@ -171,11 +171,16 @@ class MainWindow(QMainWindow, Ui_main_window):
             self.table_widget_portfolio.setItem(
                 0,
                 6,
-                QtWidgets.QTableWidgetItem(f"{val_change:+.2f}"),
+                QtWidgets.QTableWidgetItem(f"{cur_val_gbp:.2f}"),
             )
             self.table_widget_portfolio.setItem(
                 0,
                 7,
+                QtWidgets.QTableWidgetItem(f"{val_change:+.2f}"),
+            )
+            self.table_widget_portfolio.setItem(
+                0,
+                8,
                 QtWidgets.QTableWidgetItem(f"{rate_of_return_abs:+.2f}%"),
             )
 
@@ -270,13 +275,18 @@ class MainWindow(QMainWindow, Ui_main_window):
             self.table_widget_portfolio.setItem(
                 row,
                 6,
+                QtWidgets.QTableWidgetItem(f"{self.current_security_info[security.name][3]:.2f}"),
+            )
+            self.table_widget_portfolio.setItem(
+                row,
+                7,
                 QtWidgets.QTableWidgetItem(
                     f"{self.current_security_info[security.name][1]:+.2f}"
                 ),
             )
             self.table_widget_portfolio.setItem(
                 row,
-                7,
+                8,
                 QtWidgets.QTableWidgetItem(
                     f"{self.current_security_info[security.name][2]:+.2f}%"
                 ),
