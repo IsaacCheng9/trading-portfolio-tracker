@@ -424,9 +424,16 @@ class AddTransactionDialog(QDialog, Ui_dialog_add_transaction):
         currency = self.line_edit_currency.text()
         amount = Decimal(self.line_edit_amount.text())
         unit_price = Decimal(self.line_edit_unit_price.text())
+
+        # Check if the stock is traded on the LSE.
+        # if so, modify the currency from GBX to GBP.
+        if symbol[-2:] == ".L":
+            unit_price *= Decimal(0.01)
+
         units = Decimal(amount / unit_price)
         exchange_rate = get_exchange_rate(currency, provided_date=str(timestamp.date()))
         paid_standard_currency = amount * exchange_rate
+
         # Create a new transaction object and save it to the database.
         new_transaction = Transaction(
             uuid4(),
@@ -491,7 +498,8 @@ class HeldSecurity:
 
     @staticmethod
     def get_total_value(
-        current_values: dict[str, tuple[Decimal, Decimal, Decimal]], is_gpb: bool = False
+        current_values: dict[str, tuple[Decimal, Decimal, Decimal]],
+        is_gpb: bool = False,
     ) -> Decimal:
         """
         Calculate the total current value of the user's portfolio.

@@ -95,6 +95,7 @@ def get_info(symbol: str) -> dict[str, str]:
         "ticker": ticker.info["symbol"],
         "type": ticker.info["quoteType"],
     }
+    # TODO Modify this with try/excepts
 
     if return_dict["type"] in ["INDEX", "FUTURE", "CRYPTOCURRENCY"]:
         # Downloads the most recent data about the price of the asset
@@ -105,9 +106,10 @@ def get_info(symbol: str) -> dict[str, str]:
         return_dict["current_value"] = last_row_open_value
         return_dict["currency"] = ticker.info["currency"]
     else:  # If the asset is a stock
-        # Checks if the stock is traded in GBP as the LSE list stock prices in GBX (0.01 GBP)
-        if ticker.info["financialCurrency"] == "GBP":
+        # Checks if the stock is traded on the LSE as stocks are listed in GBX (0.01 GBP)
+        if ticker.info["symbol"][-2:] == ".L":
             return_dict["current_value"] = ticker.info["currentPrice"] / 100
+            return_dict["currency"] = "GBP"
         else:
             return_dict["current_value"] = ticker.info["currentPrice"]
         return_dict["sector"] = ticker.info["sector"]
@@ -219,8 +221,6 @@ def get_exchange_rate(
     """
     Gets the exchange rate from a given currency
     to a given currency using Frankfurter API (https://www.frankfurter.app/).
-    #TODO: Add try excepts to deal with inconsistent yfinance return keys.
-
 
     Args:
         original_currency: original currency to convert to given currency.
