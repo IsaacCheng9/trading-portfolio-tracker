@@ -111,7 +111,7 @@
       </attribute>
       <column>
        <property name="text">
-        <string>Transaction Type</string>
+        <string>Type</string>
        </property>
       </column>
       <column>

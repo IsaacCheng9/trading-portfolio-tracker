@@ -118,7 +118,7 @@ class Ui_dialog_transaction_history(object):
         self.lbl_transaction_history.setText(QCoreApplication.translate("dialog_transaction_history", u"Transaction History", None))
         self.lbl_last_updated.setText(QCoreApplication.translate("dialog_transaction_history", u"Last Updated: DD/MM/YYYY HH:MM:SS", None))
         ___qtablewidgetitem = self.table_widget_transactions.horizontalHeaderItem(0)
-        ___qtablewidgetitem.setText(QCoreApplication.translate("dialog_transaction_history", u"Transaction Type", None));
+        ___qtablewidgetitem.setText(QCoreApplication.translate("dialog_transaction_history", u"Type", None));
         ___qtablewidgetitem1 = self.table_widget_transactions.horizontalHeaderItem(1)
         ___qtablewidgetitem1.setText(QCoreApplication.translate("dialog_transaction_history", u"Timestamp", None));
         ___qtablewidgetitem2 = self.table_widget_transactions.horizontalHeaderItem(2)
