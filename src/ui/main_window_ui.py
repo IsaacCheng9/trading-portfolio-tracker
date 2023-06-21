@@ -167,7 +167,7 @@ class Ui_main_window(object):
         ___qtablewidgetitem6 = self.table_widget_portfolio.horizontalHeaderItem(6)
         ___qtablewidgetitem6.setText(QCoreApplication.translate("main_window", u"Value (GBP)", None));
         ___qtablewidgetitem7 = self.table_widget_portfolio.horizontalHeaderItem(7)
-        ___qtablewidgetitem7.setText(QCoreApplication.translate("main_window", u"Change (GBP)", None));
+        ___qtablewidgetitem7.setText(QCoreApplication.translate("main_window", u"Change", None));
         ___qtablewidgetitem8 = self.table_widget_portfolio.horizontalHeaderItem(8)
         ___qtablewidgetitem8.setText(QCoreApplication.translate("main_window", u"Rate of Return (Absolute)", None));
     # retranslateUi
