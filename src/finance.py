@@ -219,6 +219,8 @@ def get_exchange_rate(
     """
     Gets the exchange rate from a given currency
     to a given currency using Frankfurter API (https://www.frankfurter.app/).
+    #TODO: Add try excepts to deal with inconsistent yfinance return keys.
+
 
     Args:
         original_currency: original currency to convert to given currency.
@@ -251,7 +253,6 @@ def get_exchange_rate(
 
 
 if __name__ == "__main__":
-
     print(get_info("3697.T"))
     print(get_info("GSK.L"))
 
