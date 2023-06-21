@@ -105,7 +105,11 @@ def get_info(symbol: str) -> dict[str, str]:
         return_dict["current_value"] = last_row_open_value
         return_dict["currency"] = ticker.info["currency"]
     else:  # If the asset is a stock
-        return_dict["current_value"] = ticker.info["currentPrice"]
+        # Checks if the stock is traded in GBP as the LSE list stock prices in GBX (0.01 GBP)
+        if ticker.info["financialCurrency"] == "GBP":
+            return_dict["current_value"] = ticker.info["currentPrice"] / 100
+        else:
+            return_dict["current_value"] = ticker.info["currentPrice"]
         return_dict["sector"] = ticker.info["sector"]
         return_dict["currency"] = ticker.info["financialCurrency"]
     return return_dict
@@ -180,7 +184,7 @@ def upsert_transaction_into_portfolio(
     paid = Decimal(paid)
     if type == "Buy":
         units += Decimal(amount / unit_price)
-        paid += Decimal(amount) 
+        paid += Decimal(amount)
     elif type == "Sell":
         units -= Decimal(amount / unit_price)
         paid -= Decimal(amount)
@@ -209,7 +213,9 @@ def remove_security_from_portfolio(symbol: str) -> None:
         conn.execute("DELETE FROM portfolio WHERE symbol = ?", (symbol,))
 
 
-def get_exchange_rate(original_currency: str, convert_to: str = "GBP", provided_date: str = None) -> Decimal:
+def get_exchange_rate(
+    original_currency: str, convert_to: str = "GBP", provided_date: str = None
+) -> Decimal:
     """
     Gets the exchange rate from a given currency
     to a given currency using Frankfurter API (https://www.frankfurter.app/).
@@ -245,10 +251,8 @@ def get_exchange_rate(original_currency: str, convert_to: str = "GBP", provided_
 
 
 if __name__ == "__main__":
-    print(get_info("FTSE 250"))
-    print(get_info("Apple"))
-    print(get_info("Ethereum"))
-    
+
     print(get_info("3697.T"))
+    print(get_info("GSK.L"))
 
     print((get_exchange_rate("JPY", "GBP", "1998-04-04")))
