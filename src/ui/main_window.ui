@@ -294,7 +294,7 @@
        </column>
        <column>
         <property name="text">
-         <string>Change</string>
+         <string>Change (GBP)</string>
         </property>
        </column>
        <column>
