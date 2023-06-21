@@ -83,37 +83,37 @@ def get_info(symbol: str) -> dict[str, str]:
     Returns:
         Dictionary containing information about the stock, future, or index.
     """
-    # Creates a yfinance ticker object for a given asset
+    # Creates a yfinance ticker object for a given asset.
     try:
         ticker = yf.Ticker(symbol)
     except:
         return False
 
-    # Creates a dictionary containing basic information about the asset
+    # Creates a dictionary containing basic information about the asset.
     return_dict = {
         "name": ticker.info["shortName"],
         "ticker": ticker.info["symbol"],
         "type": ticker.info["quoteType"],
     }
-    # TODO Modify this with try/excepts
 
-    if return_dict["type"] in ["INDEX", "FUTURE", "CRYPTOCURRENCY"]:
-        # Downloads the most recent data about the price of the asset
+    # Gets information about a given index, security, or stock.
+    try:
+        return_dict["current_value"] = ticker.info["currentPrice"]
+        return_dict["currency"] = ticker.info["financialCurrency"]
+        return_dict["sector"] = ticker.info["sector"]
+    except:
         data = yf.download(return_dict["ticker"], period="1d", progress=False)
         last_row_index = len(data) - 1
         # Gets the last reported close price of the asset
         last_row_open_value = data.iloc[last_row_index]["Close"]
         return_dict["current_value"] = last_row_open_value
         return_dict["currency"] = ticker.info["currency"]
-    else:  # If the asset is a stock
-        # Checks if the stock is traded on the LSE as stocks are listed in GBX (0.01 GBP)
-        if ticker.info["symbol"][-2:] == ".L":
-            return_dict["current_value"] = ticker.info["currentPrice"] / 100
-            return_dict["currency"] = "GBP"
-        else:
-            return_dict["current_value"] = ticker.info["currentPrice"]
-        return_dict["sector"] = ticker.info["sector"]
-        return_dict["currency"] = ticker.info["financialCurrency"]
+
+    # Checks if the stock is traded on the LSE, if so GBP is converted to GBX.
+    if ticker.info["symbol"][-2:] == ".L":
+        return_dict["current_value"] = ticker.info["currentPrice"] / 100
+        return_dict["currency"] = "GBP"
+
     return return_dict
 
 
