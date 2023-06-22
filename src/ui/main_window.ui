@@ -16,7 +16,7 @@
    </font>
   </property>
   <property name="windowTitle">
-   <string>Trading Portfolio Tracker</string>
+   <string>Trading Portfolio Tracker – Portfolio</string>
   </property>
   <widget class="QWidget" name="central_widget">
    <widget class="QWidget" name="verticalLayoutWidget">
@@ -24,8 +24,8 @@
      <rect>
       <x>10</x>
       <y>10</y>
-      <width>981</width>
-      <height>581</height>
+      <width>1002</width>
+      <height>1042</height>
      </rect>
     </property>
     <layout class="QVBoxLayout" name="vert_layout_window">
@@ -77,7 +77,7 @@
           </font>
          </property>
          <property name="text">
-          <string>View Portfolio Performance</string>
+          <string>Analyse Portfolio Performance</string>
          </property>
         </widget>
        </item>
@@ -110,6 +110,95 @@
       <widget class="QLabel" name="lbl_last_updated">
        <property name="text">
         <string>Last Updated: DD/MM/YYYY HH:MM:SS</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="Line" name="hori_line_last_updated">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="lbl_portfolio_perf">
+       <property name="font">
+        <font>
+         <pointsize>16</pointsize>
+        </font>
+       </property>
+       <property name="text">
+        <string>Portfolio Performance</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QTableWidget" name="table_widget_returns">
+       <property name="showGrid">
+        <bool>true</bool>
+       </property>
+       <property name="cornerButtonEnabled">
+        <bool>false</bool>
+       </property>
+       <attribute name="verticalHeaderVisible">
+        <bool>false</bool>
+       </attribute>
+       <row>
+        <property name="text">
+         <string>Values</string>
+        </property>
+       </row>
+       <column>
+        <property name="text">
+         <string>Total Paid In</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>Current Portfolio Value</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>Change in Value</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>Rate of Return (Absolute)</string>
+        </property>
+       </column>
+       <item row="0" column="0">
+        <property name="text">
+         <string>N/A</string>
+        </property>
+       </item>
+       <item row="0" column="1">
+        <property name="text">
+         <string>N/A</string>
+        </property>
+       </item>
+       <item row="0" column="2">
+        <property name="text">
+         <string>N/A</string>
+        </property>
+       </item>
+       <item row="0" column="3">
+        <property name="text">
+         <string>N/A</string>
+        </property>
+       </item>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="lbl_holdings">
+       <property name="font">
+        <font>
+         <pointsize>16</pointsize>
+        </font>
+       </property>
+       <property name="text">
+        <string>Your Holdings</string>
        </property>
       </widget>
      </item>
@@ -205,7 +294,7 @@
        </column>
        <column>
         <property name="text">
-         <string>Change</string>
+         <string>Change (GBP)</string>
         </property>
        </column>
        <column>
