@@ -29,8 +29,7 @@ framework ensures cross-platform compatibility and high performance.
 
 ![image](https://github.com/IsaacCheng9/trading-portfolio-tracker/assets/47993930/9925ca5e-a329-4272-afdd-37f5be1af746)
 
-![image](https://github.com/IsaacCheng9/trading-portfolio-tracker/assets/47993930/04021e7d-da5c-4ec2-abf4-4123254ee227)
-
+<img src="https://github.com/IsaacCheng9/trading-portfolio-tracker/assets/47993930/04021e7d-da5c-4ec2-abf4-4123254ee227" alt="Add a Transaction" width="500">
 
 ## Usage
 
