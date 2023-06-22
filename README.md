@@ -23,6 +23,15 @@ experience. Additionally, as a desktop application, it prioritises data privacy
 by storing all information locally on the user's computer. Leveraging the Qt
 framework ensures cross-platform compatibility and high performance.
 
+## Screenshots
+
+![image](https://github.com/IsaacCheng9/trading-portfolio-tracker/assets/47993930/75ba2678-fad5-4008-9b02-7f7fa8672449)
+
+![image](https://github.com/IsaacCheng9/trading-portfolio-tracker/assets/47993930/9925ca5e-a329-4272-afdd-37f5be1af746)
+
+![image](https://github.com/IsaacCheng9/trading-portfolio-tracker/assets/47993930/04021e7d-da5c-4ec2-abf4-4123254ee227)
+
+
 ## Usage
 
 ### Operating System
