@@ -111,7 +111,7 @@
       </attribute>
       <column>
        <property name="text">
-        <string>Transaction Type</string>
+        <string>Type</string>
        </property>
       </column>
       <column>
@@ -142,6 +142,11 @@
       <column>
        <property name="text">
         <string>Amount</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>Amount (GBP)</string>
        </property>
       </column>
       <column>
