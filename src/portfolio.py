@@ -586,26 +586,4 @@ class HeldSecurity:
 
 
 if __name__ == "__main__":
-    with duckdb.connect(database=DB_PATH) as conn:
-        # Create a table to store securities in the user's portfolio.
-        conn.execute(
-            "CREATE TABLE IF NOT EXISTS portfolio ("
-            "symbol TEXT PRIMARY KEY, "
-            "name TEXT NOT NULL, "
-            "units TEXT NOT NULL, "
-            "currency TEXT NOT NULL, "
-            "paid TEXT NOT NULL,"
-            "paid_gbp TEXT NOT NULL"
-            ")"
-        )
-        # # Load some mock data into the table.
-        # conn.execute(
-        #     "INSERT OR REPLACE INTO portfolio VALUES "
-        #     "('AAPL', 'Apple Inc.', '10', 'USD', '1000'), "
-        #     "('TSLA', 'Tesla Inc.', '5', 'USD', '3000'), "
-        #     "('BTC', 'Bitcoin', '0.2', 'USD', '1000'),"
-        #     "('HMC', 'Honda', '40', 'USD', '39.5'),"
-        #     "('^IXIC', 'NASDAQ Composite', '10', 'USD', '10000'),"
-        #     "('FTMC', 'FTSE 250', '2', 'GBP', '13520')"
-        # )
-    portfolio = HeldSecurity.load_portfolio()
+    print(HeldSecurity.load_portfolio())
