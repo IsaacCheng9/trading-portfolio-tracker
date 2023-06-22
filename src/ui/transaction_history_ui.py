@@ -55,8 +55,8 @@ class Ui_dialog_transaction_history(object):
         self.vert_layout_dialog.addWidget(self.lbl_last_updated)
 
         self.table_widget_transactions = QTableWidget(self.verticalLayoutWidget)
-        if (self.table_widget_transactions.columnCount() < 11):
-            self.table_widget_transactions.setColumnCount(11)
+        if (self.table_widget_transactions.columnCount() < 12):
+            self.table_widget_transactions.setColumnCount(12)
         __qtablewidgetitem = QTableWidgetItem()
         self.table_widget_transactions.setHorizontalHeaderItem(0, __qtablewidgetitem)
         __qtablewidgetitem1 = QTableWidgetItem()
@@ -79,6 +79,8 @@ class Ui_dialog_transaction_history(object):
         self.table_widget_transactions.setHorizontalHeaderItem(9, __qtablewidgetitem9)
         __qtablewidgetitem10 = QTableWidgetItem()
         self.table_widget_transactions.setHorizontalHeaderItem(10, __qtablewidgetitem10)
+        __qtablewidgetitem11 = QTableWidgetItem()
+        self.table_widget_transactions.setHorizontalHeaderItem(11, __qtablewidgetitem11)
         self.table_widget_transactions.setObjectName(u"table_widget_transactions")
         sizePolicy = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
@@ -138,6 +140,8 @@ class Ui_dialog_transaction_history(object):
         ___qtablewidgetitem9 = self.table_widget_transactions.horizontalHeaderItem(9)
         ___qtablewidgetitem9.setText(QCoreApplication.translate("dialog_transaction_history", u"Units", None));
         ___qtablewidgetitem10 = self.table_widget_transactions.horizontalHeaderItem(10)
-        ___qtablewidgetitem10.setText(QCoreApplication.translate("dialog_transaction_history", u"Transaction ID", None));
+        ___qtablewidgetitem10.setText(QCoreApplication.translate("dialog_transaction_history", u"Exchange Rate to GBP", None));
+        ___qtablewidgetitem11 = self.table_widget_transactions.horizontalHeaderItem(11)
+        ___qtablewidgetitem11.setText(QCoreApplication.translate("dialog_transaction_history", u"Transaction ID", None));
     # retranslateUi
 
