@@ -104,18 +104,4 @@ class Transaction:
 
 
 if __name__ == "__main__":
-    with duckdb.connect(database=DB_PATH) as conn:
-        # Create a table to store the transactions made by the user.
-        conn.execute(
-            "CREATE TABLE IF NOT EXISTS transaction ("
-            "transaction_id TEXT PRIMARY KEY, "
-            "transaction_type TEXT NOT NULL, "
-            "timestamp DATETIME NOT NULL, "
-            "ticker TEXT NOT NULL, "
-            "platform TEXT NOT NULL, "
-            "currency TEXT NOT NULL, "
-            "amount TEXT NOT NULL, "
-            "unit_price TEXT NOT NULL,"
-            "units TEXT NOT NULL"
-            ")"
-        )
+    print(Transaction.load_transaction_history())
