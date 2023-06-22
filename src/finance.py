@@ -9,7 +9,7 @@ import yfinance as yf
 import pandas as pd
 from decimal import Decimal
 from requests import exceptions
-
+from datetime import datetime, date
 
 DB_PATH = "resources/portfolio.db"
 
@@ -70,7 +70,7 @@ def get_history(name: str, period: str = "1mo") -> pd.DataFrame:
     return tick.history(period=period)
 
 
-def get_info(name: str) -> dict[str, str]:
+def get_info(symbol: str) -> dict[str, str]:
     """
     Returns information about a stock/company.
     Accounts for the difference in the yfinance library in returning
@@ -78,36 +78,42 @@ def get_info(name: str) -> dict[str, str]:
     delay in reporting of price.
 
     Args:
-        name: Name of the company/index/asset/...
+        symbol: Symbol of the company/index/asset/...
 
     Returns:
         Dictionary containing information about the stock, future, or index.
     """
-    # Creates a yfinance ticker object for a given asset
+    # Creates a yfinance ticker object for a given asset.
     try:
-        ticker = yf.Ticker(get_symbol(name))
+        ticker = yf.Ticker(symbol)
     except:
         return False
 
-    # Creates a dictionary containing basic information about the asset
+    # Creates a dictionary containing basic information about the asset.
     return_dict = {
         "name": ticker.info["shortName"],
         "ticker": ticker.info["symbol"],
         "type": ticker.info["quoteType"],
     }
 
-    if return_dict["type"] in ["INDEX", "FUTURE", "CRYPTOCURRENCY"]:
-        # Downloads the most recent data about the price of the asset
+    # Gets information about a given index, security, or stock.
+    try:
+        return_dict["current_value"] = ticker.info["currentPrice"]
+        return_dict["currency"] = ticker.info["financialCurrency"]
+        return_dict["sector"] = ticker.info["sector"]
+    except:
         data = yf.download(return_dict["ticker"], period="1d", progress=False)
         last_row_index = len(data) - 1
         # Gets the last reported close price of the asset
         last_row_open_value = data.iloc[last_row_index]["Close"]
         return_dict["current_value"] = last_row_open_value
         return_dict["currency"] = ticker.info["currency"]
-    else:  # If the asset is a stock
-        return_dict["current_value"] = ticker.info["currentPrice"]
-        return_dict["sector"] = ticker.info["sector"]
-        return_dict["currency"] = ticker.info["financialCurrency"]
+
+    # Checks if the stock is traded on the LSE, if so GBP is converted to GBX.
+    if ticker.info["symbol"][-2:] == ".L":
+        return_dict["current_value"] /= 100
+        return_dict["currency"] = "GBP"
+
     return return_dict
 
 
@@ -123,7 +129,7 @@ def get_absolute_rate_of_return(current: Decimal, purchase: Decimal) -> Decimal:
     Returns:
         absolute rate of return.
     """
-    return ((current - purchase) / purchase) * 100
+    return ((current - purchase) / purchase) * 100 if purchase else Decimal(0)
 
 
 def upsert_transaction_into_portfolio(
@@ -132,6 +138,7 @@ def upsert_transaction_into_portfolio(
     currency: str,
     amount: Decimal,
     unit_price: Decimal,
+    amount_gbp: Decimal,
 ) -> None:
     """
     Update/insert the portfolio based on a new transaction.
@@ -142,12 +149,13 @@ def upsert_transaction_into_portfolio(
         currency: The currency of the security.
         amount: The amount of the transaction.
         unit_price: The unit price of the security.
+        paid_gbp: The amount of the transaction after conversion to a currency.
     """
     # Search for the security in the portfolio.
     with duckdb.connect(database=DB_PATH) as conn:
         # Retrieve the security from the portfolio table based on the symbol
         result = conn.execute(
-            "SELECT symbol, name, units, currency, paid FROM portfolio "
+            "SELECT symbol, name, units, currency, paid, paid_gbp FROM portfolio "
             "WHERE symbol = ?",
             (symbol,),
         ).fetchone()
@@ -162,27 +170,31 @@ def upsert_transaction_into_portfolio(
         units = Decimal(amount / unit_price)
         with duckdb.connect(database=DB_PATH) as conn:
             conn.execute(
-                "INSERT OR REPLACE INTO portfolio VALUES (?, ?, ?, ?, ?)",
+                "INSERT OR REPLACE INTO portfolio VALUES (?, ?, ?, ?, ?, ?)",
                 (
                     symbol,
                     name,
                     str(units),
                     currency,
                     str(amount),
+                    str(amount_gbp),
                 ),
             )
         return
 
     # Otherwise, update the security in the portfolio.
-    symbol, _, units, _, paid = result
+    symbol, _, units, _, paid, paid_gbp = result
     units = Decimal(units)
     paid = Decimal(paid)
+    paid_gbp = Decimal(paid_gbp)
     if type == "Buy":
         units += Decimal(amount / unit_price)
         paid += Decimal(amount)
+        paid_gbp += Decimal(amount_gbp)
     elif type == "Sell":
         units -= Decimal(amount / unit_price)
         paid -= Decimal(amount)
+        paid_gbp -= Decimal(amount_gbp)
     # If the user has sold all of their units, remove the security from the
     # portfolio.
     if units == 0:
@@ -192,12 +204,13 @@ def upsert_transaction_into_portfolio(
         # Update the security in the portfolio
         with duckdb.connect(database=DB_PATH) as conn:
             conn.execute(
-                "UPDATE portfolio SET units = ?, paid = ? WHERE symbol = ?",
-                (str(units), str(paid), symbol),
+                "UPDATE portfolio SET units = ?, paid = ?, paid_gbp = ? "
+                "WHERE symbol = ?",
+                (str(units), str(paid), str(paid_gbp), symbol),
             )
 
 
-def remove_security_from_portfolio(symbol) -> None:
+def remove_security_from_portfolio(symbol: str) -> None:
     """
     Remove the security from the portfolio table.
 
@@ -208,7 +221,57 @@ def remove_security_from_portfolio(symbol) -> None:
         conn.execute("DELETE FROM portfolio WHERE symbol = ?", (symbol,))
 
 
+def get_total_paid_into_portfolio() -> Decimal:
+    """
+    Get the total amount paid into the portfolio.
+
+    Returns:
+        The total amount paid into the portfolio.
+    """
+    with duckdb.connect(database=DB_PATH) as conn:
+        result = conn.execute(
+            "SELECT SUM(CAST(paid_gbp AS DECIMAL)) FROM portfolio"
+        ).fetchone()
+    return Decimal(result[0]) if result[0] != None else Decimal(0)
+
+
+def get_exchange_rate(
+    original_currency: str, convert_to: str = "GBP", provided_date: str = None
+) -> Decimal:
+    """
+    Gets the exchange rate from a given currency
+    to a given currency using Frankfurter API (https://www.frankfurter.app/).
+
+    Args:
+        original_currency: original currency to convert to given currency.
+        convert_to: currency to convert to.
+        provided_date: date to retrieve exchange rate from.
+
+    Returns:
+        Exchange rate from original currency -> given currency.
+    """
+    if original_currency == convert_to:
+        return Decimal(1)
+
+    url = None
+
+    if not provided_date:
+        # If no date is provided, the most recent exchange rate is retrieved.
+        url = f"https://api.frankfurter.app/latest?from={original_currency}&to={convert_to}"
+    else:
+        # Checks to see if data is available for the date provided
+        # Frankfurter API only provides exchange rate data since 4th January 1999.
+        pdate = datetime.strptime(provided_date, "%Y-%m-%d").date()
+        if pdate < date(1999, 1, 4):
+            provided_date = "1999-01-04"
+
+        url = f"https://api.frankfurter.app/{provided_date}?from={original_currency}&to={convert_to}"
+
+    response = requests.get(url)
+    data = response.json()
+    return Decimal(data["rates"][convert_to])
+
+
 if __name__ == "__main__":
-    print(get_info("FTSE 250"))
-    print(get_info("Apple"))
-    print(get_info("Ethereum"))
+    print(get_info("3697.T"))
+    print(get_info("GSK.L"))

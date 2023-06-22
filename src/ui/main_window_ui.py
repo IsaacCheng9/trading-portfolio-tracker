@@ -32,7 +32,7 @@ class Ui_main_window(object):
         self.central_widget.setObjectName(u"central_widget")
         self.verticalLayoutWidget = QWidget(self.central_widget)
         self.verticalLayoutWidget.setObjectName(u"verticalLayoutWidget")
-        self.verticalLayoutWidget.setGeometry(QRect(10, 10, 981, 581))
+        self.verticalLayoutWidget.setGeometry(QRect(10, 10, 1002, 1042))
         self.vert_layout_window = QVBoxLayout(self.verticalLayoutWidget)
         self.vert_layout_window.setObjectName(u"vert_layout_window")
         self.vert_layout_window.setContentsMargins(0, 0, 0, 0)
@@ -89,25 +89,78 @@ class Ui_main_window(object):
 
         self.vert_layout_window.addWidget(self.lbl_last_updated)
 
-        self.table_widget_portfolio = QTableWidget(self.verticalLayoutWidget)
-        if (self.table_widget_portfolio.columnCount() < 8):
-            self.table_widget_portfolio.setColumnCount(8)
+        self.hori_line_last_updated = QFrame(self.verticalLayoutWidget)
+        self.hori_line_last_updated.setObjectName(u"hori_line_last_updated")
+        self.hori_line_last_updated.setFrameShape(QFrame.HLine)
+        self.hori_line_last_updated.setFrameShadow(QFrame.Sunken)
+
+        self.vert_layout_window.addWidget(self.hori_line_last_updated)
+
+        self.lbl_portfolio_perf = QLabel(self.verticalLayoutWidget)
+        self.lbl_portfolio_perf.setObjectName(u"lbl_portfolio_perf")
+        font2 = QFont()
+        font2.setPointSize(16)
+        self.lbl_portfolio_perf.setFont(font2)
+
+        self.vert_layout_window.addWidget(self.lbl_portfolio_perf)
+
+        self.table_widget_returns = QTableWidget(self.verticalLayoutWidget)
+        if (self.table_widget_returns.columnCount() < 4):
+            self.table_widget_returns.setColumnCount(4)
         __qtablewidgetitem = QTableWidgetItem()
-        self.table_widget_portfolio.setHorizontalHeaderItem(0, __qtablewidgetitem)
+        self.table_widget_returns.setHorizontalHeaderItem(0, __qtablewidgetitem)
         __qtablewidgetitem1 = QTableWidgetItem()
-        self.table_widget_portfolio.setHorizontalHeaderItem(1, __qtablewidgetitem1)
+        self.table_widget_returns.setHorizontalHeaderItem(1, __qtablewidgetitem1)
         __qtablewidgetitem2 = QTableWidgetItem()
-        self.table_widget_portfolio.setHorizontalHeaderItem(2, __qtablewidgetitem2)
+        self.table_widget_returns.setHorizontalHeaderItem(2, __qtablewidgetitem2)
         __qtablewidgetitem3 = QTableWidgetItem()
-        self.table_widget_portfolio.setHorizontalHeaderItem(3, __qtablewidgetitem3)
+        self.table_widget_returns.setHorizontalHeaderItem(3, __qtablewidgetitem3)
+        if (self.table_widget_returns.rowCount() < 1):
+            self.table_widget_returns.setRowCount(1)
         __qtablewidgetitem4 = QTableWidgetItem()
-        self.table_widget_portfolio.setHorizontalHeaderItem(4, __qtablewidgetitem4)
+        self.table_widget_returns.setVerticalHeaderItem(0, __qtablewidgetitem4)
         __qtablewidgetitem5 = QTableWidgetItem()
-        self.table_widget_portfolio.setHorizontalHeaderItem(5, __qtablewidgetitem5)
+        self.table_widget_returns.setItem(0, 0, __qtablewidgetitem5)
         __qtablewidgetitem6 = QTableWidgetItem()
-        self.table_widget_portfolio.setHorizontalHeaderItem(6, __qtablewidgetitem6)
+        self.table_widget_returns.setItem(0, 1, __qtablewidgetitem6)
         __qtablewidgetitem7 = QTableWidgetItem()
-        self.table_widget_portfolio.setHorizontalHeaderItem(7, __qtablewidgetitem7)
+        self.table_widget_returns.setItem(0, 2, __qtablewidgetitem7)
+        __qtablewidgetitem8 = QTableWidgetItem()
+        self.table_widget_returns.setItem(0, 3, __qtablewidgetitem8)
+        self.table_widget_returns.setObjectName(u"table_widget_returns")
+        self.table_widget_returns.setShowGrid(True)
+        self.table_widget_returns.setCornerButtonEnabled(False)
+        self.table_widget_returns.verticalHeader().setVisible(False)
+
+        self.vert_layout_window.addWidget(self.table_widget_returns)
+
+        self.lbl_holdings = QLabel(self.verticalLayoutWidget)
+        self.lbl_holdings.setObjectName(u"lbl_holdings")
+        self.lbl_holdings.setFont(font2)
+
+        self.vert_layout_window.addWidget(self.lbl_holdings)
+
+        self.table_widget_portfolio = QTableWidget(self.verticalLayoutWidget)
+        if (self.table_widget_portfolio.columnCount() < 9):
+            self.table_widget_portfolio.setColumnCount(9)
+        __qtablewidgetitem9 = QTableWidgetItem()
+        self.table_widget_portfolio.setHorizontalHeaderItem(0, __qtablewidgetitem9)
+        __qtablewidgetitem10 = QTableWidgetItem()
+        self.table_widget_portfolio.setHorizontalHeaderItem(1, __qtablewidgetitem10)
+        __qtablewidgetitem11 = QTableWidgetItem()
+        self.table_widget_portfolio.setHorizontalHeaderItem(2, __qtablewidgetitem11)
+        __qtablewidgetitem12 = QTableWidgetItem()
+        self.table_widget_portfolio.setHorizontalHeaderItem(3, __qtablewidgetitem12)
+        __qtablewidgetitem13 = QTableWidgetItem()
+        self.table_widget_portfolio.setHorizontalHeaderItem(4, __qtablewidgetitem13)
+        __qtablewidgetitem14 = QTableWidgetItem()
+        self.table_widget_portfolio.setHorizontalHeaderItem(5, __qtablewidgetitem14)
+        __qtablewidgetitem15 = QTableWidgetItem()
+        self.table_widget_portfolio.setHorizontalHeaderItem(6, __qtablewidgetitem15)
+        __qtablewidgetitem16 = QTableWidgetItem()
+        self.table_widget_portfolio.setHorizontalHeaderItem(7, __qtablewidgetitem16)
+        __qtablewidgetitem17 = QTableWidgetItem()
+        self.table_widget_portfolio.setHorizontalHeaderItem(8, __qtablewidgetitem17)
         self.table_widget_portfolio.setObjectName(u"table_widget_portfolio")
         sizePolicy = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
@@ -144,27 +197,54 @@ class Ui_main_window(object):
     # setupUi
 
     def retranslateUi(self, main_window):
-        main_window.setWindowTitle(QCoreApplication.translate("main_window", u"Trading Portfolio Tracker", None))
+        main_window.setWindowTitle(QCoreApplication.translate("main_window", u"Trading Portfolio Tracker \u2013\u00a0Portfolio", None))
         self.lbl_app_header.setText(QCoreApplication.translate("main_window", u"Trading Portfolio Tracker", None))
         self.btn_add_transaction.setText(QCoreApplication.translate("main_window", u"Add Transaction (Buy/Sell)", None))
         self.btn_view_transactions.setText(QCoreApplication.translate("main_window", u"View Transactions", None))
-        self.btn_view_portfolio_perf.setText(QCoreApplication.translate("main_window", u"View Portfolio Performance", None))
+        self.btn_view_portfolio_perf.setText(QCoreApplication.translate("main_window", u"Analyse Portfolio Performance", None))
         self.lbl_last_updated.setText(QCoreApplication.translate("main_window", u"Last Updated: DD/MM/YYYY HH:MM:SS", None))
-        ___qtablewidgetitem = self.table_widget_portfolio.horizontalHeaderItem(0)
-        ___qtablewidgetitem.setText(QCoreApplication.translate("main_window", u"Symbol", None));
-        ___qtablewidgetitem1 = self.table_widget_portfolio.horizontalHeaderItem(1)
-        ___qtablewidgetitem1.setText(QCoreApplication.translate("main_window", u"Name", None));
-        ___qtablewidgetitem2 = self.table_widget_portfolio.horizontalHeaderItem(2)
-        ___qtablewidgetitem2.setText(QCoreApplication.translate("main_window", u"Weight", None));
-        ___qtablewidgetitem3 = self.table_widget_portfolio.horizontalHeaderItem(3)
-        ___qtablewidgetitem3.setText(QCoreApplication.translate("main_window", u"Units", None));
-        ___qtablewidgetitem4 = self.table_widget_portfolio.horizontalHeaderItem(4)
-        ___qtablewidgetitem4.setText(QCoreApplication.translate("main_window", u"Currency", None));
-        ___qtablewidgetitem5 = self.table_widget_portfolio.horizontalHeaderItem(5)
-        ___qtablewidgetitem5.setText(QCoreApplication.translate("main_window", u"Current Value", None));
-        ___qtablewidgetitem6 = self.table_widget_portfolio.horizontalHeaderItem(6)
-        ___qtablewidgetitem6.setText(QCoreApplication.translate("main_window", u"Change", None));
-        ___qtablewidgetitem7 = self.table_widget_portfolio.horizontalHeaderItem(7)
-        ___qtablewidgetitem7.setText(QCoreApplication.translate("main_window", u"Rate of Return (Absolute)", None));
+        self.lbl_portfolio_perf.setText(QCoreApplication.translate("main_window", u"Portfolio Performance", None))
+        ___qtablewidgetitem = self.table_widget_returns.horizontalHeaderItem(0)
+        ___qtablewidgetitem.setText(QCoreApplication.translate("main_window", u"Total Paid In", None));
+        ___qtablewidgetitem1 = self.table_widget_returns.horizontalHeaderItem(1)
+        ___qtablewidgetitem1.setText(QCoreApplication.translate("main_window", u"Current Portfolio Value", None));
+        ___qtablewidgetitem2 = self.table_widget_returns.horizontalHeaderItem(2)
+        ___qtablewidgetitem2.setText(QCoreApplication.translate("main_window", u"Change in Value", None));
+        ___qtablewidgetitem3 = self.table_widget_returns.horizontalHeaderItem(3)
+        ___qtablewidgetitem3.setText(QCoreApplication.translate("main_window", u"Rate of Return (Absolute)", None));
+        ___qtablewidgetitem4 = self.table_widget_returns.verticalHeaderItem(0)
+        ___qtablewidgetitem4.setText(QCoreApplication.translate("main_window", u"Values", None));
+
+        __sortingEnabled = self.table_widget_returns.isSortingEnabled()
+        self.table_widget_returns.setSortingEnabled(False)
+        ___qtablewidgetitem5 = self.table_widget_returns.item(0, 0)
+        ___qtablewidgetitem5.setText(QCoreApplication.translate("main_window", u"N/A", None));
+        ___qtablewidgetitem6 = self.table_widget_returns.item(0, 1)
+        ___qtablewidgetitem6.setText(QCoreApplication.translate("main_window", u"N/A", None));
+        ___qtablewidgetitem7 = self.table_widget_returns.item(0, 2)
+        ___qtablewidgetitem7.setText(QCoreApplication.translate("main_window", u"N/A", None));
+        ___qtablewidgetitem8 = self.table_widget_returns.item(0, 3)
+        ___qtablewidgetitem8.setText(QCoreApplication.translate("main_window", u"N/A", None));
+        self.table_widget_returns.setSortingEnabled(__sortingEnabled)
+
+        self.lbl_holdings.setText(QCoreApplication.translate("main_window", u"Your Holdings", None))
+        ___qtablewidgetitem9 = self.table_widget_portfolio.horizontalHeaderItem(0)
+        ___qtablewidgetitem9.setText(QCoreApplication.translate("main_window", u"Symbol", None));
+        ___qtablewidgetitem10 = self.table_widget_portfolio.horizontalHeaderItem(1)
+        ___qtablewidgetitem10.setText(QCoreApplication.translate("main_window", u"Name", None));
+        ___qtablewidgetitem11 = self.table_widget_portfolio.horizontalHeaderItem(2)
+        ___qtablewidgetitem11.setText(QCoreApplication.translate("main_window", u"Weight", None));
+        ___qtablewidgetitem12 = self.table_widget_portfolio.horizontalHeaderItem(3)
+        ___qtablewidgetitem12.setText(QCoreApplication.translate("main_window", u"Currency", None));
+        ___qtablewidgetitem13 = self.table_widget_portfolio.horizontalHeaderItem(4)
+        ___qtablewidgetitem13.setText(QCoreApplication.translate("main_window", u"Units", None));
+        ___qtablewidgetitem14 = self.table_widget_portfolio.horizontalHeaderItem(5)
+        ___qtablewidgetitem14.setText(QCoreApplication.translate("main_window", u"Unit Price", None));
+        ___qtablewidgetitem15 = self.table_widget_portfolio.horizontalHeaderItem(6)
+        ___qtablewidgetitem15.setText(QCoreApplication.translate("main_window", u"Value (GBP)", None));
+        ___qtablewidgetitem16 = self.table_widget_portfolio.horizontalHeaderItem(7)
+        ___qtablewidgetitem16.setText(QCoreApplication.translate("main_window", u"Change (GBP)", None));
+        ___qtablewidgetitem17 = self.table_widget_portfolio.horizontalHeaderItem(8)
+        ___qtablewidgetitem17.setText(QCoreApplication.translate("main_window", u"Rate of Return (Absolute)", None));
     # retranslateUi
 
