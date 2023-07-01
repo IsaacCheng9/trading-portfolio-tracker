@@ -88,7 +88,7 @@ def get_info(symbol: str) -> dict[str, str]:
         ticker = yf.Ticker(symbol)
     except:
         return False
-
+    
     # Creates a dictionary containing basic information about the asset.
     return_dict = {
         "name": ticker.info["shortName"],
@@ -102,7 +102,14 @@ def get_info(symbol: str) -> dict[str, str]:
         return_dict["currency"] = ticker.info["financialCurrency"]
         return_dict["sector"] = ticker.info["sector"]
     except:
-        data = yf.download(return_dict["ticker"], period="1d", progress=False)
+        range = "1d"
+        
+        # If the type is a mutual fund then change the data download period to
+        # a month, as the value of the fund updates only once a day.
+        if return_dict["type"] == "MUTUALFUND":
+            range = "1mo"
+        
+        data = yf.download(return_dict["ticker"], period=range, progress=False)
         last_row_index = len(data) - 1
         # Gets the last reported close price of the asset
         last_row_open_value = data.iloc[last_row_index]["Close"]
@@ -273,5 +280,4 @@ def get_exchange_rate(
 
 
 if __name__ == "__main__":
-    print(get_info("3697.T"))
-    print(get_info("GSK.L"))
+    print(get_info("0P0000KSPA.L"))
