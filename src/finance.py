@@ -88,7 +88,7 @@ def get_info(symbol: str) -> dict[str, str]:
         ticker = yf.Ticker(symbol)
     except:
         return False
-    
+
     # Creates a dictionary containing basic information about the asset.
     return_dict = {
         "name": ticker.info["shortName"],
@@ -103,12 +103,12 @@ def get_info(symbol: str) -> dict[str, str]:
         return_dict["sector"] = ticker.info["sector"]
     except:
         range = "1d"
-        
+
         # If the type is a mutual fund then change the data download period to
-        # a month, as the value of the fund updates only once a day.
+        # a month, as the value of the fund updates only once a day.
         if return_dict["type"] == "MUTUALFUND":
             range = "1mo"
-        
+
         data = yf.download(return_dict["ticker"], period=range, progress=False)
         last_row_index = len(data) - 1
         # Gets the last reported close price of the asset
