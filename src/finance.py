@@ -96,13 +96,23 @@ def get_info(symbol: str) -> dict[str, str]:
         "type": ticker.info["quoteType"],
     }
 
-    # Gets information about a given index, security, or stock.
+    # Tries to get information about a stock/index/fund but if the data is
+    # unavailable in the usual format, the most recent data about that asset is
+    # downloaded and retrieved using the download method of yfinance.
     try:
         return_dict["current_value"] = ticker.info["currentPrice"]
         return_dict["currency"] = ticker.info["financialCurrency"]
         return_dict["sector"] = ticker.info["sector"]
-    except:
-        data = yf.download(return_dict["ticker"], period="1d", progress=False)
+    except KeyError:
+        range = "1d"
+
+        # If the type is a mutual fund then change the data download period to
+        # a month, as the value of the fund updates only once a day.
+        if return_dict["type"] == "MUTUALFUND":
+            range = "1mo"
+
+        # Downloads the most recent data associated with the asset.
+        data = yf.download(return_dict["ticker"], period=range, progress=False)
         last_row_index = len(data) - 1
         # Gets the last reported close price of the asset
         last_row_open_value = data.iloc[last_row_index]["Close"]
@@ -260,7 +270,8 @@ def get_exchange_rate(
         url = f"https://api.frankfurter.app/latest?from={original_currency}&to={convert_to}"
     else:
         # Checks to see if data is available for the date provided
-        # Frankfurter API only provides exchange rate data since 4th January 1999.
+        # Frankfurter API only provides exchange rate data since
+        # 4th January 1999.
         pdate = datetime.strptime(provided_date, "%Y-%m-%d").date()
         if pdate < date(1999, 1, 4):
             provided_date = "1999-01-04"
@@ -273,5 +284,7 @@ def get_exchange_rate(
 
 
 if __name__ == "__main__":
-    print(get_info("3697.T"))
-    print(get_info("GSK.L"))
+    print(get_info("0P0001F96E.L"))  # OEIC
+    print(get_info("AAPL"))  # Company
+    print(get_info("^FTSE"))  # Index
+    print(get_info("MKS.L"))  # LSE stock
