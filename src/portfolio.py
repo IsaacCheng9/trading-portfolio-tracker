@@ -18,15 +18,16 @@ from PySide6.QtWidgets import QDialog, QMainWindow
 
 from src.finance import (
     get_absolute_rate_of_return,
+    get_exchange_rate,
     get_info,
     get_name_from_symbol,
     get_total_paid_into_portfolio,
     upsert_transaction_into_portfolio,
-    get_exchange_rate,
 )
 from src.transactions import Transaction
 from src.ui.add_transaction_ui import Ui_dialog_add_transaction
 from src.ui.main_window_ui import Ui_main_window
+from src.ui.portfolio_performance_ui import Ui_dialog_portfolio_perf
 from src.ui.transaction_history_ui import Ui_dialog_transaction_history
 
 DB_PATH = "resources/portfolio.db"
@@ -78,6 +79,8 @@ class MainWindow(QMainWindow, Ui_main_window):
         self.btn_add_transaction.clicked.connect(self.open_add_transaction_dialog)
         # Connect the 'View Transactions' button to open the dialog.
         self.btn_view_transactions.clicked.connect(self.open_transaction_history_dialog)
+        # Connect the 'Analyse Portfolio Performance' button.
+        self.btn_view_portfolio_perf.clicked.connect(self.open_portfolio_perf_dialog)
 
         # Set the resize mode of the table to resize the columns to fit
         # the contents by default.
@@ -135,6 +138,13 @@ class MainWindow(QMainWindow, Ui_main_window):
         """
         self.transaction_history_dialog = TransactionHistoryDialog()
         self.transaction_history_dialog.open()
+
+    def open_portfolio_perf_dialog(self) -> None:
+        """
+        Open the dialog to view the user's portfolio performance analysis.
+        """
+        self.portfolio_perf_dialog = PortfolioPerfDialog()
+        self.portfolio_perf_dialog.open()
 
     def update_returns_table(self) -> None:
         """
@@ -353,6 +363,12 @@ class MainWindow(QMainWindow, Ui_main_window):
         # Update last updated time label in dd-mm-yyyy hh:mm:ss format
         cur_time = time.strftime("%d/%m/%Y %H:%M:%S")
         self.lbl_last_updated.setText(f"Last Updated: {cur_time}")
+
+
+class PortfolioPerfDialog(QDialog, Ui_dialog_portfolio_perf):
+    def __init__(self) -> None:
+        super().__init__()
+        self.setupUi(self)
 
 
 class TransactionHistoryDialog(QDialog, Ui_dialog_transaction_history):
