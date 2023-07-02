@@ -370,6 +370,13 @@ class PortfolioPerfDialog(QDialog, Ui_dialog_portfolio_perf):
         super().__init__()
         self.setupUi(self)
 
+        # Set the resize mode of the table to resize the columns to fit
+        # the contents by default.
+        table_header = self.table_widget_returns_breakdown.horizontalHeader()
+        table_header.setSectionResizeMode(
+            QtWidgets.QHeaderView.ResizeMode.ResizeToContents
+        )
+
 
 class TransactionHistoryDialog(QDialog, Ui_dialog_transaction_history):
     def __init__(self) -> None:
