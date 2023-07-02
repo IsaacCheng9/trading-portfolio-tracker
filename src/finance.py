@@ -48,7 +48,7 @@ def get_name_from_symbol(symbol: str) -> str:
     """
     tick = yf.Ticker(symbol)
     try:
-        name = tick.info["shortName"]
+        name = tick.info["longName"]
         return name
     except (exceptions.HTTPError, KeyError):
         return ""
