@@ -88,7 +88,7 @@ def get_info(symbol: str) -> dict[str, str]:
         ticker = yf.Ticker(symbol)
     except:
         return False
-
+    
     # Creates a dictionary containing basic information about the asset.
     return_dict = {
         "name": ticker.info["shortName"],
@@ -162,7 +162,7 @@ def upsert_transaction_into_portfolio(
     with duckdb.connect(database=DB_PATH) as conn:
         # Retrieve the security from the portfolio table based on the symbol
         result = conn.execute(
-            "SELECT symbol, name, units, currency, paid, paid_gbp FROM portfolio "
+            "SELECT symbol, name, units, currency, paid, paid_gbp FROM portfolio"
             "WHERE symbol = ?",
             (symbol,),
         ).fetchone()
@@ -267,7 +267,8 @@ def get_exchange_rate(
         url = f"https://api.frankfurter.app/latest?from={original_currency}&to={convert_to}"
     else:
         # Checks to see if data is available for the date provided
-        # Frankfurter API only provides exchange rate data since 4th January 1999.
+        # Frankfurter API only provides exchange rate data since 
+        # 4th January 1999.
         pdate = datetime.strptime(provided_date, "%Y-%m-%d").date()
         if pdate < date(1999, 1, 4):
             provided_date = "1999-01-04"
@@ -280,4 +281,7 @@ def get_exchange_rate(
 
 
 if __name__ == "__main__":
-    print(get_info("0P0000KSPA.L"))
+    print(get_info("0P0001F96E.L")) # OEIC
+    print(get_info("AAPL")) # Company
+    print(get_info("^FTSE")) # Index
+    print(get_info("MKS.L")) # LSE stock
