@@ -162,7 +162,7 @@ def upsert_transaction_into_portfolio(
     with duckdb.connect(database=DB_PATH) as conn:
         # Retrieve the security from the portfolio table based on the symbol
         result = conn.execute(
-            "SELECT symbol, name, units, currency, paid, paid_gbp FROM portfolio"
+            "SELECT symbol, name, units, currency, paid, paid_gbp FROM portfolio "
             "WHERE symbol = ?",
             (symbol,),
         ).fetchone()
