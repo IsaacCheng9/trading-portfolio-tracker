@@ -97,7 +97,7 @@ def get_info(symbol: str) -> dict[str, str]:
     }
 
     # Tries to get information about a stock/index/fund but if the data is
-    # unavailable in the usual format, the most recent data about that asset is 
+    # unavailable in the usual format, the most recent data about that asset is
     # downloaded and retrieved using the download method of yfinance.
     try:
         return_dict["current_value"] = ticker.info["currentPrice"]
