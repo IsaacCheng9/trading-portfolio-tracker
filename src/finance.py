@@ -96,12 +96,14 @@ def get_info(symbol: str) -> dict[str, str]:
         "type": ticker.info["quoteType"],
     }
 
-    # Gets information about a given index, security, or stock.
+    # Tries to get information about a stock/index/fund but if the data is
+    # unavailable in the usual format, the most recent data about that asset is
+    # downloaded and retrieved using the download method of yfinance.
     try:
         return_dict["current_value"] = ticker.info["currentPrice"]
         return_dict["currency"] = ticker.info["financialCurrency"]
         return_dict["sector"] = ticker.info["sector"]
-    except:
+    except KeyError:
         range = "1d"
 
         # If the type is a mutual fund then change the data download period to
@@ -109,6 +111,7 @@ def get_info(symbol: str) -> dict[str, str]:
         if return_dict["type"] == "MUTUALFUND":
             range = "1mo"
 
+        # Downloads the most recent data associated with the asset.
         data = yf.download(return_dict["ticker"], period=range, progress=False)
         last_row_index = len(data) - 1
         # Gets the last reported close price of the asset
