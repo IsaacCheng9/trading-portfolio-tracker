@@ -387,6 +387,7 @@ class PortfolioPerfDialog(QDialog, Ui_dialog_portfolio_perf):
         total_cur_val = Decimal(0.0)
         total_cur_val_gbp = Decimal(0.0)
         total_paid = Decimal(0.0)
+        total_paid_gbp = Decimal(0.0)
 
         # Calculate the cumulative total paid and current value of the
         # portfolio.
@@ -394,16 +395,17 @@ class PortfolioPerfDialog(QDialog, Ui_dialog_portfolio_perf):
             stock_info = get_info(security.symbol)
             cur_val = Decimal(stock_info["current_value"]) * security.units
             total_cur_val += cur_val
+            total_paid += security.paid
             exchange_rate = get_exchange_rate(stock_info["currency"])
             total_cur_val_gbp += cur_val * exchange_rate
+            total_paid_gbp += security.paid * exchange_rate
 
-        total_paid = get_total_paid_into_portfolio()
-        total_val_change = total_cur_val_gbp - total_paid
-        rate_of_return_absolute = get_absolute_rate_of_return(
-            total_cur_val_gbp, total_paid
-        )
-        # TODO: Change this to exclude currency risk.
-        val_change_return = (total_val_change / total_paid) * Decimal(100.0)
+        rate_of_return_absolute = get_absolute_rate_of_return(total_cur_val_gbp, total_paid_gbp)
+        val_change_return = get_absolute_rate_of_return(total_cur_val, total_paid)
+        print(total_cur_val)
+        print(total_cur_val_gbp)
+        print(total_paid)
+        print(total_paid_gbp)
 
         # Absolute rate of return
         self.table_widget_returns_breakdown.setItem(
