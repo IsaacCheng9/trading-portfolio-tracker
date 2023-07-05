@@ -392,14 +392,18 @@ class PortfolioPerfDialog(QDialog, Ui_dialog_portfolio_perf):
         # portfolio.
         for security in portfolio:
             stock_info = get_info(security.symbol)
-            # TODO: This field mixes pounds and pence - fix this.
-            total_paid += Decimal(security.paid)
-            total_cur_val += Decimal(stock_info["current_value"]) * security.units
+            cur_val = Decimal(stock_info["current_value"]) * security.units
+            total_cur_val += cur_val
             exchange_rate = get_exchange_rate(stock_info["currency"])
-            total_cur_val_gbp += total_cur_val * exchange_rate
+            total_cur_val_gbp += cur_val * exchange_rate
 
+        total_paid = get_total_paid_into_portfolio()
         total_val_change = total_cur_val_gbp - total_paid
-        rate_of_return_absolute = get_absolute_rate_of_return(total_cur_val, total_paid)
+        rate_of_return_absolute = get_absolute_rate_of_return(
+            total_cur_val_gbp, total_paid
+        )
+        # TODO: Change this to exclude currency risk.
+        val_change_return = (total_val_change / total_paid) * Decimal(100.0)
 
         # Absolute rate of return
         self.table_widget_returns_breakdown.setItem(
@@ -407,7 +411,7 @@ class PortfolioPerfDialog(QDialog, Ui_dialog_portfolio_perf):
         )
         # Return from change in value
         self.table_widget_returns_breakdown.setItem(
-            0, 1, QtWidgets.QTableWidgetItem(f"{total_val_change:.2f}")
+            0, 1, QtWidgets.QTableWidgetItem(f"{val_change_return:.2f}%")
         )
         # Return from currency risk
         self.table_widget_returns_breakdown.setItem(
