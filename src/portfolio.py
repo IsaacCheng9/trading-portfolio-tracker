@@ -17,7 +17,7 @@ from PySide6.QtGui import QDoubleValidator
 from PySide6.QtWidgets import QDialog, QMainWindow
 
 from src.finance import (
-    get_absolute_rate_of_return,
+    get_rate_of_return,
     get_exchange_rate,
     get_info,
     get_name_from_symbol,
@@ -161,7 +161,7 @@ class MainWindow(QMainWindow, Ui_main_window):
         total_val_change = Decimal(
             sum(self.current_security_info[security.name][1] for security in portfolio)
         )
-        rate_of_return_absolute = get_absolute_rate_of_return(total_cur_val, total_paid)
+        rate_of_return_absolute = get_rate_of_return(total_cur_val, total_paid)
 
         # Update the table with the new values.
         self.table_widget_returns.setItem(
@@ -267,7 +267,7 @@ class MainWindow(QMainWindow, Ui_main_window):
             cur_val_gbp = cur_val * exchange_rate
 
             val_change = cur_val_gbp - (security.paid * exchange_rate)
-            rate_of_return_abs = get_absolute_rate_of_return(cur_val, security.paid)
+            rate_of_return_abs = get_rate_of_return(cur_val, security.paid)
 
             # Stores the live security information in a dictionary indexed
             # by the name of the security
@@ -400,8 +400,8 @@ class PortfolioPerfDialog(QDialog, Ui_dialog_portfolio_perf):
             total_cur_val_gbp += cur_val * exchange_rate
             total_paid_gbp += security.paid * exchange_rate
 
-        rate_of_return_absolute = get_absolute_rate_of_return(total_cur_val_gbp, total_paid_gbp)
-        val_change_return = get_absolute_rate_of_return(total_cur_val, total_paid)
+        rate_of_return_absolute = get_rate_of_return(total_cur_val_gbp, total_paid_gbp)
+        val_change_return = get_rate_of_return(total_cur_val, total_paid)
         print(total_cur_val)
         print(total_cur_val_gbp)
         print(total_paid)

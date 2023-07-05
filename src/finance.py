@@ -127,9 +127,9 @@ def get_info(symbol: str) -> dict[str, str]:
     return return_dict
 
 
-def get_absolute_rate_of_return(current: Decimal, purchase: Decimal) -> Decimal:
+def get_rate_of_return(current: Decimal, purchase: Decimal) -> Decimal:
     """
-    Calculates the absolute rate of return given the current and purchase price of an
+    Calculates the rate of return given the current and purchase price of an
     asset.
 
     Args:
