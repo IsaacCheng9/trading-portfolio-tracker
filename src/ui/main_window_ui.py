@@ -24,7 +24,7 @@ class Ui_main_window(object):
     def setupUi(self, main_window):
         if not main_window.objectName():
             main_window.setObjectName(u"main_window")
-        main_window.resize(1000, 600)
+        main_window.resize(1200, 800)
         font = QFont()
         font.setPointSize(12)
         main_window.setFont(font)
@@ -32,7 +32,7 @@ class Ui_main_window(object):
         self.central_widget.setObjectName(u"central_widget")
         self.verticalLayoutWidget = QWidget(self.central_widget)
         self.verticalLayoutWidget.setObjectName(u"verticalLayoutWidget")
-        self.verticalLayoutWidget.setGeometry(QRect(10, 10, 1002, 1042))
+        self.verticalLayoutWidget.setGeometry(QRect(10, 10, 1181, 781))
         self.vert_layout_window = QVBoxLayout(self.verticalLayoutWidget)
         self.vert_layout_window.setObjectName(u"vert_layout_window")
         self.vert_layout_window.setContentsMargins(0, 0, 0, 0)
