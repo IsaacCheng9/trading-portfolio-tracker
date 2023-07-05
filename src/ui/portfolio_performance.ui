@@ -96,12 +96,12 @@
       </column>
       <column>
        <property name="text">
-        <string>Returns from Currency Risk</string>
+        <string>Returns from Change of Value</string>
        </property>
       </column>
       <column>
        <property name="text">
-        <string>Returns from Change of Value</string>
+        <string>Returns from Currency Risk</string>
        </property>
       </column>
       <item row="0" column="0">

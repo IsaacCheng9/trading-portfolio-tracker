@@ -112,9 +112,9 @@ class Ui_dialog_portfolio_perf(object):
         ___qtablewidgetitem = self.table_widget_returns_breakdown.horizontalHeaderItem(0)
         ___qtablewidgetitem.setText(QCoreApplication.translate("dialog_portfolio_perf", u"Rate of Return (Absolute)", None));
         ___qtablewidgetitem1 = self.table_widget_returns_breakdown.horizontalHeaderItem(1)
-        ___qtablewidgetitem1.setText(QCoreApplication.translate("dialog_portfolio_perf", u"Returns from Currency Risk", None));
+        ___qtablewidgetitem1.setText(QCoreApplication.translate("dialog_portfolio_perf", u"Returns from Change of Value", None));
         ___qtablewidgetitem2 = self.table_widget_returns_breakdown.horizontalHeaderItem(2)
-        ___qtablewidgetitem2.setText(QCoreApplication.translate("dialog_portfolio_perf", u"Returns from Change of Value", None));
+        ___qtablewidgetitem2.setText(QCoreApplication.translate("dialog_portfolio_perf", u"Returns from Currency Risk", None));
         ___qtablewidgetitem3 = self.table_widget_returns_breakdown.verticalHeaderItem(0)
         ___qtablewidgetitem3.setText(QCoreApplication.translate("dialog_portfolio_perf", u"Values", None));
 
