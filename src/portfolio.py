@@ -377,6 +377,43 @@ class PortfolioPerfDialog(QDialog, Ui_dialog_portfolio_perf):
             QtWidgets.QHeaderView.ResizeMode.ResizeToContents
         )
 
+        self.update_returns_breakdown()
+
+    def update_returns_breakdown(self):
+        """
+        Update the breakdown of returns for the user's portfolio.
+        """
+        portfolio = HeldSecurity.load_portfolio()
+        total_cur_val = Decimal(0.0)
+        total_cur_val_gbp = Decimal(0.0)
+        total_paid = Decimal(0.0)
+
+        # Calculate the cumulative total paid and current value of the
+        # portfolio.
+        for security in portfolio:
+            stock_info = get_info(security.symbol)
+            # TODO: This field mixes pounds and pence - fix this.
+            total_paid += Decimal(security.paid)
+            total_cur_val += Decimal(stock_info["current_value"]) * security.units
+            exchange_rate = get_exchange_rate(stock_info["currency"])
+            total_cur_val_gbp += total_cur_val * exchange_rate
+
+        total_val_change = total_cur_val_gbp - total_paid
+        rate_of_return_absolute = get_absolute_rate_of_return(total_cur_val, total_paid)
+
+        # Absolute rate of return
+        self.table_widget_returns_breakdown.setItem(
+            0, 0, QtWidgets.QTableWidgetItem(f"{rate_of_return_absolute:.3f}%")
+        )
+        # Return from change in value
+        self.table_widget_returns_breakdown.setItem(
+            0, 1, QtWidgets.QTableWidgetItem(f"{total_val_change:.2f}")
+        )
+        # Return from currency risk
+        self.table_widget_returns_breakdown.setItem(
+            0, 2, QtWidgets.QTableWidgetItem(f"")
+        )
+
 
 class TransactionHistoryDialog(QDialog, Ui_dialog_transaction_history):
     def __init__(self) -> None:
