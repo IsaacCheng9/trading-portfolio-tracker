@@ -266,8 +266,8 @@ class MainWindow(QMainWindow, Ui_main_window):
             exchange_rate = get_exchange_rate(stock_info["currency"])
             cur_val_gbp = cur_val * exchange_rate
 
-            val_change = cur_val_gbp - (security.paid * exchange_rate)
-            rate_of_return_abs = get_rate_of_return(cur_val, security.paid)
+            val_change = cur_val_gbp - security.paid_gbp
+            rate_of_return_abs = get_rate_of_return(cur_val_gbp, security.paid)
 
             # Stores the live security information in a dictionary indexed
             # by the name of the security
@@ -597,6 +597,7 @@ class HeldSecurity:
     units: Decimal
     currency: str
     paid: Decimal
+    paid_gbp: Decimal
 
     @staticmethod
     def load_portfolio() -> list[HeldSecurity]:
@@ -610,19 +611,20 @@ class HeldSecurity:
         with duckdb.connect(database=DB_PATH) as conn:
             # Retrieve securities from the portfolio table
             result = conn.execute(
-                "SELECT symbol, name, units, currency, paid FROM portfolio"
+                "SELECT symbol, name, units, currency, paid, paid_gbp FROM portfolio"
             )
             records = result.fetchall()
 
         # Create HeldSecurity objects for each record.
         portfolio = []
         for record in records:
-            symbol, name, units, currency, paid = record
+            symbol, name, units, currency, paid, paid_gbp = record
             # Convert the units and paid values to Decimal objects to avoid
             # floating point precision errors.
             units = Decimal(units)
             paid = Decimal(paid)
-            security = HeldSecurity(symbol, name, units, currency, paid)
+            paid_gbp = Decimal(paid_gbp)
+            security = HeldSecurity(symbol, name, units, currency, paid, paid_gbp)
             portfolio.append(security)
 
         return portfolio
