@@ -91,7 +91,7 @@
       </row>
       <column>
        <property name="text">
-        <string>Rate of Return (Absolute)</string>
+        <string>Total Rate of Return (Absolute)</string>
        </property>
       </column>
       <column>

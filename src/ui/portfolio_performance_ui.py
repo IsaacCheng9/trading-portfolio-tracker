@@ -110,7 +110,7 @@ class Ui_dialog_portfolio_perf(object):
         self.lbl_last_updated.setText(QCoreApplication.translate("dialog_portfolio_perf", u"Last Updated: DD/MM/YYYY HH:MM:SS", None))
         self.lbl_returns_breakdown.setText(QCoreApplication.translate("dialog_portfolio_perf", u"Breakdown of Returns", None))
         ___qtablewidgetitem = self.table_widget_returns_breakdown.horizontalHeaderItem(0)
-        ___qtablewidgetitem.setText(QCoreApplication.translate("dialog_portfolio_perf", u"Rate of Return (Absolute)", None));
+        ___qtablewidgetitem.setText(QCoreApplication.translate("dialog_portfolio_perf", u"Total Rate of Return (Absolute)", None));
         ___qtablewidgetitem1 = self.table_widget_returns_breakdown.horizontalHeaderItem(1)
         ___qtablewidgetitem1.setText(QCoreApplication.translate("dialog_portfolio_perf", u"Returns from Change of Value", None));
         ___qtablewidgetitem2 = self.table_widget_returns_breakdown.horizontalHeaderItem(2)
