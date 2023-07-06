@@ -396,16 +396,17 @@ class PortfolioPerfDialog(QDialog, Ui_dialog_portfolio_perf):
             cur_val = Decimal(stock_info["current_value"]) * security.units
             total_cur_val += cur_val
             total_paid += security.paid
+            total_paid_gbp += security.paid_gbp
             exchange_rate = get_exchange_rate(stock_info["currency"])
             total_cur_val_gbp += cur_val * exchange_rate
-            total_paid_gbp += security.paid * exchange_rate
 
         rate_of_return_absolute = get_rate_of_return(total_cur_val_gbp, total_paid_gbp)
         val_change_return = get_rate_of_return(total_cur_val, total_paid)
-        print(total_cur_val)
-        print(total_cur_val_gbp)
-        print(total_paid)
-        print(total_paid_gbp)
+        # Currency risk is the returns caused by fluctuations in the exchange
+        # rate between the currency of the security and GBP since the
+        # security was purchased. If the GBP has weakened against the original
+        # currency, it results in a positive return, and vice versa.
+        currency_risk_return = rate_of_return_absolute - val_change_return
 
         # Absolute rate of return
         self.table_widget_returns_breakdown.setItem(
@@ -413,11 +414,11 @@ class PortfolioPerfDialog(QDialog, Ui_dialog_portfolio_perf):
         )
         # Return from change in value
         self.table_widget_returns_breakdown.setItem(
-            0, 1, QtWidgets.QTableWidgetItem(f"{val_change_return:.2f}%")
+            0, 1, QtWidgets.QTableWidgetItem(f"{val_change_return:.3f}%")
         )
         # Return from currency risk
         self.table_widget_returns_breakdown.setItem(
-            0, 2, QtWidgets.QTableWidgetItem(f"")
+            0, 2, QtWidgets.QTableWidgetItem(f"{currency_risk_return:.3f}%")
         )
 
 
