@@ -169,7 +169,7 @@ class Ui_dialog_add_transaction(object):
     # setupUi
 
     def retranslateUi(self, dialog_add_transaction):
-        dialog_add_transaction.setWindowTitle(QCoreApplication.translate("dialog_add_transaction", u"Add a Transaction \u2013 Trading Portfolio Tracker", None))
+        dialog_add_transaction.setWindowTitle(QCoreApplication.translate("dialog_add_transaction", u"Trading Portfolio Tracker \u2013\u00a0Add a Transaction", None))
         self.lbl_add_transaction.setText(QCoreApplication.translate("dialog_add_transaction", u"Add a Transaction", None))
         self.lbl_transaction_type.setText(QCoreApplication.translate("dialog_add_transaction", u"Transaction Type:", None))
         self.combo_box_transaction_type.setItemText(0, QCoreApplication.translate("dialog_add_transaction", u"Buy", None))

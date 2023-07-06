@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>dialog_portfolio_perf</class>
+ <widget class="QDialog" name="dialog_portfolio_perf">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>800</width>
+    <height>600</height>
+   </rect>
+  </property>
+  <property name="font">
+   <font>
+    <pointsize>12</pointsize>
+   </font>
+  </property>
+  <property name="windowTitle">
+   <string>Trading Portfolio Tracker – Portfolio Performance Analysis</string>
+  </property>
+  <widget class="QWidget" name="verticalLayoutWidget">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>6</y>
+     <width>781</width>
+     <height>581</height>
+    </rect>
+   </property>
+   <layout class="QVBoxLayout" name="vert_layout_dialog">
+    <item>
+     <widget class="QLabel" name="lbl_portfolio_perf">
+      <property name="font">
+       <font>
+        <pointsize>22</pointsize>
+       </font>
+      </property>
+      <property name="text">
+       <string>Portfolio Performance Analysis</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="Line" name="hori_line_portfolio_perf">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QLabel" name="lbl_last_updated">
+      <property name="text">
+       <string>Last Updated: DD/MM/YYYY HH:MM:SS</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="Line" name="hori_line_last_updated">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QLabel" name="lbl_returns_breakdown">
+      <property name="font">
+       <font>
+        <pointsize>16</pointsize>
+       </font>
+      </property>
+      <property name="text">
+       <string>Breakdown of Returns</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QTableWidget" name="table_widget_returns_breakdown">
+      <property name="showGrid">
+       <bool>true</bool>
+      </property>
+      <property name="cornerButtonEnabled">
+       <bool>false</bool>
+      </property>
+      <attribute name="verticalHeaderVisible">
+       <bool>false</bool>
+      </attribute>
+      <row>
+       <property name="text">
+        <string>Values</string>
+       </property>
+      </row>
+      <column>
+       <property name="text">
+        <string>Total Rate of Return (Absolute)</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>Returns from Change of Value</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>Returns from Currency Risk</string>
+       </property>
+      </column>
+      <item row="0" column="0">
+       <property name="text">
+        <string>N/A</string>
+       </property>
+      </item>
+      <item row="0" column="1">
+       <property name="text">
+        <string>N/A</string>
+       </property>
+      </item>
+      <item row="0" column="2">
+       <property name="text">
+        <string>N/A</string>
+       </property>
+      </item>
+     </widget>
+    </item>
+    <item>
+     <spacer name="vert_spacer_dialog">
+      <property name="orientation">
+       <enum>Qt::Vertical</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>20</width>
+        <height>40</height>
+       </size>
+      </property>
+     </spacer>
+    </item>
+   </layout>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
