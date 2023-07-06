@@ -84,10 +84,7 @@ def get_info(symbol: str) -> dict[str, str]:
         Dictionary containing information about the stock, future, or index.
     """
     # Creates a yfinance ticker object for a given asset.
-    try:
-        ticker = yf.Ticker(symbol)
-    except:
-        return False
+    ticker = yf.Ticker(symbol)
 
     # Creates a dictionary containing basic information about the asset.
     return_dict = {

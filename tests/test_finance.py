@@ -192,3 +192,137 @@ def test_get_absolute_rate_of_return_no_purchase_price() -> None:
     """
     calculated_ror = finance.get_absolute_rate_of_return(100, None)
     assert calculated_ror == 0
+
+
+def test_get_absolute_rate_of_return_invalid() -> None:
+    """
+    Tests the get_absolute_rate_of_return method whilst passing no purchase
+    and current price into the method
+    """
+    calculated_ror = finance.get_absolute_rate_of_return(None, None)
+    assert calculated_ror == 0
+
+
+# TODO: Work out DB_PATH testing DB
+def test_upsert_transaction_into_portfolio_valid_buy() -> None:
+    """ """
+    pass
+
+
+def test_upsert_transaction_into_portfolio_invalid_buy() -> None:
+    """ """
+    pass
+
+
+def test_upsert_transaction_into_portfolio_valid_sell() -> None:
+    """ """
+    pass
+
+
+def test_upsert_transaction_into_portfolio_invalid_sell() -> None:
+    """ """
+    pass
+
+
+def test_remove_security_from_portfolio_valid() -> None:
+    """ """
+    pass
+
+
+def test_remove_security_from_portfolio_valid() -> None:
+    """ """
+    pass
+
+
+def test_remove_security_from_portfolio_invalid() -> None:
+    """ """
+    pass
+
+
+def test_get_total_paid_into_portfolio_valid() -> None:
+    """ """
+    pass
+
+
+def test_get_total_paid_into_portfolio_empty() -> None:
+    """ """
+    pass
+
+
+@pytest.mark.parametrize(
+    "original_currency, currency_to", [("GBP", "USD"), ("USD", "JPY"), ("JPY", "GBP")]
+)
+def test_get_exchange_rate_valid(original_currency: str, currency_to: str) -> None:
+    """
+    Tests the get_exchange_rate method providing valid currencies to ensure
+    the most recent exchange rate is retrieved.
+
+    Args:
+        original_currency: Currency to convert from.
+        currency_to: Currency to convert to.
+    """
+    exch_rate = finance.get_exchange_rate(original_currency, currency_to)
+    assert exch_rate
+    assert exch_rate > 0
+
+
+@pytest.mark.parametrize(
+    "currency",
+    [
+        ("GBP"),
+        ("EUR"),
+        ("USD"),
+    ],
+)
+def test_get_exchange_rate_same_currency(currency: str) -> None:
+    """
+    Tests the get_exchange_rate method providing the same currency to convert
+    to. The exchange rate between the same currency should be 1.
+
+    Args:
+        currency: Currency to convert from and to.
+    """
+    assert finance.get_exchange_rate(currency, currency) == 1
+
+
+@pytest.mark.parametrize(
+    "provided_date",
+    [
+        ("1999-01-04"),
+        ("2023-07-01"),
+        ("2002-08-03"),
+    ],
+)
+def test_get_exchange_rate_valid_date(provided_date: str) -> None:
+    """
+    Tests the get_exchange_rate method providing a valid date.
+
+    Args:
+        provided_date: Date to retrieve the exchange rate from.
+    """
+    exch_rate = finance.get_exchange_rate("GBP", "USD", provided_date)
+    assert exch_rate
+    assert exch_rate > 0
+
+
+def test_get_exchange_rate_too_old_date() -> None:
+    """
+    Tests the get_exchange_rate method providing a date that is too old for
+    the Frankfurter API to ensure the oldest possible exchange rate is
+    retrieved.
+    """
+    exch_rate = finance.get_exchange_rate("GBP", "USD", "1900-01-01")
+    exch_rate_oldest = finance.get_exchange_rate("GBP", "USD", "1999-01-04")
+
+    assert exch_rate == exch_rate_oldest
+
+
+def test_get_exchange_rate_invalid_date() -> None:
+    """
+    Tests the get_exchange_rate method providing an invalid date.
+    """
+    try:
+        finance.get_exchange_rate("GBP", "USD", "INVALID")
+        assert False
+    except ValueError:
+        assert True
