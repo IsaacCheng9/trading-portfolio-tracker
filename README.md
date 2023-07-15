@@ -25,11 +25,13 @@ framework ensures cross-platform compatibility and high performance.
 
 ## Screenshots
 
-![image](https://github.com/IsaacCheng9/trading-portfolio-tracker/assets/47993930/b028e543-4fe4-44c6-8c2e-5c48c395fd6e)
+![image](https://github.com/IsaacCheng9/trading-portfolio-tracker/assets/47993930/d572dea0-133c-4369-b45f-d497a782dd13)
 
-![image](https://github.com/IsaacCheng9/trading-portfolio-tracker/assets/47993930/e0e24d49-de81-411a-b4b2-c227c4c8240b)
+![image](https://github.com/IsaacCheng9/trading-portfolio-tracker/assets/47993930/48c23b13-45cf-4fb5-a87e-21d5d57e86e9)
 
-<img src="https://github.com/IsaacCheng9/trading-portfolio-tracker/assets/47993930/455492ae-924d-4611-aabb-feebc3463892" alt="Add a Transaction" width="500">
+<img src="https://github.com/IsaacCheng9/trading-portfolio-tracker/assets/47993930/7ffc058c-39fe-404c-a3ac-58d4d7120bef" alt="Add a Transaction" width="400">
+
+<img src="https://github.com/IsaacCheng9/trading-portfolio-tracker/assets/47993930/8067a5d0-f7c6-4cc5-ad00-20ccbf9d0e50" alt="Add a Transaction" width="700">
 
 ## Usage
 

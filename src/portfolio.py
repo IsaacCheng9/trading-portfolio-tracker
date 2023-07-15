@@ -17,16 +17,17 @@ from PySide6.QtGui import QDoubleValidator
 from PySide6.QtWidgets import QDialog, QMainWindow
 
 from src.finance import (
-    get_absolute_rate_of_return,
+    get_rate_of_return,
+    get_exchange_rate,
     get_info,
     get_name_from_symbol,
     get_total_paid_into_portfolio,
     upsert_transaction_into_portfolio,
-    get_exchange_rate,
 )
 from src.transactions import Transaction
 from src.ui.add_transaction_ui import Ui_dialog_add_transaction
 from src.ui.main_window_ui import Ui_main_window
+from src.ui.portfolio_performance_ui import Ui_dialog_portfolio_perf
 from src.ui.transaction_history_ui import Ui_dialog_transaction_history
 
 DB_PATH = "resources/portfolio.db"
@@ -78,6 +79,8 @@ class MainWindow(QMainWindow, Ui_main_window):
         self.btn_add_transaction.clicked.connect(self.open_add_transaction_dialog)
         # Connect the 'View Transactions' button to open the dialog.
         self.btn_view_transactions.clicked.connect(self.open_transaction_history_dialog)
+        # Connect the 'Analyse Portfolio Performance' button.
+        self.btn_view_portfolio_perf.clicked.connect(self.open_portfolio_perf_dialog)
 
         # Set the resize mode of the table to resize the columns to fit
         # the contents by default.
@@ -136,6 +139,13 @@ class MainWindow(QMainWindow, Ui_main_window):
         self.transaction_history_dialog = TransactionHistoryDialog()
         self.transaction_history_dialog.open()
 
+    def open_portfolio_perf_dialog(self) -> None:
+        """
+        Open the dialog to view the user's portfolio performance analysis.
+        """
+        self.portfolio_perf_dialog = PortfolioPerfDialog()
+        self.portfolio_perf_dialog.open()
+
     def update_returns_table(self) -> None:
         """
         Update the table of returns based on the latest prices.
@@ -151,7 +161,7 @@ class MainWindow(QMainWindow, Ui_main_window):
         total_val_change = Decimal(
             sum(self.current_security_info[security.name][1] for security in portfolio)
         )
-        rate_of_return_absolute = get_absolute_rate_of_return(total_cur_val, total_paid)
+        rate_of_return_absolute = get_rate_of_return(total_cur_val, total_paid)
 
         # Update the table with the new values.
         self.table_widget_returns.setItem(
@@ -256,8 +266,8 @@ class MainWindow(QMainWindow, Ui_main_window):
             exchange_rate = get_exchange_rate(stock_info["currency"])
             cur_val_gbp = cur_val * exchange_rate
 
-            val_change = cur_val_gbp - (security.paid * exchange_rate)
-            rate_of_return_abs = get_absolute_rate_of_return(cur_val, security.paid)
+            val_change = cur_val_gbp - security.paid_gbp
+            rate_of_return_abs = get_rate_of_return(cur_val_gbp, security.paid)
 
             # Stores the live security information in a dictionary indexed
             # by the name of the security
@@ -351,6 +361,66 @@ class MainWindow(QMainWindow, Ui_main_window):
 
         self.update_returns_table()
         # Update last updated time label in dd-mm-yyyy hh:mm:ss format
+        cur_time = time.strftime("%d/%m/%Y %H:%M:%S")
+        self.lbl_last_updated.setText(f"Last Updated: {cur_time}")
+
+
+class PortfolioPerfDialog(QDialog, Ui_dialog_portfolio_perf):
+    def __init__(self) -> None:
+        super().__init__()
+        self.setupUi(self)
+
+        # Set the resize mode of the table to resize the columns to fit
+        # the contents by default.
+        table_header = self.table_widget_returns_breakdown.horizontalHeader()
+        table_header.setSectionResizeMode(
+            QtWidgets.QHeaderView.ResizeMode.ResizeToContents
+        )
+
+        self.update_returns_breakdown()
+
+    def update_returns_breakdown(self):
+        """
+        Update the breakdown of returns for the user's portfolio.
+        """
+        portfolio = HeldSecurity.load_portfolio()
+        total_cur_val = Decimal(0.0)
+        total_cur_val_gbp = Decimal(0.0)
+        total_paid = Decimal(0.0)
+        total_paid_gbp = Decimal(0.0)
+
+        # Calculate the cumulative total paid and current value of the
+        # portfolio.
+        for security in portfolio:
+            stock_info = get_info(security.symbol)
+            cur_val = Decimal(stock_info["current_value"]) * security.units
+            total_cur_val += cur_val
+            total_paid += security.paid
+            total_paid_gbp += security.paid_gbp
+            exchange_rate = get_exchange_rate(stock_info["currency"])
+            total_cur_val_gbp += cur_val * exchange_rate
+
+        # Absolute rate of return
+        rate_of_return_absolute = get_rate_of_return(total_cur_val_gbp, total_paid_gbp)
+        self.table_widget_returns_breakdown.setItem(
+            0, 0, QtWidgets.QTableWidgetItem(f"{rate_of_return_absolute:.3f}%")
+        )
+        # Return from change in value
+        val_change_return = get_rate_of_return(total_cur_val, total_paid)
+        self.table_widget_returns_breakdown.setItem(
+            0, 1, QtWidgets.QTableWidgetItem(f"{val_change_return:.3f}%")
+        )
+        # Return from currency risk
+        # Currency risk is the returns caused by fluctuations in the exchange
+        # rate between the currency of the security and GBP since the
+        # security was purchased. If the GBP has weakened against the original
+        # currency, it results in a positive return, and vice versa.
+        currency_risk_return = rate_of_return_absolute - val_change_return
+        self.table_widget_returns_breakdown.setItem(
+            0, 2, QtWidgets.QTableWidgetItem(f"{currency_risk_return:.3f}%")
+        )
+
+        # Get the current time in DD/MM/YYYY HH:MM:SS format.
         cur_time = time.strftime("%d/%m/%Y %H:%M:%S")
         self.lbl_last_updated.setText(f"Last Updated: {cur_time}")
 
@@ -531,6 +601,7 @@ class HeldSecurity:
     units: Decimal
     currency: str
     paid: Decimal
+    paid_gbp: Decimal
 
     @staticmethod
     def load_portfolio() -> list[HeldSecurity]:
@@ -544,19 +615,20 @@ class HeldSecurity:
         with duckdb.connect(database=DB_PATH) as conn:
             # Retrieve securities from the portfolio table
             result = conn.execute(
-                "SELECT symbol, name, units, currency, paid FROM portfolio"
+                "SELECT symbol, name, units, currency, paid, paid_gbp FROM portfolio"
             )
             records = result.fetchall()
 
         # Create HeldSecurity objects for each record.
         portfolio = []
         for record in records:
-            symbol, name, units, currency, paid = record
+            symbol, name, units, currency, paid, paid_gbp = record
             # Convert the units and paid values to Decimal objects to avoid
             # floating point precision errors.
             units = Decimal(units)
             paid = Decimal(paid)
-            security = HeldSecurity(symbol, name, units, currency, paid)
+            paid_gbp = Decimal(paid_gbp)
+            security = HeldSecurity(symbol, name, units, currency, paid, paid_gbp)
             portfolio.append(security)
 
         return portfolio
