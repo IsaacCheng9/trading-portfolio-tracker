@@ -169,11 +169,11 @@ def test_get_info_invalid() -> None:
         (0, 0, 0),
     ],
 )
-def test_get_absolute_rate_of_return_valid(
+def test_get_rate_of_return_valid(
     current: float, purchase: float, expected_result: float
 ) -> None:
     """
-    Tests the get_absolute_rate_of_return method using valid current and
+    Tests the get_rate_of_return method using valid current and
     purchase prices of an asset.
 
     Args:
@@ -181,25 +181,25 @@ def test_get_absolute_rate_of_return_valid(
         purchase: Purchase price of the asset.
         expected_result: Expected absolute rate of return
     """
-    calculated_ror = finance.get_absolute_rate_of_return(current, purchase)
+    calculated_ror = finance.get_rate_of_return(current, purchase)
     assert calculated_ror == expected_result
 
 
-def test_get_absolute_rate_of_return_no_purchase_price() -> None:
+def test_get_rate_of_return_no_purchase_price() -> None:
     """
-    Tests the get_absolute_rate_of_return method whilst passing no purchase
+    Tests the get_rate_of_return method whilst passing no purchase
     price into the method.
     """
-    calculated_ror = finance.get_absolute_rate_of_return(100, None)
+    calculated_ror = finance.get_rate_of_return(100, None)
     assert calculated_ror == 0
 
 
-def test_get_absolute_rate_of_return_invalid() -> None:
+def test_get_rate_of_return_invalid() -> None:
     """
-    Tests the get_absolute_rate_of_return method whilst passing no purchase
+    Tests the get_rate_of_return method whilst passing no purchase
     and current price into the method
     """
-    calculated_ror = finance.get_absolute_rate_of_return(None, None)
+    calculated_ror = finance.get_rate_of_return(None, None)
     assert calculated_ror == 0
 
 
