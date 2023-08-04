@@ -146,7 +146,7 @@ def upsert_transaction_into_portfolio(
     amount: Decimal,
     unit_price: Decimal,
     amount_gbp: Decimal,
-    database_path: str = DB_PATH
+    database_path: str = DB_PATH,
 ) -> None:
     """
     Update/insert the portfolio based on a new transaction.
@@ -218,10 +218,7 @@ def upsert_transaction_into_portfolio(
             )
 
 
-def remove_security_from_portfolio(
-    symbol: str, 
-    database_path: str = DB_PATH
-    ) -> None:
+def remove_security_from_portfolio(symbol: str, database_path: str = DB_PATH) -> None:
     """
     Remove the security from the portfolio table.
 
