@@ -1,10 +1,22 @@
+import duckdb
 import pytest
+import os
 import pandas as pd
 import yfinance as yf
 
 from requests import exceptions
-from src import finance
+from src import finance, app
 
+DB_PATH = "resources/test.db"
+
+@pytest.fixture
+def setup_and_teardown_database():
+    """
+    
+    """
+    app.create_database_tables(DB_PATH)
+    yield
+    os.remove(DB_PATH)
 
 @pytest.mark.parametrize(
     "name, expected_result",
@@ -203,48 +215,82 @@ def test_get_rate_of_return_invalid() -> None:
     assert calculated_ror == 0
 
 
-# TODO: Work out DB_PATH testing DB
-def test_upsert_transaction_into_portfolio_valid_buy() -> None:
+def test_upsert_transaction_into_portfolio_valid_buy(
+    setup_and_teardown_database: function
+    ) -> None:
+    """ 
+    
+    """
+    finance.upsert_transaction_into_portfolio(
+        "buy",
+        "BTC-USD",
+        "USD",
+        1000,
+        100,
+        100,
+        DB_PATH
+    )
+    
+    with duckdb.connect(DB_PATH) as conn:
+        result = conn.execute(
+            "SELECT symbol, name, units, currency, paid, paid_gbp FROM portfolio "
+            "WHERE symbol = ?",
+            ("BTC-USD",)
+        ).fetchone()
+    
+    
+    if result:
+        symbol, _, units, currency, paid, _ = result
+        assert symbol == "BTC-USD"
+        assert float(units) == 10
+        assert currency == "USD"
+        assert float(paid) == 1000
+    else:
+        assert False
+
+def test_upsert_transaction_into_portfolio_valid_sell(
+    setup_and_teardown_database
+    ) -> None:
+    pass
+
+def test_upsert_transaction_into_portfolio_invalid_sell(
+    setup_and_teardown_database
+    ) -> None:
     """ """
     pass
 
 
-def test_upsert_transaction_into_portfolio_invalid_buy() -> None:
+def test_remove_security_from_portfolio_valid(
+    setup_and_teardown_database
+    ) -> None:
     """ """
     pass
 
 
-def test_upsert_transaction_into_portfolio_valid_sell() -> None:
+def test_remove_security_from_portfolio_valid(
+    setup_and_teardown_database
+    ) -> None:
     """ """
     pass
 
 
-def test_upsert_transaction_into_portfolio_invalid_sell() -> None:
+def test_remove_security_from_portfolio_invalid(
+    setup_and_teardown_database
+    ) -> None:
     """ """
     pass
 
 
-def test_remove_security_from_portfolio_valid() -> None:
+def test_get_total_paid_into_portfolio_valid(
+    setup_and_teardown_database
+    ) -> None:
     """ """
     pass
 
 
-def test_remove_security_from_portfolio_valid() -> None:
-    """ """
-    pass
-
-
-def test_remove_security_from_portfolio_invalid() -> None:
-    """ """
-    pass
-
-
-def test_get_total_paid_into_portfolio_valid() -> None:
-    """ """
-    pass
-
-
-def test_get_total_paid_into_portfolio_empty() -> None:
+def test_get_total_paid_into_portfolio_empty(
+    setup_and_teardown_database
+    ) -> None:
     """ """
     pass
 
