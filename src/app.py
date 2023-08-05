@@ -22,12 +22,12 @@ def main() -> None:
     sys.exit(app.exec())
 
 
-def create_database_tables() -> None:
+def create_database_tables(database_path: str = DB_PATH) -> None:
     """
     Create the database tables if they don't already exist.
     """
     # Create a table to store securities in the user's portfolio.
-    with duckdb.connect(database=DB_PATH) as conn:
+    with duckdb.connect(database=database_path) as conn:
         conn.execute(
             "CREATE TABLE IF NOT EXISTS portfolio ("
             "symbol TEXT PRIMARY KEY, "
@@ -40,7 +40,7 @@ def create_database_tables() -> None:
         )
 
     # Create a table to store the transactions made by the user.
-    with duckdb.connect(database=DB_PATH) as conn:
+    with duckdb.connect(database=database_path) as conn:
         conn.execute(
             "CREATE TABLE IF NOT EXISTS transaction ("
             "transaction_id TEXT PRIMARY KEY, "

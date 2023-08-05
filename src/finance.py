@@ -48,7 +48,7 @@ def get_name_from_symbol(symbol: str) -> str:
     """
     tick = yf.Ticker(symbol)
     try:
-        name = tick.info["shortName"]
+        name = tick.info["longName"]
         return name
     except (exceptions.HTTPError, KeyError):
         return ""
@@ -84,10 +84,7 @@ def get_info(symbol: str) -> dict[str, str]:
         Dictionary containing information about the stock, future, or index.
     """
     # Creates a yfinance ticker object for a given asset.
-    try:
-        ticker = yf.Ticker(symbol)
-    except:
-        return False
+    ticker = yf.Ticker(symbol)
 
     # Creates a dictionary containing basic information about the asset.
     return_dict = {
@@ -149,6 +146,7 @@ def upsert_transaction_into_portfolio(
     amount: Decimal,
     unit_price: Decimal,
     amount_gbp: Decimal,
+    database_path: str = DB_PATH,
 ) -> None:
     """
     Update/insert the portfolio based on a new transaction.
@@ -162,7 +160,7 @@ def upsert_transaction_into_portfolio(
         paid_gbp: The amount of the transaction after conversion to a currency.
     """
     # Search for the security in the portfolio.
-    with duckdb.connect(database=DB_PATH) as conn:
+    with duckdb.connect(database_path) as conn:
         # Retrieve the security from the portfolio table based on the symbol
         result = conn.execute(
             "SELECT symbol, name, units, currency, paid, paid_gbp FROM portfolio "
@@ -178,7 +176,7 @@ def upsert_transaction_into_portfolio(
 
         name = get_name_from_symbol(symbol)
         units = Decimal(amount / unit_price)
-        with duckdb.connect(database=DB_PATH) as conn:
+        with duckdb.connect(database=database_path) as conn:
             conn.execute(
                 "INSERT OR REPLACE INTO portfolio VALUES (?, ?, ?, ?, ?, ?)",
                 (
@@ -212,7 +210,7 @@ def upsert_transaction_into_portfolio(
         remove_security_from_portfolio(symbol)
     else:
         # Update the security in the portfolio
-        with duckdb.connect(database=DB_PATH) as conn:
+        with duckdb.connect(database=database_path) as conn:
             conn.execute(
                 "UPDATE portfolio SET units = ?, paid = ?, paid_gbp = ? "
                 "WHERE symbol = ?",
@@ -220,25 +218,25 @@ def upsert_transaction_into_portfolio(
             )
 
 
-def remove_security_from_portfolio(symbol: str) -> None:
+def remove_security_from_portfolio(symbol: str, database_path: str = DB_PATH) -> None:
     """
     Remove the security from the portfolio table.
 
     Args:
         symbol: The symbol of the security.
     """
-    with duckdb.connect(database=DB_PATH) as conn:
+    with duckdb.connect(database=database_path) as conn:
         conn.execute("DELETE FROM portfolio WHERE symbol = ?", (symbol,))
 
 
-def get_total_paid_into_portfolio() -> Decimal:
+def get_total_paid_into_portfolio(database_path: str = DB_PATH) -> Decimal:
     """
     Get the total amount paid into the portfolio.
 
     Returns:
         The total amount paid into the portfolio.
     """
-    with duckdb.connect(database=DB_PATH) as conn:
+    with duckdb.connect(database=database_path) as conn:
         result = conn.execute(
             "SELECT SUM(CAST(paid_gbp AS DECIMAL)) FROM portfolio"
         ).fetchone()
@@ -284,7 +282,7 @@ def get_exchange_rate(
 
 
 if __name__ == "__main__":
-    print(get_info("0P0001F96E.L"))  # OEIC
+    print(get_info("0P0001A1D0.L"))  # OEIC
     print(get_info("AAPL"))  # Company
     print(get_info("^FTSE"))  # Index
     print(get_info("MKS.L"))  # LSE stock
