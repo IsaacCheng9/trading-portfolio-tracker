@@ -10,7 +10,7 @@ on:
 jobs:
   test:
     # The type of runner that the job will run on.
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
     # Configures the build to use the latest version of Python 3.
     strategy:
       matrix:
@@ -38,4 +38,4 @@ jobs:
         run: coverage run --source=src -m pytest -v
 
       - name: Get code coverage report
-        run: coverage report -m 
+        run: coverage report -m
