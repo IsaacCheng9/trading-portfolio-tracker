@@ -41,7 +41,7 @@ Compatible with:
 
 - macOS
 - Windows
-- Linux
+<!-- Test Linux compatibility with PyQt6, as Linux doesn't work with PySide6. -->
 
 ### Python Version
 
