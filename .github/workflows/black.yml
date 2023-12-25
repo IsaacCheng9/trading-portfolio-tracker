@@ -15,7 +15,7 @@ jobs:
       - name: Run Python code formatting with Black
         uses: lgeiger/black-action@v1.0.1
         with:
-          args: ". --exclude src/ui"
+          args: ". --exclude src/trading_portfolio_tracker/ui"
 
       - name: Commit changes made by Black
         uses: stefanzweifel/git-auto-commit-action@v5
