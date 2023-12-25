@@ -1,0 +1,9 @@
+
+
+
+CREATE TABLE "transaction"(transaction_id VARCHAR PRIMARY KEY, transaction_type VARCHAR NOT NULL, "timestamp" TIMESTAMP NOT NULL, ticker VARCHAR NOT NULL, platform VARCHAR NOT NULL, currency VARCHAR NOT NULL, amount VARCHAR NOT NULL, unit_price VARCHAR NOT NULL, units VARCHAR NOT NULL, amount_gbp VARCHAR NOT NULL, exchange_rate VARCHAR NOT NULL);
+CREATE TABLE portfolio(symbol VARCHAR PRIMARY KEY, "name" VARCHAR NOT NULL, units VARCHAR NOT NULL, currency VARCHAR NOT NULL, paid VARCHAR NOT NULL, paid_gbp VARCHAR NOT NULL);
+
+
+
+
