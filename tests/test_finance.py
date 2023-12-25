@@ -5,7 +5,7 @@ import pandas as pd
 import yfinance as yf
 
 from requests import exceptions
-from src import finance, app
+from src.trading_portfolio_tracker import finance, app
 
 DB_PATH = "resources/test.db"
 
