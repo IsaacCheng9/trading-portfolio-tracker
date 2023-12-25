@@ -19,6 +19,8 @@ pytest = "^7.4.3"
 
 [tool.poetry.scripts]
 app = "src.trading_portfolio_tracker.app:main"
+import_db = "utils.import_duckdb:main"
+export_db = "utils.export_duckdb:main"
 
 [[tool.poetry.packages]]
 include = "trading_portfolio_tracker"

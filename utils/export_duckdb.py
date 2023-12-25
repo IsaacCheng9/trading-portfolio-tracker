@@ -5,10 +5,16 @@ due to merge conflicts and other issues that arise with binary files.
 """
 import duckdb
 
-# The directory to get the DB file from.
-export_from = "resources/portfolio.db"
-# The directory to export the DB to.
-export_to = "resources/portfolio_data"
 
-conn = duckdb.connect(export_from)
-conn.execute(f"EXPORT DATABASE '{export_to}'")
+def main():
+    # The directory to get the DB file from.
+    export_from = "resources/portfolio.db"
+    # The directory to export the DB to.
+    export_to = "resources/portfolio_data"
+
+    conn = duckdb.connect(export_from)
+    conn.execute(f"EXPORT DATABASE '{export_to}'")
+
+
+if __name__ == "__main__":
+    main()
