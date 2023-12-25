@@ -17,10 +17,10 @@ from PySide6.QtGui import QDoubleValidator
 from PySide6.QtWidgets import QDialog, QMainWindow
 
 from src.trading_portfolio_tracker.finance import (
-    get_rate_of_return,
     get_exchange_rate,
     get_info,
     get_name_from_symbol,
+    get_rate_of_return,
     get_total_paid_into_portfolio,
     upsert_transaction_into_portfolio,
 )

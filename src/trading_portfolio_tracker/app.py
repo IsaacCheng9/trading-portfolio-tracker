@@ -1,7 +1,9 @@
-import duckdb
-import sys
 import os
+import sys
+
+import duckdb
 from PySide6 import QtWidgets
+
 from src.trading_portfolio_tracker.portfolio import MainWindow
 
 DB_PATH = "resources/portfolio.db"

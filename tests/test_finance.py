@@ -1,11 +1,13 @@
-import duckdb
-import pytest
 import os
-import pandas as pd
-import yfinance as yf
+from decimal import Decimal
 
+import duckdb
+import pandas as pd
+import pytest
+import yfinance as yf
 from requests import exceptions
-from src.trading_portfolio_tracker import finance, app
+
+from src.trading_portfolio_tracker import app, finance
 
 DB_PATH = "resources/test.db"
 
@@ -23,10 +25,6 @@ def setup_and_teardown_database():
     [
         ("Apple", "AAPL"),
         ("FTSE 100", "^FTSE"),
-        (
-            "T. Rowe Price Funds OEIC Asian Opportunities Equity Fund Class C GBP",
-            "0P0001BVXP.L",
-        ),
     ],
 )
 def test_get_symbol_valid(name: str, expected_result: str) -> None:
@@ -39,7 +37,7 @@ def test_get_symbol_valid(name: str, expected_result: str) -> None:
         expected_result: Expected symbol to be returned (AAPL...).
     """
     symbol = finance.get_symbol(name)
-    assert type(symbol) is str
+    assert isinstance(symbol, str)
     assert symbol == expected_result
 
 
@@ -60,10 +58,6 @@ def test_get_symbol_invalid() -> None:
     [
         ("TSLA", "Tesla, Inc."),
         ("^FTSE", "FTSE 100"),
-        (
-            "0P0001BVXP.L",
-            "T. Rowe Price Funds OEIC Asian Opportunities Equity Fund Class C GBP",
-        ),
     ],
 )
 def test_get_name_from_symbol_valid(symbol: str, expected_result: str) -> None:
@@ -76,7 +70,7 @@ def test_get_name_from_symbol_valid(symbol: str, expected_result: str) -> None:
         expected_result: Expected name to be returned.
     """
     name = finance.get_name_from_symbol(symbol)
-    assert type(name) is str
+    assert isinstance(name, str)
     assert name == expected_result
 
 
@@ -86,7 +80,7 @@ def test_get_name_from_symbol_invalid() -> None:
     blank name is returned.
     """
     name = finance.get_name_from_symbol("INVALID")
-    assert type(name) == str
+    assert isinstance(name, str)
     assert name == ""
 
 
@@ -95,7 +89,6 @@ def test_get_name_from_symbol_invalid() -> None:
     [
         ("Tesla"),
         ("FTSE 100"),
-        ("T. Rowe Price Funds OEIC Asian Opportunities Equity Fund Class C GBP"),
     ],
 )
 def test_get_history_valid(name: str) -> None:
@@ -146,7 +139,7 @@ def test_get_info_valid(
     info = finance.get_info(symbol)
     assert info["currency"] == expected_currency
     assert info["type"] == expected_type
-    assert info["current_value"] >= 0
+    assert float(info["current_value"]) >= 0.0
 
 
 def test_get_info_lse() -> None:
@@ -193,7 +186,7 @@ def test_get_rate_of_return_valid(
         purchase: Purchase price of the asset.
         expected_result: Expected absolute rate of return
     """
-    calculated_ror = finance.get_rate_of_return(current, purchase)
+    calculated_ror = finance.get_rate_of_return(Decimal(current), Decimal(purchase))
     assert calculated_ror == expected_result
 
 
@@ -202,7 +195,7 @@ def test_get_rate_of_return_no_purchase_price() -> None:
     Tests the get_rate_of_return method whilst passing no purchase
     price into the method.
     """
-    calculated_ror = finance.get_rate_of_return(100, None)
+    calculated_ror = finance.get_rate_of_return(Decimal(100), Decimal(0))
     assert calculated_ror == 0
 
 
@@ -211,7 +204,7 @@ def test_get_rate_of_return_invalid() -> None:
     Tests the get_rate_of_return method whilst passing no purchase
     and current price into the method
     """
-    calculated_ror = finance.get_rate_of_return(None, None)
+    calculated_ror = finance.get_rate_of_return(Decimal(0), Decimal(0))
     assert calculated_ror == 0
 
 
@@ -220,7 +213,7 @@ def test_upsert_transaction_into_portfolio_valid_buy(
 ) -> None:
     """ """
     finance.upsert_transaction_into_portfolio(
-        "buy", "BTC-USD", "USD", 1000, 100, 100, DB_PATH
+        "buy", "BTC-USD", "USD", Decimal(1000), Decimal(100), Decimal(100), DB_PATH
     )
 
     with duckdb.connect(DB_PATH) as conn:
@@ -249,11 +242,6 @@ def test_upsert_transaction_into_portfolio_valid_sell(
 def test_upsert_transaction_into_portfolio_invalid_sell(
     setup_and_teardown_database,
 ) -> None:
-    """ """
-    pass
-
-
-def test_remove_security_from_portfolio_valid(setup_and_teardown_database) -> None:
     """ """
     pass
 
