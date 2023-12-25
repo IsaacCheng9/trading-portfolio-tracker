@@ -16,7 +16,7 @@ from PySide6.QtCore import QDateTime, QObject, QThread, QTimer, Signal
 from PySide6.QtGui import QDoubleValidator
 from PySide6.QtWidgets import QDialog, QMainWindow
 
-from src.finance import (
+from src.trading_portfolio_tracker.finance import (
     get_rate_of_return,
     get_exchange_rate,
     get_info,
@@ -24,11 +24,17 @@ from src.finance import (
     get_total_paid_into_portfolio,
     upsert_transaction_into_portfolio,
 )
-from src.transactions import Transaction
-from src.ui.add_transaction_ui import Ui_dialog_add_transaction
-from src.ui.main_window_ui import Ui_main_window
-from src.ui.portfolio_performance_ui import Ui_dialog_portfolio_perf
-from src.ui.transaction_history_ui import Ui_dialog_transaction_history
+from src.trading_portfolio_tracker.transactions import Transaction
+from src.trading_portfolio_tracker.ui.add_transaction_ui import (
+    Ui_dialog_add_transaction,
+)
+from src.trading_portfolio_tracker.ui.main_window_ui import Ui_main_window
+from src.trading_portfolio_tracker.ui.portfolio_performance_ui import (
+    Ui_dialog_portfolio_perf,
+)
+from src.trading_portfolio_tracker.ui.transaction_history_ui import (
+    Ui_dialog_transaction_history,
+)
 
 DB_PATH = "resources/portfolio.db"
 

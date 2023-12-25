@@ -5,10 +5,9 @@ on: [push, pull_request]
 jobs:
   lint:
     runs-on: ubuntu-latest
-    # Use the latest version of Python 3.
     strategy:
       matrix:
-        python-version: [3.x]
+        python-version: [3.11.x]
 
     steps:
       - uses: actions/checkout@v3
@@ -16,10 +15,10 @@ jobs:
       - name: Run Python code formatting with Black
         uses: lgeiger/black-action@v1.0.1
         with:
-          args: ". --exclude src/ui"
+          args: ". --exclude src/trading_portfolio_tracker/ui"
 
       - name: Commit changes made by Black
-        uses: stefanzweifel/git-auto-commit-action@v4
+        uses: stefanzweifel/git-auto-commit-action@v5
         with:
           commit_message: Format Python code with Black
 
