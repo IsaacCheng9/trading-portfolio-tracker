@@ -67,6 +67,32 @@ Run the following command from the [project root](./) directory:
 poetry run pytest
 ```
 
+### Importing and Exporting Databases
+
+DuckDB uses a binary file format which is inefficient, not human-readable, and
+leads to merge conflicts, so we avoid version controlling the database file
+directly. Instead, we store the data and schema of the database in the folder
+[/resources/portfolio_data/](/resources/portfolio_data/) -- this gives us
+human-readable, merge-friendly files that we can easily version control.
+
+To **import** the database, run the following command from the [project root](./)
+directory:
+
+```bash
+poetry run export_db
+```
+
+To **export** the database, run the following command from the [project root](./)
+directory:
+
+```bash
+poetry run import_db
+```
+
+Note that importing the database won't work if
+[/resources/portfolio.db](./resources/portfolio.db) already exists – you must
+rename it, move it, or delete it before importing.
+
 ## Data Privacy
 
 We store all data locally on the user's computer in a
