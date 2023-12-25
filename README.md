@@ -3,9 +3,9 @@
 [![code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 ![CI](https://github.com/IsaacCheng9/trading-portfolio-tracker/actions/workflows/pytest.yml/badge.svg)
 
-A cross-platform desktop application for monitoring and managing your investments
-from different brokers, with real-time market data integration from Yahoo
-Finance, developed with Qt.
+A cross-platform desktop application for monitoring and managing your
+investments from different brokers, with real-time market data integration from
+Yahoo Finance. Developed with Qt.
 
 ## Motivation
 
@@ -43,32 +43,28 @@ Compatible with:
 - Windows
 <!-- Test Linux compatibility with PyQt6, as Linux doesn't work with PySide6. -->
 
-### Python Version
+### Installing Dependencies
 
-We have developed and tested this application to work on Python 3.8 onwards.
+Run the following command from the [project root](./) directory:
+
+```bash
+poetry install
+```
 
 ### Running the Application
 
-To run the application, you should follow the following steps from the
-[root](./) directory:
-
-1. Install the required Python libraries: `pip install -r requirements.txt`
-2. Run the application with the command: `python -m src.app`
-
-### Running the Tests
-
-The tests are written using the [pytest](https://docs.pytest.org/en/stable/)
-library. Ensure that you have the correct version installed by running the
-following command from the [root](./) directory:
+Run the following command from the [project root](./) directory:
 
 ```bash
-pip install -r requirements.txt
+poetry run app
 ```
 
-To run the tests, use the following command from the [tests](tests/) directory:
+### Running Tests
+
+Run the following command from the [project root](./) directory:
 
 ```bash
-pytest
+poetry run pytest
 ```
 
 ## Data Privacy

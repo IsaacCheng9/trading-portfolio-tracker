@@ -17,6 +17,9 @@ pyside6 = "^6.6.1"
 coverage = "^7.3.4"
 pytest = "^7.4.3"
 
+[tool.poetry.scripts]
+app = "src.trading_portfolio_tracker.app:main"
+
 [[tool.poetry.packages]]
 include = "trading_portfolio_tracker"
 from = "src"
