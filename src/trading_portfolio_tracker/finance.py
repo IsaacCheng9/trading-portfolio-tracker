@@ -1,15 +1,16 @@
 """
-Module containing functions relating to retrieving financial data from yahoo finance 
-using yfinance and performing financial calculations 
+Contains functions related to retrieval of financial data from Yahoo Finance
+and performing financial calculations.
 """
 
+from datetime import date, datetime
+from decimal import Decimal
+
 import duckdb
+import pandas as pd
 import requests
 import yfinance as yf
-import pandas as pd
-from decimal import Decimal
 from requests import exceptions
-from datetime import datetime, date
 
 DB_PATH = "resources/portfolio.db"
 
@@ -240,7 +241,7 @@ def get_total_paid_into_portfolio(database_path: str = DB_PATH) -> Decimal:
         result = conn.execute(
             "SELECT SUM(CAST(paid_gbp AS DECIMAL)) FROM portfolio"
         ).fetchone()
-    return Decimal(result[0]) if result[0] != None else Decimal(0)
+    return Decimal(result[0]) if result[0] is not None else Decimal(0)
 
 
 def get_exchange_rate(
