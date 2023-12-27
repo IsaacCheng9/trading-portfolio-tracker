@@ -87,8 +87,8 @@ def test_get_name_from_symbol_invalid() -> None:
 @pytest.mark.parametrize(
     "name",
     [
-        ("Tesla"),
-        ("FTSE 100"),
+        "Tesla",
+        "FTSE 100",
     ],
 )
 def test_get_history_valid(name: str) -> None:
@@ -125,7 +125,7 @@ def test_get_history_invalid() -> None:
     ],
 )
 def test_get_info_valid(
-    symbol: str, expected_type: str, expected_currency: str
+        symbol: str, expected_type: str, expected_currency: str
 ) -> None:
     """
     Tests the get_info method using valid symbols to ensure pricing data
@@ -175,7 +175,7 @@ def test_get_info_invalid() -> None:
     ],
 )
 def test_get_rate_of_return_valid(
-    current: float, purchase: float, expected_result: float
+        current: float, purchase: float, expected_result: float
 ) -> None:
     """
     Tests the get_rate_of_return method using valid current and
@@ -209,7 +209,7 @@ def test_get_rate_of_return_invalid() -> None:
 
 
 def test_upsert_transaction_into_portfolio_valid_buy(
-    setup_and_teardown_database,
+        setup_and_teardown_database,
 ) -> None:
     """ """
     finance.upsert_transaction_into_portfolio(
@@ -234,13 +234,13 @@ def test_upsert_transaction_into_portfolio_valid_buy(
 
 
 def test_upsert_transaction_into_portfolio_valid_sell(
-    setup_and_teardown_database,
+        setup_and_teardown_database,
 ) -> None:
     pass
 
 
 def test_upsert_transaction_into_portfolio_invalid_sell(
-    setup_and_teardown_database,
+        setup_and_teardown_database,
 ) -> None:
     """ """
     pass
@@ -286,9 +286,9 @@ def test_get_exchange_rate_valid(original_currency: str, currency_to: str) -> No
 @pytest.mark.parametrize(
     "currency",
     [
-        ("GBP"),
-        ("EUR"),
-        ("USD"),
+        "GBP",
+        "EUR",
+        "USD",
     ],
 )
 def test_get_exchange_rate_same_currency(currency: str) -> None:
@@ -305,9 +305,9 @@ def test_get_exchange_rate_same_currency(currency: str) -> None:
 @pytest.mark.parametrize(
     "provided_date",
     [
-        ("1999-01-04"),
-        ("2023-07-01"),
-        ("2002-08-03"),
+        "1999-01-04",
+        "2023-07-01",
+        "2002-08-03",
     ],
 )
 def test_get_exchange_rate_valid_date(provided_date: str) -> None:
