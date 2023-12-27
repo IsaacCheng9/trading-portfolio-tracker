@@ -1,7 +1,7 @@
 # Trading Portfolio Tracker
 
 [![code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
-![CI](https://github.com/IsaacCheng9/trading-portfolio-tracker/actions/workflows/pytest.yml/badge.svg)
+[![Test](https://github.com/IsaacCheng9/trading-portfolio-tracker/actions/workflows/test.yml/badge.svg)](https://github.com/IsaacCheng9/trading-portfolio-tracker/actions/workflows/test.yml)
 
 A cross-platform desktop application for monitoring and managing your
 investments from different brokers, with real-time market data integration from
