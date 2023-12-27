@@ -27,7 +27,8 @@ def get_symbol(name: str) -> str:
         Symbol of the company.
     """
     yfinance = "https://query2.finance.yahoo.com/v1/finance/search"
-    user_agent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36"
+    user_agent = ("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 ("
+                  "KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36")
     params = {"q": name, "quotes_count": 1, "country": "United States"}
 
     res = requests.get(url=yfinance, params=params, headers={"User-Agent": user_agent})
@@ -102,15 +103,15 @@ def get_info(symbol: str) -> dict[str, str]:
         return_dict["currency"] = ticker.info["financialCurrency"]
         return_dict["sector"] = ticker.info["sector"]
     except KeyError:
-        range = "1d"
+        date_range = "1d"
 
         # If the type is a mutual fund then change the data download period to
         # a month, as the value of the fund updates only once a day.
         if return_dict["type"] == "MUTUALFUND":
-            range = "1mo"
+            date_range = "1mo"
 
         # Downloads the most recent data associated with the asset.
-        data = yf.download(return_dict["ticker"], period=range, progress=False)
+        data = yf.download(return_dict["ticker"], period=date_range, progress=False)
         last_row_index = len(data) - 1
         # Gets the last reported close price of the asset
         last_row_open_value = data.iloc[last_row_index]["Close"]
@@ -141,24 +142,26 @@ def get_rate_of_return(current: Decimal, purchase: Decimal) -> Decimal:
 
 
 def upsert_transaction_into_portfolio(
-    type: str,
-    symbol: str,
-    currency: str,
-    amount: Decimal,
-    unit_price: Decimal,
-    amount_gbp: Decimal,
-    database_path: str = DB_PATH,
+        transaction_type: str,
+        symbol: str,
+        currency: str,
+        amount: Decimal,
+        unit_price: Decimal,
+        amount_gbp: Decimal,
+        database_path: str = DB_PATH,
 ) -> None:
     """
     Update/insert the portfolio based on a new transaction.
 
     Args:
-        type: The type of transaction (Buy/Sell).
+        transaction_type: The type of transaction (Buy/Sell).
         symbol: The symbol of the security.
         currency: The currency of the security.
         amount: The amount of the transaction.
         unit_price: The unit price of the security.
-        paid_gbp: The amount of the transaction after conversion to a currency.
+        amount_gbp: The amount of the transaction after conversion to a
+                    currency.
+        database_path: The path of the database to use.
     """
     # Search for the security in the portfolio.
     with duckdb.connect(database_path) as conn:
@@ -172,7 +175,7 @@ def upsert_transaction_into_portfolio(
     # Create a new HeldSecurity object for the transaction and save it if it
     # wasn't previously held.
     if not result:
-        if type == "Sell":
+        if transaction_type == "Sell":
             raise Exception("Cannot sell a security that is not held.")
 
         name = get_name_from_symbol(symbol)
@@ -196,11 +199,11 @@ def upsert_transaction_into_portfolio(
     units = Decimal(units)
     paid = Decimal(paid)
     paid_gbp = Decimal(paid_gbp)
-    if type == "Buy":
+    if transaction_type == "Buy":
         units += Decimal(amount / unit_price)
         paid += Decimal(amount)
         paid_gbp += Decimal(amount_gbp)
-    elif type == "Sell":
+    elif transaction_type == "Sell":
         units -= Decimal(amount / unit_price)
         paid -= Decimal(amount)
         paid_gbp -= Decimal(amount_gbp)
@@ -225,6 +228,7 @@ def remove_security_from_portfolio(symbol: str, database_path: str = DB_PATH) ->
 
     Args:
         symbol: The symbol of the security.
+        database_path: The path of the database to use.
     """
     with duckdb.connect(database=database_path) as conn:
         conn.execute("DELETE FROM portfolio WHERE symbol = ?", (symbol,))
@@ -245,7 +249,7 @@ def get_total_paid_into_portfolio(database_path: str = DB_PATH) -> Decimal:
 
 
 def get_exchange_rate(
-    original_currency: str, convert_to: str = "GBP", provided_date: str = None
+        original_currency: str, convert_to: str = "GBP", provided_date: str = None
 ) -> Decimal:
     """
     Gets the exchange rate from a given currency
@@ -262,11 +266,10 @@ def get_exchange_rate(
     if original_currency == convert_to:
         return Decimal(1)
 
-    url = None
-
     if not provided_date:
         # If no date is provided, the most recent exchange rate is retrieved.
-        url = f"https://api.frankfurter.app/latest?from={original_currency}&to={convert_to}"
+        url = (f"https://api.frankfurter.app/latest?from={original_currency}"
+               f"&to={convert_to}")
     else:
         # Checks to see if data is available for the date provided
         # Frankfurter API only provides exchange rate data since
@@ -275,7 +278,8 @@ def get_exchange_rate(
         if pdate < date(1999, 1, 4):
             provided_date = "1999-01-04"
 
-        url = f"https://api.frankfurter.app/{provided_date}?from={original_currency}&to={convert_to}"
+        url = (f"https://api.frankfurter.app/{provided_date}"
+               f"?from={original_currency}&to={convert_to}")
 
     response = requests.get(url)
     data = response.json()
