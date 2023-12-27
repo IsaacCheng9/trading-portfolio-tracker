@@ -71,6 +71,9 @@ class UpdateStockPricesWorker(QObject):
 class MainWindow(QMainWindow, Ui_main_window):
     def __init__(self) -> None:
         super().__init__()
+        self.portfolio_perf_dialog = None
+        self.add_transaction_dialog = None
+        self.transaction_history_dialog = None
         self.setupUi(self)
 
         # Stores current information about each security:
@@ -109,7 +112,6 @@ class MainWindow(QMainWindow, Ui_main_window):
         self.load_portfolio_table()
         self.update_returns_table()
         portfolio = HeldSecurity.load_portfolio()
-        interval = None
 
         diff = 2000 - (2 * (60 * len(portfolio)))
         if diff > 0:
@@ -232,7 +234,7 @@ class MainWindow(QMainWindow, Ui_main_window):
             self.table_widget_portfolio.setItem(
                 0,
                 5,
-                QtWidgets.QTableWidgetItem(f"{(cur_val/security.units):.2f}"),
+                QtWidgets.QTableWidgetItem(f"{(cur_val / security.units):.2f}"),
             )
             self.table_widget_portfolio.setItem(
                 0,

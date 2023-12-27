@@ -87,8 +87,8 @@ def test_get_name_from_symbol_invalid() -> None:
 @pytest.mark.parametrize(
     "name",
     [
-        ("Tesla"),
-        ("FTSE 100"),
+        "Tesla",
+        "FTSE 100",
     ],
 )
 def test_get_history_valid(name: str) -> None:
@@ -286,9 +286,9 @@ def test_get_exchange_rate_valid(original_currency: str, currency_to: str) -> No
 @pytest.mark.parametrize(
     "currency",
     [
-        ("GBP"),
-        ("EUR"),
-        ("USD"),
+        "GBP",
+        "EUR",
+        "USD",
     ],
 )
 def test_get_exchange_rate_same_currency(currency: str) -> None:
@@ -305,9 +305,9 @@ def test_get_exchange_rate_same_currency(currency: str) -> None:
 @pytest.mark.parametrize(
     "provided_date",
     [
-        ("1999-01-04"),
-        ("2023-07-01"),
-        ("2002-08-03"),
+        "1999-01-04",
+        "2023-07-01",
+        "2002-08-03",
     ],
 )
 def test_get_exchange_rate_valid_date(provided_date: str) -> None:
