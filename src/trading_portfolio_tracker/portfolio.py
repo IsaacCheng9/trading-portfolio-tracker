@@ -71,6 +71,9 @@ class UpdateStockPricesWorker(QObject):
 class MainWindow(QMainWindow, Ui_main_window):
     def __init__(self) -> None:
         super().__init__()
+        self.portfolio_perf_dialog = None
+        self.add_transaction_dialog = None
+        self.transaction_history_dialog = None
         self.setupUi(self)
 
         # Stores current information about each security:
@@ -109,7 +112,6 @@ class MainWindow(QMainWindow, Ui_main_window):
         self.load_portfolio_table()
         self.update_returns_table()
         portfolio = HeldSecurity.load_portfolio()
-        interval = None
 
         diff = 2000 - (2 * (60 * len(portfolio)))
         if diff > 0:
@@ -210,8 +212,9 @@ class MainWindow(QMainWindow, Ui_main_window):
             weight = str(
                 round(
                     (
-                        self.current_security_info[security.name][3]
-                        / HeldSecurity.get_total_value(self.current_security_info, True)
+                            self.current_security_info[security.name][3]
+                            / HeldSecurity.get_total_value(self.current_security_info,
+                                                           True)
                     )
                     * 100,
                     3,
@@ -232,7 +235,7 @@ class MainWindow(QMainWindow, Ui_main_window):
             self.table_widget_portfolio.setItem(
                 0,
                 5,
-                QtWidgets.QTableWidgetItem(f"{(cur_val/security.units):.2f}"),
+                QtWidgets.QTableWidgetItem(f"{(cur_val / security.units):.2f}"),
             )
             self.table_widget_portfolio.setItem(
                 0,
@@ -315,8 +318,9 @@ class MainWindow(QMainWindow, Ui_main_window):
             weight = str(
                 round(
                     (
-                        self.current_security_info[security.name][3]
-                        / HeldSecurity.get_total_value(self.current_security_info, True)
+                            self.current_security_info[security.name][3]
+                            / HeldSecurity.get_total_value(self.current_security_info,
+                                                           True)
                     )
                     * 100,
                     3,
@@ -528,12 +532,12 @@ class AddTransactionDialog(QDialog, Ui_dialog_add_transaction):
         """
         # Ensure that none of the fields are empty.
         if (
-            not self.combo_box_transaction_type.currentText()
-            or not self.line_edit_symbol.text()
-            or not self.line_edit_platform.text()
-            or not self.line_edit_currency.text()
-            or not self.line_edit_amount.text()
-            or not self.line_edit_unit_price.text()
+                not self.combo_box_transaction_type.currentText()
+                or not self.line_edit_symbol.text()
+                or not self.line_edit_platform.text()
+                or not self.line_edit_currency.text()
+                or not self.line_edit_amount.text()
+                or not self.line_edit_unit_price.text()
         ):
             self.lbl_status_msg.setText("Please fill in all of the details.")
             return
@@ -549,8 +553,8 @@ class AddTransactionDialog(QDialog, Ui_dialog_add_transaction):
             return
         # Ensure that the amount and unit price are positive.
         if (
-            float(self.line_edit_amount.text()) <= 0.0
-            or float(self.line_edit_unit_price.text()) <= 0.0
+                float(self.line_edit_amount.text()) <= 0.0
+                or float(self.line_edit_unit_price.text()) <= 0.0
         ):
             self.lbl_status_msg.setText("The amount and unit price must be positive.")
             return
@@ -641,8 +645,8 @@ class HeldSecurity:
 
     @staticmethod
     def get_total_value(
-        current_values: dict[str, tuple[Decimal, Decimal, Decimal]],
-        is_gbp: bool = False,
+            current_values: dict[str, tuple[Decimal, Decimal, Decimal]],
+            is_gbp: bool = False,
     ) -> Decimal:
         """
         Calculate the total current value of the user's portfolio.
