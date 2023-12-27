@@ -4,8 +4,8 @@ transactions.
 """
 from __future__ import annotations
 
-import datetime
 from dataclasses import dataclass
+from datetime import datetime
 from decimal import Decimal
 from uuid import UUID
 
@@ -18,7 +18,7 @@ DB_PATH = "resources/portfolio.db"
 class Transaction:
     id: UUID
     type: str
-    timestamp: datetime.datetime
+    timestamp: datetime
     symbol: str
     platform: str
     currency: str
@@ -63,7 +63,7 @@ class Transaction:
                 exchange_rate,
             ) = record
             # Convert timestamp to remove the milliseconds.
-            timestamp = datetime.datetime.strptime(
+            timestamp = datetime.strptime(
                 str(timestamp), "%Y-%m-%d %H:%M:%S.%f"
             ).replace(microsecond=0)
             # Convert to Decimal objects to avoid floating point precision
