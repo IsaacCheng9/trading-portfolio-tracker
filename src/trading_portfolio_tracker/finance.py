@@ -27,8 +27,10 @@ def get_symbol(name: str) -> str:
         Symbol of the company.
     """
     yfinance = "https://query2.finance.yahoo.com/v1/finance/search"
-    user_agent = ("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 ("
-                  "KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36")
+    user_agent = (
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 ("
+        "KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36"
+    )
     params = {"q": name, "quotes_count": 1, "country": "United States"}
 
     res = requests.get(url=yfinance, params=params, headers={"User-Agent": user_agent})
@@ -142,13 +144,13 @@ def get_rate_of_return(current: Decimal, purchase: Decimal) -> Decimal:
 
 
 def upsert_transaction_into_portfolio(
-        transaction_type: str,
-        symbol: str,
-        currency: str,
-        amount: Decimal,
-        unit_price: Decimal,
-        amount_gbp: Decimal,
-        database_path: str = DB_PATH,
+    transaction_type: str,
+    symbol: str,
+    currency: str,
+    amount: Decimal,
+    unit_price: Decimal,
+    amount_gbp: Decimal,
+    database_path: str = DB_PATH,
 ) -> None:
     """
     Update/insert the portfolio based on a new transaction.
@@ -249,7 +251,7 @@ def get_total_paid_into_portfolio(database_path: str = DB_PATH) -> Decimal:
 
 
 def get_exchange_rate(
-        original_currency: str, convert_to: str = "GBP", provided_date: str = None
+    original_currency: str, convert_to: str = "GBP", provided_date: str = None
 ) -> Decimal:
     """
     Gets the exchange rate from a given currency
@@ -268,8 +270,10 @@ def get_exchange_rate(
 
     if not provided_date:
         # If no date is provided, the most recent exchange rate is retrieved.
-        url = (f"https://api.frankfurter.app/latest?from={original_currency}"
-               f"&to={convert_to}")
+        url = (
+            f"https://api.frankfurter.app/latest?from={original_currency}"
+            f"&to={convert_to}"
+        )
     else:
         # Checks to see if data is available for the date provided
         # Frankfurter API only provides exchange rate data since
@@ -278,8 +282,10 @@ def get_exchange_rate(
         if pdate < date(1999, 1, 4):
             provided_date = "1999-01-04"
 
-        url = (f"https://api.frankfurter.app/{provided_date}"
-               f"?from={original_currency}&to={convert_to}")
+        url = (
+            f"https://api.frankfurter.app/{provided_date}"
+            f"?from={original_currency}&to={convert_to}"
+        )
 
     response = requests.get(url)
     data = response.json()
