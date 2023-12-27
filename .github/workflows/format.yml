@@ -1,9 +1,9 @@
-name: Format with Black
+name: Format
 
 on: [push]
 
 jobs:
-  lint:
+  format:
     runs-on: ubuntu-latest
     strategy:
       matrix:
