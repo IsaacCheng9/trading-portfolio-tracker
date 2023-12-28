@@ -302,6 +302,11 @@
          <string>Rate of Return (Absolute)</string>
         </property>
        </column>
+       <column>
+        <property name="text">
+         <string>Rate of Return (Time-Weighted)</string>
+        </property>
+       </column>
       </widget>
      </item>
      <item>

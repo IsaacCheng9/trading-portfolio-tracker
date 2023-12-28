@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'main_window.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.5.1
+## Created by: Qt User Interface Compiler version 6.6.1
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -141,8 +141,8 @@ class Ui_main_window(object):
         self.vert_layout_window.addWidget(self.lbl_holdings)
 
         self.table_widget_portfolio = QTableWidget(self.verticalLayoutWidget)
-        if (self.table_widget_portfolio.columnCount() < 9):
-            self.table_widget_portfolio.setColumnCount(9)
+        if (self.table_widget_portfolio.columnCount() < 10):
+            self.table_widget_portfolio.setColumnCount(10)
         __qtablewidgetitem9 = QTableWidgetItem()
         self.table_widget_portfolio.setHorizontalHeaderItem(0, __qtablewidgetitem9)
         __qtablewidgetitem10 = QTableWidgetItem()
@@ -161,6 +161,8 @@ class Ui_main_window(object):
         self.table_widget_portfolio.setHorizontalHeaderItem(7, __qtablewidgetitem16)
         __qtablewidgetitem17 = QTableWidgetItem()
         self.table_widget_portfolio.setHorizontalHeaderItem(8, __qtablewidgetitem17)
+        __qtablewidgetitem18 = QTableWidgetItem()
+        self.table_widget_portfolio.setHorizontalHeaderItem(9, __qtablewidgetitem18)
         self.table_widget_portfolio.setObjectName(u"table_widget_portfolio")
         sizePolicy = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
@@ -246,5 +248,7 @@ class Ui_main_window(object):
         ___qtablewidgetitem16.setText(QCoreApplication.translate("main_window", u"Change (GBP)", None));
         ___qtablewidgetitem17 = self.table_widget_portfolio.horizontalHeaderItem(8)
         ___qtablewidgetitem17.setText(QCoreApplication.translate("main_window", u"Rate of Return (Absolute)", None));
+        ___qtablewidgetitem18 = self.table_widget_portfolio.horizontalHeaderItem(9)
+        ___qtablewidgetitem18.setText(QCoreApplication.translate("main_window", u"Rate of Return (Time-Weighted)", None));
     # retranslateUi
 
