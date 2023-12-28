@@ -6,7 +6,7 @@ from PySide6 import QtWidgets
 
 from src.trading_portfolio_tracker.portfolio import MainWindow
 
-DB_PATH = "resources/portfolio.db"
+DB_PATH = "resources/portfolio.duckdb"
 
 
 def main() -> None:
