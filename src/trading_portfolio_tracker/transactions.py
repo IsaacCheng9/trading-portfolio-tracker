@@ -11,7 +11,7 @@ from uuid import UUID
 
 import duckdb
 
-DB_PATH = "resources/portfolio.db"
+DB_PATH = "resources/portfolio.duckdb"
 
 
 @dataclass

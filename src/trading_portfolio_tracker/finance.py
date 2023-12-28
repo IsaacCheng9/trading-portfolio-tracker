@@ -12,7 +12,7 @@ import requests
 import yfinance as yf
 from requests import exceptions
 
-DB_PATH = "resources/portfolio.db"
+DB_PATH = "resources/portfolio.duckdb"
 
 
 def get_symbol(name: str) -> str:

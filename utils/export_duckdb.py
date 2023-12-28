@@ -8,7 +8,7 @@ import duckdb
 
 def main():
     # The directory to get the DB file from.
-    export_from = "resources/portfolio.db"
+    export_from = "resources/portfolio.duckdb"
     # The directory to export the DB to.
     export_to = "resources/portfolio_data"
 
