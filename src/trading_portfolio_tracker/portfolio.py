@@ -36,7 +36,7 @@ from src.trading_portfolio_tracker.ui.transaction_history_ui import (
     Ui_dialog_transaction_history,
 )
 
-DB_PATH = "resources/portfolio.db"
+DB_PATH = "resources/portfolio.duckdb"
 
 
 class UpdateStockPricesWorker(QObject):
@@ -275,7 +275,7 @@ class MainWindow(QMainWindow, Ui_main_window):
             cur_val_gbp = cur_val * exchange_rate
 
             val_change = cur_val_gbp - security.paid_gbp
-            rate_of_return_abs = get_rate_of_return(cur_val_gbp, security.paid)
+            rate_of_return_abs = get_rate_of_return(cur_val_gbp, security.paid_gbp)
 
             # Stores the live security information in a dictionary indexed
             # by the name of the security
@@ -363,7 +363,7 @@ class MainWindow(QMainWindow, Ui_main_window):
                 row,
                 8,
                 QtWidgets.QTableWidgetItem(
-                    f"{self.current_security_info[security.name][2]:+.2f}%"
+                    f"{self.current_security_info[security.name][2]:+.3f}%"
                 ),
             )
 

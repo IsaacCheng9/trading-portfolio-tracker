@@ -168,3 +168,4 @@ cython_debug/
 
 # DB files - these are binary files which causes version control conflicts.
 *.db
+*.duckdb
