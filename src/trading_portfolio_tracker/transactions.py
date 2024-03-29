@@ -2,6 +2,7 @@
 Handles the logic for the processing and storage of the user's trading
 transactions.
 """
+
 from __future__ import annotations
 
 import datetime

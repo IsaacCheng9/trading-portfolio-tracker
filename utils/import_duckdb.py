@@ -4,6 +4,7 @@ previously exported by a user. This is preferred over version controlling the
 DB file itself due to merge conflicts and other issues that arise with binary
 files.
 """
+
 import duckdb
 
 
