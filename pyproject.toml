@@ -29,7 +29,6 @@ from = "src"
 
 [tool.ruff]
 exclude = ["src/trading_portfolio_tracker/ui/*"]
-fix = true
 
 [build-system]
 requires = ["poetry-core"]
