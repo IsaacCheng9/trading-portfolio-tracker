@@ -14,18 +14,18 @@ jobs:
     # Configures the build to use the latest version of Python 3.
     strategy:
       matrix:
-        python-version: [3.11.x]
+        python-version: [3.12.x]
 
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can
       # access it.
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@main
 
       - name: Switch to current branch
         run: git checkout ${{ env.BRANCH }}
 
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v1
+        uses: actions/setup-python@main
         with:
           python-version: ${{ matrix.python-version }}
 

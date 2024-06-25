@@ -7,25 +7,25 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: [3.11.x]
+        python-version: [3.12.x]
 
     steps:
       - uses: actions/checkout@v3
 
-      - name: Run Python code formatting with Black
-        uses: lgeiger/black-action@v1.0.1
+      - name: Run Python code formatting with Ruff
+        uses: chartboost/ruff-action@main
         with:
-          args: ". --exclude src/trading_portfolio_tracker/ui"
+          args: "format --exclude src/trading_portfolio_tracker/ui"
 
-      - name: Commit changes made by Black
-        uses: stefanzweifel/git-auto-commit-action@v5
+      - name: Commit changes made by Ruff
+        uses: stefanzweifel/git-auto-commit-action@master
         with:
-          commit_message: Format Python code with Black
+          commit_message: Format Python code with Ruff
 
       - name: Switch to current branch
         run: git checkout ${{ env.BRANCH }}
 
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v3.1.4
+        uses: actions/setup-python@main
         with:
           python-version: ${{ matrix.python-version }}
