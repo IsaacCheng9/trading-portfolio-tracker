@@ -12,15 +12,15 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Run Python code formatting with Black
-        uses: lgeiger/black-action@master
+      - name: Run Python code formatting with Ruff
+        uses: chartboost/ruff-action@master
         with:
-          args: ". --exclude src/trading_portfolio_tracker/ui"
+          args: "format --check --exclude src/trading_portfolio_tracker/ui"
 
       - name: Commit changes made by Black
         uses: stefanzweifel/git-auto-commit-action@master
         with:
-          commit_message: Format Python code with Black
+          commit_message: Format Python code with Ruff
 
       - name: Switch to current branch
         run: git checkout ${{ env.BRANCH }}
