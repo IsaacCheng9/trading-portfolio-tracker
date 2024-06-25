@@ -5,7 +5,6 @@ import duckdb
 import pandas as pd
 import pytest
 import yfinance as yf
-from requests import exceptions
 
 from src.trading_portfolio_tracker import app, finance
 
@@ -159,11 +158,8 @@ def test_get_info_invalid() -> None:
     Tests the get_info method using an invalid symbol to ensure an error is
     thrown.
     """
-    try:
+    with pytest.raises(KeyError):
         finance.get_info("INVALID")
-        assert False
-    except exceptions.HTTPError:
-        assert True
 
 
 @pytest.mark.parametrize(
