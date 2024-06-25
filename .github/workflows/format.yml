@@ -12,10 +12,10 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Run Python code formatting with Ruff  
+      - name: Run Python code formatting with Ruff
         uses: chartboost/ruff-action@main
         with:
-          args: "format --fix --check --exclude src/trading_portfolio_tracker/ui"
+          args: "format --exclude src/trading_portfolio_tracker/ui"
 
       - name: Commit changes made by Ruff
         uses: stefanzweifel/git-auto-commit-action@master
