@@ -318,7 +318,6 @@ def test_get_exchange_rate_valid_date(provided_date: str) -> None:
     assert exch_rate > 0
 
 
-
 def test_get_exchange_rate_too_old_date() -> None:
     """
     Tests the get_exchange_rate method providing a date that is too old for
