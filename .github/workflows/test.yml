@@ -19,13 +19,13 @@ jobs:
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can
       # access it.
-      - uses: actions/checkout@master
+      - uses: actions/checkout@main
 
       - name: Switch to current branch
         run: git checkout ${{ env.BRANCH }}
 
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@master
+        uses: actions/setup-python@main
         with:
           python-version: ${{ matrix.python-version }}
 

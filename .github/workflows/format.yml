@@ -12,13 +12,13 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Run Python code formatting with Ruff
-        uses: chartboost/ruff-action@master
+      - name: Run Python code formatting with Ruff  
+        uses: chartboost/ruff-action@main
         with:
           args: "format --check --exclude src/trading_portfolio_tracker/ui"
 
       - name: Commit changes made by Black
-        uses: stefanzweifel/git-auto-commit-action@master
+        uses: stefanzweifel/git-auto-commit-action@main
         with:
           commit_message: Format Python code with Ruff
 
@@ -26,6 +26,6 @@ jobs:
         run: git checkout ${{ env.BRANCH }}
 
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@master
+        uses: actions/setup-python@main
         with:
           python-version: ${{ matrix.python-version }}
