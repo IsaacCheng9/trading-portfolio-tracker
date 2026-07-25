@@ -1,10 +1,10 @@
 import os
 from decimal import Decimal
+from types import SimpleNamespace
 
 import duckdb
 import pandas as pd
 import pytest
-import yfinance as yf
 
 from src.trading_portfolio_tracker import app, finance
 
@@ -116,15 +116,57 @@ def test_get_history_invalid() -> None:
 
 
 @pytest.mark.parametrize(
-    "symbol, expected_type, expected_currency",
+    "symbol, ticker_info, expected_type, expected_currency, expected_value",
     [
-        ("AAPL", "EQUITY", "USD"),
-        ("0P0001BVXP.L", "MUTUALFUND", "GBP"),
-        ("^FTSE", "INDEX", "GBP"),
+        (
+            "AAPL",
+            {
+                "shortName": "Apple Inc.",
+                "symbol": "AAPL",
+                "quoteType": "EQUITY",
+                "currentPrice": 200.0,
+                "financialCurrency": "USD",
+                "sector": "Technology",
+            },
+            "EQUITY",
+            "USD",
+            200.0,
+        ),
+        (
+            "0P0001BVXP.L",
+            {
+                "shortName": "Fund",
+                "symbol": "0P0001BVXP.L",
+                "quoteType": "MUTUALFUND",
+                "regularMarketPrice": 18.0897,
+                "currency": "GBP",
+            },
+            "MUTUALFUND",
+            "GBP",
+            18.0897,
+        ),
+        (
+            "^FTSE",
+            {
+                "shortName": "FTSE 100",
+                "symbol": "^FTSE",
+                "quoteType": "INDEX",
+                "regularMarketPrice": 8_000.0,
+                "currency": "GBP",
+            },
+            "INDEX",
+            "GBP",
+            8_000.0,
+        ),
     ],
 )
 def test_get_info_valid(
-    symbol: str, expected_type: str, expected_currency: str
+    monkeypatch: pytest.MonkeyPatch,
+    symbol: str,
+    ticker_info: dict[str, str | float],
+    expected_type: str,
+    expected_currency: str,
+    expected_value: float,
 ) -> None:
     """
     Tests the get_info method using valid symbols to ensure pricing data
@@ -132,32 +174,114 @@ def test_get_info_valid(
 
     Args:
         symbol: Listed symbol.
+        ticker_info: Yahoo Finance response for the symbol.
         expected_type: Expected type of the asset (Equity, Index, Mutual Fund).
         expected_currency: Expected currency the asset is traded in.
+        expected_value: Expected current value of the asset.
     """
+    monkeypatch.setattr(
+        finance.yf,
+        "Ticker",
+        lambda requested_symbol: SimpleNamespace(info=ticker_info),
+    )
+
     info = finance.get_info(symbol)
     assert info["currency"] == expected_currency
     assert info["type"] == expected_type
-    assert float(info["current_value"]) >= 0.0
+    assert info["current_value"] == expected_value
 
 
-def test_get_info_lse() -> None:
+@pytest.mark.parametrize(
+    "history",
+    [
+        pd.DataFrame({"Close": [10.0, 11.0]}),
+        pd.DataFrame({("Close", "FUND"): [10.0, 11.0]}),
+    ],
+    ids=["flat-columns", "multi-index-columns"],
+)
+def test_get_info_falls_back_to_history(
+    monkeypatch: pytest.MonkeyPatch, history: pd.DataFrame
+) -> None:
+    """Use the latest close when Yahoo's quote data contains no price."""
+    ticker_info = {
+        "shortName": "Fund",
+        "symbol": "FUND",
+        "quoteType": "MUTUALFUND",
+        "currency": "GBP",
+    }
+    monkeypatch.setattr(
+        finance.yf,
+        "Ticker",
+        lambda symbol: SimpleNamespace(info=ticker_info),
+    )
+
+    def download(*args, **kwargs):
+        return history
+
+    monkeypatch.setattr(finance.yf, "download", download)
+
+    info = finance.get_info("FUND")
+
+    assert info["current_value"] == 11.0
+    assert info["currency"] == "GBP"
+
+
+def test_get_info_missing_price_data(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Raise a clear error when Yahoo returns no quote or price history."""
+    ticker_info = {
+        "shortName": "Fund",
+        "symbol": "FUND",
+        "quoteType": "MUTUALFUND",
+        "currency": "GBP",
+    }
+    monkeypatch.setattr(
+        finance.yf,
+        "Ticker",
+        lambda symbol: SimpleNamespace(info=ticker_info),
+    )
+    monkeypatch.setattr(finance.yf, "download", lambda *args, **kwargs: pd.DataFrame())
+
+    with pytest.raises(ValueError, match="No price data found for FUND"):
+        finance.get_info("FUND")
+
+
+def test_get_info_lse(monkeypatch: pytest.MonkeyPatch) -> None:
     """
     Tests the get_info method using a stock listed on the London Stock Exchange
     to ensure that GBX is converted to GBP.
     """
     symbol = "LSEG.L"
-    ticker = yf.Ticker(symbol)
+    ticker_info = {
+        "shortName": "London Stock Exchange Group plc",
+        "symbol": symbol,
+        "quoteType": "EQUITY",
+        "currentPrice": 8_774.0,
+        "currency": "GBp",
+        "financialCurrency": "GBP",
+        "sector": "Financial Services",
+    }
+    monkeypatch.setattr(
+        finance.yf,
+        "Ticker",
+        lambda requested_symbol: SimpleNamespace(info=ticker_info),
+    )
+
     info = finance.get_info(symbol)
-    assert info["current_value"] == (ticker.info["currentPrice"] / 100)
+    assert info["current_value"] == 87.74
     assert info["currency"] == "GBP"
 
 
-def test_get_info_invalid() -> None:
+def test_get_info_invalid(monkeypatch: pytest.MonkeyPatch) -> None:
     """
     Tests the get_info method using an invalid symbol to ensure an error is
     thrown.
     """
+    monkeypatch.setattr(
+        finance.yf,
+        "Ticker",
+        lambda symbol: SimpleNamespace(info={}),
+    )
+
     with pytest.raises(KeyError):
         finance.get_info("INVALID")
 

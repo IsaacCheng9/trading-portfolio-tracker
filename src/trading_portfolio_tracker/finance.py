@@ -74,7 +74,7 @@ def get_history(name: str, period: str = "1mo") -> pd.DataFrame:
     return tick.history(period=period)
 
 
-def get_info(symbol: str) -> dict[str, str]:
+def get_info(symbol: str) -> dict[str, str | float]:
     """
     Returns information about a stock/company.
     Accounts for the difference in the yfinance library in returning
@@ -89,22 +89,21 @@ def get_info(symbol: str) -> dict[str, str]:
     """
     # Creates a yfinance ticker object for a given asset.
     ticker = yf.Ticker(symbol)
+    info = ticker.info
 
     # Creates a dictionary containing basic information about the asset.
     return_dict = {
-        "name": ticker.info["shortName"],
-        "ticker": ticker.info["symbol"],
-        "type": ticker.info["quoteType"],
+        "name": info["shortName"],
+        "ticker": info["symbol"],
+        "type": info["quoteType"],
     }
 
-    # Tries to get information about a stock/index/fund but if the data is
-    # unavailable in the usual format, the most recent data about that asset is
-    # downloaded and retrieved using the download method of yfinance.
-    try:
-        return_dict["current_value"] = ticker.info["currentPrice"]
-        return_dict["currency"] = ticker.info["financialCurrency"]
-        return_dict["sector"] = ticker.info["sector"]
-    except KeyError:
+    current_value = info.get("currentPrice")
+    if current_value is None:
+        current_value = info.get("regularMarketPrice")
+
+    # Download the latest close if Yahoo's quote data has no current price.
+    if current_value is None:
         date_range = "1d"
 
         # If the type is a mutual fund then change the data download period to
@@ -113,16 +112,28 @@ def get_info(symbol: str) -> dict[str, str]:
             date_range = "1mo"
 
         # Downloads the most recent data associated with the asset.
-        data = yf.download(return_dict["ticker"], period=date_range, progress=False)
-        last_row_index = len(data) - 1
-        # Gets the last reported close price of the asset
-        last_row_open_value = data.iloc[last_row_index]["Close"]
-        return_dict["current_value"] = last_row_open_value
-        return_dict["currency"] = ticker.info["currency"]
+        data = yf.download(
+            return_dict["ticker"],
+            period=date_range,
+            progress=False,
+            auto_adjust=False,
+        )
+        if data.empty:
+            raise ValueError(f"No price data found for {symbol}.")
+        close_prices = data["Close"]
+        if isinstance(close_prices, pd.DataFrame):
+            current_value = float(close_prices.iloc[-1, 0])
+        else:
+            current_value = float(close_prices.iloc[-1])
 
-    # Checks if the stock is traded on the LSE, if so GBP is converted to GBX.
-    if ticker.info["symbol"][-2:] == ".L":
-        return_dict["current_value"] /= 100
+    return_dict["current_value"] = current_value
+    return_dict["currency"] = info.get("financialCurrency") or info["currency"]
+    if sector := info.get("sector"):
+        return_dict["sector"] = sector
+
+    # Convert prices reported in pence to pounds.
+    if info.get("currency") in {"GBp", "GBX"}:
+        return_dict["current_value"] = current_value / 100
         return_dict["currency"] = "GBP"
 
     return return_dict
